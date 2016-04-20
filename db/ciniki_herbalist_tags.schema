@@ -1,0 +1,40 @@
+#
+# Description
+# -----------
+# The tags for the pieces of information in Herbalist module.
+#
+# Fields
+# ------
+# id:				The ID assigned to the ingredient.
+# uuid:				The Universal Unique ID.
+# business_id:		The business the ingredient is attached to.
+#
+# object:           The Object the tag is for.
+#
+# object_id:        The ID for the herbalist object the tag is attached to.
+#
+# tag_type:         The type of the tag.
+#
+#                   10 - Category
+#                   20 - Tag/Keyword
+#
+# tag_name:         The name of the tag.
+# permalink:        The permalink for the tag.
+#
+# date_added:		The UTC date and time the record was added.
+# last_updated:		The UTC date and time the record was last updated.
+#
+create table ciniki_herbalist_tags (
+	id int not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	ref_id int not null,
+	tag_type tinyint not null,
+	tag_name varchar(150) not null,
+	permalink varchar(150) not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	unique index (uuid),
+	index sync (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';
