@@ -23,9 +23,10 @@ function ciniki_herbalist_objects($ciniki) {
             'plant_id'=>array('name'=>'Plant', 'ref'=>'ciniki.herbalist.plant', 'default'=>'0'),
             'recipe_id'=>array('name'=>'Recipe', 'ref'=>'ciniki.herbalist.recipe', 'default'=>'0'),
             'units'=>array('name'=>'Units'),
-            'costing_weight'=>array('name'=>'Purchase Weight', 'default'=>'0'),
+            'costing_quantity'=>array('name'=>'Purchase Quantity', 'default'=>'0'),
             'costing_price'=>array('name'=>'Purchase Price', 'default'=>'0'),
             'cost_per_unit'=>array('name'=>'Cost per Unit', 'default'=>'0'),
+            'notes'=>array('name'=>'Notes', 'default'=>''),
 			),
 		'history_table'=>'ciniki_herbalist_history',
 		);

@@ -2,19 +2,19 @@
 //
 // Description
 // -----------
-// This method will add a new container for the business.
+// This method will add a new ingredient for the business.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:        The ID of the business to add the Container to.
+// business_id:        The ID of the business to add the Ingredient to.
 //
 // Returns
 // -------
 // <rsp stat="ok" id="42">
 //
-function ciniki_herbalist_containerAdd(&$ciniki) {
+function ciniki_herbalist_ingredientAdd(&$ciniki) {
     //
     // Find all the required and optional arguments
     //
@@ -22,10 +22,11 @@ function ciniki_herbalist_containerAdd(&$ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
         'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'),
-        'top_quantity'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'name'=>'Top Quantity'),
-        'top_price'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'type'=>'currency', 'name'=>'Top Price'),
-        'bottom_quantity'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'name'=>'Bottom Quantity'),
-        'bottom_price'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'type'=>'currency', 'name'=>'Bottom Price'),
+        'plant_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Plant'),
+        'recipe_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Recipe'),
+        'units'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Units'),
+        'costing_quantity'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Purchase Quantity'),
+        'costing_price'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Purchase Price'),
         'cost_per_unit'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Cost per Unit'),
         'notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Notes'),
         ));
@@ -38,7 +39,7 @@ function ciniki_herbalist_containerAdd(&$ciniki) {
     // Check access to business_id as owner
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.containerAdd');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.ingredientAdd');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -56,28 +57,15 @@ function ciniki_herbalist_containerAdd(&$ciniki) {
     }
 
     //
-    // Calculate cost per unit
-    //
-    if( !isset($args['cost_per_unit']) ) {
-        $args['cost_per_unit'] = 0;
-        if( $args['top_price'] > 0 && $args['top_quantity'] > 0 ) {
-            $args['cost_per_unit'] += bcdiv($args['top_price'], $args['top_quantity'], 4);
-        }
-        if( $args['bottom_price'] > 0 && $args['bottom_quantity'] > 0 ) {
-            $args['cost_per_unit'] += bcdiv($args['bottom_price'], $args['bottom_quantity'], 4);
-        }
-    }
-
-    //
-    // Add the container to the database
+    // Add the ingredient to the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.herbalist.container', $args, 0x04);
+    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.herbalist.ingredient', $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
         return $rc;
     }
-    $container_id = $rc['id'];
+    $ingredient_id = $rc['id'];
 
     //
     // Commit the transaction
@@ -98,8 +86,8 @@ function ciniki_herbalist_containerAdd(&$ciniki) {
     // Update the web index if enabled
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'hookExec');
-    ciniki_core_hookExec($ciniki, $args['business_id'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.herbalist.container', 'object_id'=>$container_id));
+    ciniki_core_hookExec($ciniki, $args['business_id'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.herbalist.ingredient', 'object_id'=>$ingredient_id));
 
-    return array('stat'=>'ok', 'id'=>$container_id);
+    return array('stat'=>'ok', 'id'=>$ingredient_id);
 }
 ?>
