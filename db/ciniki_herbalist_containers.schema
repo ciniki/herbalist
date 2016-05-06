@@ -19,6 +19,8 @@
 #
 # cost_per_unit:    The cost per unit of the container.
 #
+# notes:            Any notes about the container.
+#
 # date_added:		The UTC date and time the record was added.
 # last_updated:		The UTC date and time the record was last updated.
 #
@@ -32,6 +34,7 @@ create table ciniki_herbalist_containers (
     bottom_quantity int not null,
     bottom_price decimal(19,4) not null,
     cost_per_unit decimal(19,4) not null,
+    notes varchar(5000) not null,
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),

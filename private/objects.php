@@ -79,11 +79,12 @@ function ciniki_herbalist_objects($ciniki) {
 		'table'=>'ciniki_herbalist_containers',
 		'fields'=>array(
             'name'=>array('name'=>'Name'),
-            'top_quantity'=>array('name'=>'Top Quantity'),
-            'top_price'=>array('name'=>'Top Price'),
-            'bottom_quantity'=>array('name'=>'Bottom Quantity'),
-            'bottom_price'=>array('name'=>'Bottom Price'),
-            'cost_per_unit'=>array('name'=>'Cost per Unit'),
+            'top_quantity'=>array('name'=>'Top Quantity', 'default'=>'0'),
+            'top_price'=>array('name'=>'Top Price', 'default'=>'0'),
+            'bottom_quantity'=>array('name'=>'Bottom Quantity', 'default'=>'0'),
+            'bottom_price'=>array('name'=>'Bottom Price', 'default'=>'0'),
+            'cost_per_unit'=>array('name'=>'Cost per Unit', 'default'=>'0'),
+            'notes'=>array('name'=>'Notes', 'default'=>''),
 			),
 		'history_table'=>'ciniki_herbalist_history',
 		);
