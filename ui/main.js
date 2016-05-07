@@ -230,7 +230,6 @@ function ciniki_herbalist_main() {
         this.ingredient.save = function() {
             if( this.ingredient_id > 0 ) {
                 var c = this.serializeForm('no');
-                console.log(c);
                 if( c != '' ) {
                     M.api.postJSONCb('ciniki.herbalist.ingredientUpdate', {'business_id':M.curBusinessID, 'ingredient_id':this.ingredient_id}, c,
                         function(rsp) {
