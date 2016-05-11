@@ -265,6 +265,7 @@ function ciniki_herbalist_main() {
                 p.refreshSection('ingredients_30');
                 p.refreshSection('ingredients_60');
                 p.refreshSection('ingredients_90');
+                p.updateCPU();
                 p.show();
             });
         };
