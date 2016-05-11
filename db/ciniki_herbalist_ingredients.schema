@@ -11,6 +11,12 @@
 #
 # name:				The name for the ingredient.
 #
+# sorttype:         The type of ingrident, to be used when ingredients are added to a recipe.
+#
+#                   30 - Herb
+#                   60 - Liquid
+#                   90 - Misc
+#
 # plant_id:         The ID of the plant in the materia medica  **future**
 #
 # recipe_id:        The ID of the recipe to make this ingredient, or zero if no recipe.
@@ -33,6 +39,7 @@ create table ciniki_herbalist_ingredients (
 	uuid char(36) not null,
 	business_id int not null,
 	name varchar(150) not null,
+    sorttype tinyint unsigned not null,
     plant_id int not null,
     recipe_id int not null,
     units tinyint unsigned not null,

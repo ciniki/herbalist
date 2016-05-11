@@ -33,7 +33,7 @@ function ciniki_herbalist_main() {
                 'cellClasses':[''],
                 'noData':'No Recipes',
                 'addTxt':'Add Recipe',
-                'addFn':'',
+                'addFn':'M.ciniki_herbalist_main.recipe.edit(\'M.ciniki_herbalist_main.menuShow();\',0);',
                 },
             'ingredients':{'label':'Ingredients', 'type':'simplegrid', 'num_cols':2, 
                 'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='ingredients'?'yes':'no';},
@@ -174,6 +174,216 @@ function ciniki_herbalist_main() {
 		this.artist.addClose('Back');
 
 		//
+		// The panel for editing a recipe
+		//
+		this.recipe = new M.panel('Recipe',
+			'ciniki_herbalist_main', 'recipe',
+			'mc', 'medium mediumaside', 'sectioned', 'ciniki.herbalist.main.recipe');
+		this.recipe.data = {};
+		this.recipe.recipe_id = 0;
+        this.recipe.sections = { 
+            'general':{'label':'Recipe', 'aside':'yes', 'fields':{
+                'name':{'label':'Name', 'type':'text'},
+                'units':{'label':'Units', 'type':'toggle', 'toggles':{'10':'gm', '60':'ml'}},
+                'yield':{'label':'Yield', 'type':'text', 'size':'small', 'autocomplete':'off', 'onkeyupFn':'M.ciniki_herbalist_main.recipe.updateCPU'},
+                'cost_per_unit':{'label':'Cost/Unit', 'type':'text', 'editable':'no'},
+                }}, 
+            'ingredients_30':{'label':'Herbs', 'type':'simplegrid', 'num_cols':2,
+                'visible':function() { return (M.ciniki_herbalist_main.recipe.data.ingredient_types[30] != null) ? 'yes': 'no'; },
+                },
+            'ingredients_60':{'label':'Liquids', 'type':'simplegrid', 'num_cols':2,
+                'visible':function() { return (M.ciniki_herbalist_main.recipe.data.ingredient_types[60] != null) ? 'yes': 'no'; },
+                },
+            'ingredients_90':{'label':'Misc', 'type':'simplegrid', 'num_cols':2,
+                'visible':function() { return (M.ciniki_herbalist_main.recipe.data.ingredient_types[90] != null) ? 'yes': 'no'; },
+                },
+            'ingredients':{'label':'', 'type':'simplegrid', 'num_cols':1,
+                'addTxt':'Add Ingredient',
+                'addFn':'M.ciniki_herbalist_main.recipe.addIngredient();',
+                },
+			'_notes':{'label':'Notes', 'aside':'yes', 'fields':{
+                'notes':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'large', 'type':'textarea'},
+                }},
+			'_buttons':{'label':'', 'buttons':{
+                'save':{'label':'Save', 'fn':'M.ciniki_herbalist_main.recipe.save();'},
+                'delete':{'label':'Delete', 'visible':'no', 'fn':'M.ciniki_herbalist_main.recipe.delete();'},
+                }},
+            };  
+        this.recipe.sectionData = function(s) { 
+            switch (s) {
+                case 'ingredients_30': return this.data['ingredient_types'][30]['ingredients'];
+                case 'ingredients_60': return this.data['ingredient_types'][60]['ingredients'];
+                case 'ingredients_90': return this.data['ingredient_types'][90]['ingredients'];
+            }
+        }
+		this.recipe.fieldValue = function(s, i, d) { return this.data[i]; }
+		this.recipe.fieldHistoryArgs = function(s, i) {
+			return {'method':'ciniki.herbalist.recipeHistory', 'args':{'business_id':M.curBusinessID, 
+				'recipe_id':this.recipe_id, 'field':i}};
+		}
+        this.recipe.cellValue = function(s, i, j, d) {
+            switch(j) {
+                case 0: return d.name;
+                case 1: return d.quantity_display;
+            }
+        }
+        this.recipe.rowFn = function(s, i, d) {
+            return 'M.ciniki_herbalist_main.recipeingredient.edit(\'M.ciniki_herbalist_main.recipe.updateIngredients();\',' + d.id + ');';
+        }
+        this.recipe.addIngredient = function() {
+            if( this.recipe_id == 0 ) {
+                var c = this.serializeForm('yes');
+                M.api.postJSONCb('ciniki.herbalist.recipeAdd', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, c,
+                    function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        } 
+                        M.ciniki_herbalist_main.recipe.recipe_id = rsp.id;
+                        M.ciniki_herbalist_main.recipeingredient.edit('M.ciniki_herbalist_main.recipe.updateIngredients();',0,rsp.id);
+                    });
+            } else {
+                M.ciniki_herbalist_main.recipeingredient.edit('M.ciniki_herbalist_main.recipe.updateIngredients();',0,this.recipe_id);
+            }
+        }
+        this.recipe.updateIngredients = function() {
+            M.api.getJSONCb('ciniki.herbalist.recipeGet', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                var p = M.ciniki_herbalist_main.recipe;
+                p.data.ingredients = rsp.recipe.ingredients;
+                p.refreshSection('ingredients');
+                p.show();
+            });
+        };
+        this.recipe.updateCPU = function() {
+            var y = M.gE(this.panelUID + '_yield').value;
+            var c = 0; // cost
+            for(var i in this.data.ingredient_types) {
+                for(var j in this.data.ingredient_types[i].ingredients) {
+                    c += this.data.ingredient_types[i].ingredients[j].quantity * this.data.ingredient_types[i].ingredients[j].cost_per_unit;
+                }
+            }
+            v = (c/y);
+            M.gE(this.panelUID + '_cost_per_unit').value = '$' + v.toFixed(2);
+        }
+        this.recipe.edit = function(cb, id) {
+            this.reset();
+            if( id != null ) { this.recipe_id = id; }
+            M.api.getJSONCb('ciniki.herbalist.recipeGet', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                var p = M.ciniki_herbalist_main.recipe;
+                p.data = rsp.recipe;
+                p.refresh();
+                p.show(cb);
+            });
+        }
+        this.recipe.save = function() {
+            if( this.recipe_id > 0 ) {
+                var c = this.serializeForm('no');
+                if( c != '' ) {
+                    M.api.postJSONCb('ciniki.herbalist.recipeUpdate', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, c,
+                        function(rsp) {
+                            if( rsp.stat != 'ok' ) {
+                                M.api.err(rsp);
+                                return false;
+                            } 
+                        M.ciniki_herbalist_main.recipe.close();
+                        });
+                } else {
+                    this.close();
+                }
+            } else {
+                var c = this.serializeForm('yes');
+                M.api.postJSONCb('ciniki.herbalist.recipeAdd', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, c,
+                    function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        } 
+                    M.ciniki_herbalist_main.recipe.close();
+                    });
+            }
+        };
+		this.recipe.addButton('save', 'Save', 'M.ciniki_herbalist_main.recipe.save();');
+		this.recipe.addClose('Cancel');
+
+		//
+		// The panel for editing a recipe ingredient
+		//
+		this.recipeingredient = new M.panel('Recipe Ingredient',
+			'ciniki_herbalist_main', 'recipeingredient',
+			'mc', 'medium', 'sectioned', 'ciniki.herbalist.main.recipeingredient');
+		this.recipeingredient.data = {};
+		this.recipeingredient.recipe_id = 0;
+        this.recipeingredient.recipeingredient_id = 0;
+        this.recipeingredient.sections = { 
+            'general':{'label':'Ingredient', 'fields':{
+                'ingredient_id':{'label':'Ingredient', 'type':'select', 'options':{}},
+                'quantity':{'label':'Quantity', 'type':'text', 'size':'small'},
+                }}, 
+			'_buttons':{'label':'', 'buttons':{
+                'save':{'label':'Save', 'fn':'M.ciniki_herbalist_main.recipeingredient.save();'},
+                'delete':{'label':'Delete', 'visible':'no', 'fn':'M.ciniki_herbalist_main.recipeingredient.delete();'},
+                }},
+            };  
+		this.recipeingredient.fieldValue = function(s, i, d) { return this.data[i]; }
+		this.recipeingredient.fieldHistoryArgs = function(s, i) {
+			return {'method':'ciniki.herbalist.recipeIngredientHistory', 'args':{'business_id':M.curBusinessID, 
+				'recipeingredient_id':this.recipeingredient_id, 'field':i}};
+		}
+        this.recipeingredient.edit = function(cb, riid, rid) {
+            this.reset();
+            if( riid != null ) { this.recipeingredient_id = riid; }
+            if( rid != null ) { this.recipe_id = rid; }
+            M.api.getJSONCb('ciniki.herbalist.recipeIngredientGet', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id, 'recipeingredient_id':this.recipeingredient_id}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                var p = M.ciniki_herbalist_main.recipeingredient;
+                p.data = rsp.recipeingredient;
+                p.sections.general.fields.ingredient_id.options = rsp.ingredients;
+                p.refresh();
+                p.show(cb);
+            });
+        }
+        this.recipeingredient.save = function() {
+            if( this.recipeingredient_id > 0 ) {
+                var c = this.serializeForm('no');
+                if( c != '' ) {
+                    M.api.postJSONCb('ciniki.herbalist.recipeIngredientUpdate', {'business_id':M.curBusinessID, 'recipeingredient_id':this.recipeingredient_id}, c,
+                        function(rsp) {
+                            if( rsp.stat != 'ok' ) {
+                                M.api.err(rsp);
+                                return false;
+                            } 
+                        M.ciniki_herbalist_main.recipeingredient.close();
+                        });
+                } else {
+                    this.close();
+                }
+            } else {
+                var c = this.serializeForm('yes');
+                M.api.postJSONCb('ciniki.herbalist.recipeIngredientAdd', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, c,
+                    function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        } 
+                    M.ciniki_herbalist_main.recipeingredient.close();
+                    });
+            }
+        };
+		this.recipeingredient.addButton('save', 'Save', 'M.ciniki_herbalist_main.recipeingredient.save();');
+		this.recipeingredient.addClose('Cancel');
+
+		//
 		// The panel for containering an artist
 		//
 		this.ingredient = new M.panel('Ingredient',
@@ -182,8 +392,9 @@ function ciniki_herbalist_main() {
 		this.ingredient.data = {};
 		this.ingredient.ingredient_id = 0;
         this.ingredient.sections = { 
-            'general':{'label':'Container', 'fields':{
+            'general':{'label':'Ingredient', 'fields':{
                 'name':{'label':'Name', 'type':'text'},
+                'sorttype':{'label':'Type', 'type':'multitoggle', 'toggles':{'30':'Herb', '60':'Liquid', '90':'Misc'}},
                 'recipe_id':{'label':'Recipe', 'type':'select', 'options':{'0':'None'}},
                 'units':{'label':'Units', 'type':'toggle', 'toggles':{'10':'gm', '60':'ml'}},
                 'costing_quantity':{'label':'Quantity', 'type':'text', 'size':'small', 'onkeyupFn':'M.ciniki_herbalist_main.ingredient.updateCPU'},

@@ -62,6 +62,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
     //
     $strsql = "SELECT ciniki_herbalist_ingredients.id, "
         . "ciniki_herbalist_ingredients.name, "
+        . "ciniki_herbalist_ingredients.sorttype, "
         . "ciniki_herbalist_ingredients.plant_id, "
         . "ciniki_herbalist_ingredients.recipe_id, "
         . "ciniki_herbalist_ingredients.units, "
