@@ -35,6 +35,12 @@ function ciniki_herbalist_main() {
                 'addTxt':'Add Recipe',
                 'addFn':'M.ciniki_herbalist_main.recipe.edit(\'M.ciniki_herbalist_main.menuShow();\',0);',
                 },
+            '_ingredient_tabs':{'label':'', 'type':'paneltabs', 'selected':'0', 'tabs':{
+                '0':{'label':'All', 'fn':'M.ciniki_herbalist_main.menuShow(null,null,0);'},
+                '30':{'label':'Herbs', 'fn':'M.ciniki_herbalist_main.menuShow(null,null,30);'},
+                '60':{'label':'Liquids', 'fn':'M.ciniki_herbalist_main.menuShow(null,null,60);'},
+                '90':{'label':'Misc', 'fn':'M.ciniki_herbalist_main.menuShow(null,null,90);'},
+                }},
             'ingredients':{'label':'Ingredients', 'type':'simplegrid', 'num_cols':2, 
                 'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='ingredients'?'yes':'no';},
                 'headerValues':['Name', 'Cost'],
@@ -582,9 +588,10 @@ function ciniki_herbalist_main() {
         this.menuShow(cb);
 	}
 
-	this.menuShow = function(cb, tab) {
+	this.menuShow = function(cb, tab, itab) {
 		this.menu.data = {};
         if( tab != null ) { this.menu.sections._tabs.selected = tab; }
+        if( itab != null ) { this.menu.sections._ingredient_tabs.selected = itab; }
         args = {'business_id':M.curBusinessID};
         method = '';
         switch( this.menu.sections._tabs.selected ) {
@@ -592,6 +599,9 @@ function ciniki_herbalist_main() {
             case 'recipes': method = 'ciniki.herbalist.recipeList'; break;
             case 'ingredients': method = 'ciniki.herbalist.ingredientList'; break;
             case 'containers': method = 'ciniki.herbalist.containerList'; break;
+        }
+        if( this.menu.sections._tabs.selected == 'ingredients' ) {
+            args['sorttype'] = this.menu.sections._ingredient_tabs.selected;
         }
         M.api.getJSONCb(method, args, function(rsp) {
             if( rsp.stat != 'ok' ) {

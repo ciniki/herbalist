@@ -20,6 +20,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'sorttype'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Type'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -73,7 +74,11 @@ function ciniki_herbalist_ingredientList($ciniki) {
         . "ciniki_herbalist_ingredients.notes "
         . "FROM ciniki_herbalist_ingredients "
         . "WHERE ciniki_herbalist_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-        . "ORDER BY name "
+        . "";
+    if( isset($args['sorttype']) && $args['sorttype'] > 0 ) {
+        $strsql .= "AND ciniki_herbalist_ingredients.sorttype = '" . ciniki_core_dbQuote($ciniki, $args['sorttype']) . "' ";
+    }
+    $strsql .= "ORDER BY name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
