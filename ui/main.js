@@ -188,6 +188,9 @@ function ciniki_herbalist_main() {
                 'yield':{'label':'Yield', 'type':'text', 'size':'small', 'autocomplete':'off', 'onkeyupFn':'M.ciniki_herbalist_main.recipe.updateCPU'},
                 'cost_per_unit':{'label':'Cost/Unit', 'type':'text', 'editable':'no'},
                 }}, 
+			'_notes':{'label':'Notes', 'aside':'yes', 'fields':{
+                'notes':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'large', 'type':'textarea'},
+                }},
             'ingredients_30':{'label':'Herbs', 'type':'simplegrid', 'num_cols':2,
                 'visible':function() { return (M.ciniki_herbalist_main.recipe.data.ingredient_types[30] != null) ? 'yes': 'no'; },
                 },
@@ -201,9 +204,6 @@ function ciniki_herbalist_main() {
                 'addTxt':'Add Ingredient',
                 'addFn':'M.ciniki_herbalist_main.recipe.addIngredient();',
                 },
-			'_notes':{'label':'Notes', 'aside':'yes', 'fields':{
-                'notes':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'large', 'type':'textarea'},
-                }},
 			'_buttons':{'label':'', 'buttons':{
                 'save':{'label':'Save', 'fn':'M.ciniki_herbalist_main.recipe.save();'},
                 'delete':{'label':'Delete', 'visible':'no', 'fn':'M.ciniki_herbalist_main.recipe.delete();'},
@@ -253,8 +253,10 @@ function ciniki_herbalist_main() {
                     return false;
                 }
                 var p = M.ciniki_herbalist_main.recipe;
-                p.data.ingredients = rsp.recipe.ingredients;
-                p.refreshSection('ingredients');
+                p.data.ingredient_types = rsp.recipe.ingredient_types;
+                p.refreshSection('ingredients_30');
+                p.refreshSection('ingredients_60');
+                p.refreshSection('ingredients_90');
                 p.show();
             });
         };
