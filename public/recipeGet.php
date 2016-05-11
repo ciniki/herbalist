@@ -62,7 +62,7 @@ function ciniki_herbalist_recipeGet($ciniki) {
             'units'=>'',
             'yield'=>'0',
             'cost_per_unit'=>'0',
-            'ingredients'=>array(),
+            'ingredient_types'=>array(),
         );
     }
 
