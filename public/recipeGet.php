@@ -133,7 +133,7 @@ function ciniki_herbalist_recipeGet($ciniki) {
                 }
             }
         } else {
-            $recipe['ingredients'] = array();
+            $recipe['ingredient_types'] = array();
         }
     }
 

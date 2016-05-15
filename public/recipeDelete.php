@@ -56,6 +56,40 @@ function ciniki_herbalist_recipeDelete(&$ciniki) {
     $recipe = $rc['recipe'];
 
     //
+    // Check if the recipe is used as any ingredients
+    //
+    $strsql = "SELECT COUNT(*) AS num_recipes "
+        . "FROM ciniki_herbalist_ingredients "
+        . "WHERE recipe_id = '" . ciniki_core_dbQuote($ciniki, $args['recipe_id']) . "' "
+        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
+    $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.products', 'num');
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( $rc['num'] > 0 ) {
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3445', 'msg'=>'You still have ' . $rc['num'] . ' ingredient' . ($rc['num']>1?'s':'') .' using this recipe.'));
+    }
+
+    //
+    // Check if recipe is used for any products
+    //
+    $strsql = "SELECT COUNT(*) AS num_recipes "
+        . "FROM ciniki_herbalist_products "
+        . "WHERE recipe_id = '" . ciniki_core_dbQuote($ciniki, $args['recipe_id']) . "' "
+        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
+    $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.products', 'num');
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( $rc['num'] > 0 ) {
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3446', 'msg'=>'You still have ' . $rc['num'] . ' product' . ($rc['num']>1?'s':'') .' using this recipe.'));
+    }
+
+    //
     // Start transaction
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');

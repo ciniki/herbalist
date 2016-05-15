@@ -5,30 +5,44 @@
 #
 # Fields
 # ------
-# id:				The ID assigned to the product.
-# uuid:				The Universal Unique ID.
-# business_id:		The business the product is attached to.
+# id:				    The ID assigned to the product.
+# uuid:				    The Universal Unique ID.
+# business_id:		    The business the product is attached to.
 #
-# name:				The name for the product.
+# name:				    The name for the product.
+# permalink:            The permalink for the product, to be used on the website.
+# 
+# recipe_id:            The ID of the recipe to make this product.
 #
-# recipe_id:        The ID of the recipe to make this product.
+# recipe_quantity:      The quantity of the recipe used.
 #
-# recipe_quantity:  The quantity of the recipe used.
+# container_id:         The container used for the product.
 #
-# container_id:     The container used for the product.
+# cost_per_container:   The cost of the production for one container.
 #
-# date_added:		The UTC date and time the record was added.
-# last_updated:		The UTC date and time the record was last updated.
+# notes:                The notes for the product.
+#
+# primary_image_id:     The ID of the image to be used as the main image for the product.
+# synopsis:             The synopsis of the product.
+# description:          The full description of the product.
+#
+# date_added:		    The UTC date and time the record was added.
+# last_updated:		    The UTC date and time the record was last updated.
 #
 create table ciniki_herbalist_products (
 	id int not null auto_increment,
 	uuid char(36) not null,
 	business_id int not null,
     name varchar(250) not null,
+    permalink varchar(250) not null,
     recipe_id int not null,
     recipe_quantity decimal(10,2) not null,
     container_id int not null,
     cost_per_container decimal(19,4) not null,
+    notes varchar(5000) not null,
+    primary_image_id int not null,
+    synopsis varchar(1000) not null,
+    description varchar(20000) not null,
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),

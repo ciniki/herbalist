@@ -200,13 +200,13 @@ function ciniki_herbalist_main() {
                 'notes':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'large', 'type':'textarea'},
                 }},
             'ingredients_30':{'label':'Herbs', 'type':'simplegrid', 'num_cols':2,
-                'visible':function() { return (M.ciniki_herbalist_main.recipe.data.ingredient_types[30] != null) ? 'yes': 'no'; },
+                'visible':function() { return (M.ciniki_herbalist_main.recipe.data.ingredient_types[30] != null) ? 'yes': 'hidden'; },
                 },
             'ingredients_60':{'label':'Liquids', 'type':'simplegrid', 'num_cols':2,
-                'visible':function() { return (M.ciniki_herbalist_main.recipe.data.ingredient_types[60] != null) ? 'yes': 'no'; },
+                'visible':function() { return (M.ciniki_herbalist_main.recipe.data.ingredient_types[60] != null) ? 'yes': 'hidden'; },
                 },
             'ingredients_90':{'label':'Misc', 'type':'simplegrid', 'num_cols':2,
-                'visible':function() { return (M.ciniki_herbalist_main.recipe.data.ingredient_types[90] != null) ? 'yes': 'no'; },
+                'visible':function() { return (M.ciniki_herbalist_main.recipe.data.ingredient_types[90] != null) ? 'yes': 'hidden'; },
                 },
             'ingredients':{'label':'', 'type':'simplegrid', 'num_cols':1,
                 'addTxt':'Add Ingredient',
@@ -214,14 +214,14 @@ function ciniki_herbalist_main() {
                 },
 			'_buttons':{'label':'', 'buttons':{
                 'save':{'label':'Save', 'fn':'M.ciniki_herbalist_main.recipe.save();'},
-                'delete':{'label':'Delete', 'visible':'no', 'fn':'M.ciniki_herbalist_main.recipe.delete();'},
+                'delete':{'label':'Delete', 'visible':function() {return M.ciniki_herbalist_main.recipe.recipe_id>0?'yes':'no';}, 'fn':'M.ciniki_herbalist_main.recipe.remove();'},
                 }},
             };  
         this.recipe.sectionData = function(s) { 
             switch (s) {
-                case 'ingredients_30': return this.data['ingredient_types'][30]['ingredients'];
-                case 'ingredients_60': return this.data['ingredient_types'][60]['ingredients'];
-                case 'ingredients_90': return this.data['ingredient_types'][90]['ingredients'];
+                case 'ingredients_30': return this.data['ingredient_types'][30] != null ? this.data['ingredient_types'][30]['ingredients'] : null;
+                case 'ingredients_60': return this.data['ingredient_types'][60] != null ? this.data['ingredient_types'][60]['ingredients'] : null;
+                case 'ingredients_90': return this.data['ingredient_types'][90] != null ? this.data['ingredient_types'][90]['ingredients'] : null;
             }
         }
 		this.recipe.fieldValue = function(s, i, d) { return this.data[i]; }
@@ -321,6 +321,17 @@ function ciniki_herbalist_main() {
                     });
             }
         };
+        this.recipe.remove = function() {
+            if( confirm('Are you sure you want to remove this recipe?') ) {
+                M.api.getJSONCb('ciniki.herbalist.recipeDelete', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    } 
+                    M.ciniki_herbalist_main.recipe.close();
+                });
+            }
+        };
 		this.recipe.addButton('save', 'Save', 'M.ciniki_herbalist_main.recipe.save();');
 		this.recipe.addClose('Cancel');
 
@@ -340,7 +351,7 @@ function ciniki_herbalist_main() {
                 }}, 
 			'_buttons':{'label':'', 'buttons':{
                 'save':{'label':'Save', 'fn':'M.ciniki_herbalist_main.recipeingredient.save();'},
-                'delete':{'label':'Delete', 'visible':'no', 'fn':'M.ciniki_herbalist_main.recipeingredient.delete();'},
+                'delete':{'label':'Delete', 'visible':function() {return M.ciniki_herbalist_main.recipeingredient.recipeingredient_id>0?'yes':'no';}, 'fn':'M.ciniki_herbalist_main.recipeingredient.remove();'},
                 }},
             };  
 		this.recipeingredient.fieldValue = function(s, i, d) { return this.data[i]; }
@@ -391,6 +402,17 @@ function ciniki_herbalist_main() {
                     });
             }
         };
+        this.recipeingredient.remove = function() {
+            if( confirm('Are you sure you want to remove this recipe?') ) {
+                M.api.getJSONCb('ciniki.herbalist.recipeIngredientDelete', {'business_id':M.curBusinessID, 'recipeingredient_id':this.recipeingredient_id}, function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    } 
+                    M.ciniki_herbalist_main.recipeingredient.close();
+                });
+            }
+        };
 		this.recipeingredient.addButton('save', 'Save', 'M.ciniki_herbalist_main.recipeingredient.save();');
 		this.recipeingredient.addClose('Cancel');
 
@@ -417,7 +439,7 @@ function ciniki_herbalist_main() {
                 }},
 			'_buttons':{'label':'', 'buttons':{
                 'save':{'label':'Save', 'fn':'M.ciniki_herbalist_main.ingredient.save();'},
-                'delete':{'label':'Delete', 'visible':'no', 'fn':'M.ciniki_herbalist_main.ingredient.delete();'},
+                'delete':{'label':'Delete', 'visible':function() {return M.ciniki_herbalist_main.ingredient.ingredient_id>0?'yes':'no';}, 'fn':'M.ciniki_herbalist_main.ingredient.remove();'},
                 }},
             };  
 		this.ingredient.fieldValue = function(s, i, d) { return this.data[i]; }
@@ -445,6 +467,8 @@ function ciniki_herbalist_main() {
                 }
                 var p = M.ciniki_herbalist_main.ingredient;
                 p.data = rsp.ingredient;
+                p.sections.general.fields.recipe_id.options = rsp.recipes;
+                p.sections.general.fields.recipe_id.options[0] = 'None';
                 p.refresh();
                 p.show(cb);
             });
@@ -476,6 +500,17 @@ function ciniki_herbalist_main() {
                     });
             }
         };
+        this.ingredient.remove = function() {
+            if( confirm('Are you sure you want to remove this ingredient?') ) {
+                M.api.getJSONCb('ciniki.herbalist.ingredientDelete', {'business_id':M.curBusinessID, 'ingredient_id':this.ingredient_id}, function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    } 
+                    M.ciniki_herbalist_main.ingredient.close();
+                });
+            }
+        };
 		this.ingredient.addButton('save', 'Save', 'M.ciniki_herbalist_main.ingredient.save();');
 		this.ingredient.addClose('Cancel');
 
@@ -501,7 +536,7 @@ function ciniki_herbalist_main() {
                 }},
 			'_buttons':{'label':'', 'buttons':{
                 'save':{'label':'Save', 'fn':'M.ciniki_herbalist_main.container.save();'},
-                'delete':{'label':'Delete', 'visible':'no', 'fn':'M.ciniki_herbalist_main.container.delete();'},
+                'delete':{'label':'Delete', 'visible':function() {return M.ciniki_herbalist_main.container.container_id>0?'yes':'no';}, 'fn':'M.ciniki_herbalist_main.container.remove();'},
                 }},
             };  
 		this.container.fieldValue = function(s, i, d) { return this.data[i]; }
@@ -564,6 +599,17 @@ function ciniki_herbalist_main() {
                         } 
                     M.ciniki_herbalist_main.container.close();
                     });
+            }
+        };
+        this.container.remove = function() {
+            if( confirm('Are you sure you want to remove this container?') ) {
+                M.api.getJSONCb('ciniki.herbalist.containerDelete', {'business_id':M.curBusinessID, 'container_id':this.container_id}, function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    } 
+                    M.ciniki_herbalist_main.container.close();
+                });
             }
         };
 		this.container.addButton('save', 'Save', 'M.ciniki_herbalist_main.container.save();');

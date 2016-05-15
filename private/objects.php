@@ -99,10 +99,15 @@ function ciniki_herbalist_objects($ciniki) {
 		'table'=>'ciniki_herbalist_products',
 		'fields'=>array(
             'name'=>array('name'=>'Name'),
+            'permalink'=>array('name'=>'Permalink'),
             'recipe_id'=>array('name'=>'Recipe', 'ref'=>'ciniki.herbalist.recipe', 'default'=>'0'),
             'recipe_quantity'=>array('name'=>'Recipe Quantity', 'default'=>'0'),
             'container_id'=>array('name'=>'Recipe Quantity', 'ref'=>'ciniki.herbalist.container', 'default'=>'0'),
             'cost_per_container'=>array('name'=>'Cost', 'default'=>'0'),
+            'notes'=>array('name'=>'Notes', 'default'=>''),
+            'primary_image_id'=>array('name'=>'Image', 'default'=>'0'),
+            'synopsis'=>array('name'=>'Synopsis', 'default'=>''),
+            'description'=>array('name'=>'Description', 'default'=>''),
 			),
 		'history_table'=>'ciniki_herbalist_history',
 		);

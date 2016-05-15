@@ -56,6 +56,23 @@ function ciniki_herbalist_containerDelete(&$ciniki) {
     $container = $rc['container'];
 
     //
+    // Check the container is used in any products
+    //
+    $strsql = "SELECT COUNT(*) AS recipes "
+        . "FROM ciniki_herbalist_products "
+        . "WHERE container_id = '" . ciniki_core_dbQuote($ciniki, $args['container_id']) . "' "
+        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
+    $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.products', 'num');
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( $rc['num'] > 0 ) {
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3443', 'msg'=>'You still have ' . $rc['num'] . ' product' . ($rc['num']>1?'s':'') .' using this container.'));
+    }
+
+    //
     // Start transaction
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');

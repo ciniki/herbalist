@@ -102,6 +102,25 @@ function ciniki_herbalist_ingredientGet($ciniki) {
         $ingredient['cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $ingredient['cost_per_unit'], $intl_currency);
     }
 
-    return array('stat'=>'ok', 'ingredient'=>$ingredient);
+    //
+    // Get the list of recipes
+    //
+    $strsql = "SELECT ciniki_herbalist_recipes.id, ciniki_herbalist_recipes.name "
+        . "FROM ciniki_herbalist_recipes "
+        . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "ORDER BY name "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList2');
+    $rc = ciniki_core_dbQueryList2($ciniki, $strsql, 'ciniki.herbalist', 'recipes');
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( isset($rc['recipes']) ) {
+        $recipes = $rc['recipes'];
+    } else {
+        $recipes = array();
+    }
+
+    return array('stat'=>'ok', 'ingredient'=>$ingredient, 'recipes'=>$recipes);
 }
 ?>

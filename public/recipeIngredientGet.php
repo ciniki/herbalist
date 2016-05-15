@@ -90,20 +90,25 @@ function ciniki_herbalist_recipeIngredientGet($ciniki) {
     //
     // Get the list of ingredients
     //
+    $ingredients = array();
     $strsql = "SELECT ciniki_herbalist_ingredients.id, "
-        . "ciniki_herbalist_ingredients.name "
+        . "ciniki_herbalist_ingredients.name, ciniki_herbalist_ingredients.units "
         . "FROM ciniki_herbalist_ingredients "
         . "WHERE ciniki_herbalist_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "ORDER BY ciniki_herbalist_ingredients.name "
         . "";
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList2');
-    $rc = ciniki_core_dbQueryList2($ciniki, $strsql, 'ciniki.herbalist', 'ingredients');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'ingredient');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    if( isset($rc['ingredients']) ) {
-        $ingredients = $rc['ingredients'];
-    } else {
-        $ingredients = array();
+    if( isset($rc['rows']) ) {
+        foreach($rc['rows'] as  $ingredient) {
+            switch ($ingredient['units']) {
+                case 10: $ingredients[$ingredient['id']] = $ingredient['name'] . ' (gm)'; break;
+                case 60: $ingredients[$ingredient['id']] = $ingredient['name'] . ' (ml)'; break;
+            }
+        }
     }
 
     return array('stat'=>'ok', 'recipeingredient'=>$recipeingredient, 'ingredients'=>$ingredients);
