@@ -9,14 +9,12 @@
 # uuid:				The Universal Unique ID.
 # business_id:		The business the ingredient is attached to.
 #
-# object:           The Object the tag is for.
-#
 # object_id:        The ID for the herbalist object the tag is attached to.
 #
 # tag_type:         The type of the tag.
 #
-#                   10 - Category
-#                   20 - Tag/Keyword
+#                   10 - Product Category
+#                   20 - Product Tag/Keyword
 #
 # tag_name:         The name of the tag.
 # permalink:        The permalink for the tag.

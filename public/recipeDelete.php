@@ -76,7 +76,7 @@ function ciniki_herbalist_recipeDelete(&$ciniki) {
     // Check if recipe is used for any products
     //
     $strsql = "SELECT COUNT(*) AS num_recipes "
-        . "FROM ciniki_herbalist_products "
+        . "FROM ciniki_herbalist_product_versions "
         . "WHERE recipe_id = '" . ciniki_core_dbQuote($ciniki, $args['recipe_id']) . "' "
         . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
         . "";

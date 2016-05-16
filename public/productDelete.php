@@ -2,27 +2,27 @@
 //
 // Description
 // -----------
-// This method will delete an container.
+// This method will delete an product.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:            The ID of the business the container is attached to.
-// container_id:            The ID of the container to be removed.
+// business_id:            The ID of the business the product is attached to.
+// product_id:            The ID of the product to be removed.
 //
 // Returns
 // -------
 // <rsp stat="ok">
 //
-function ciniki_herbalist_containerDelete(&$ciniki) {
+function ciniki_herbalist_productDelete(&$ciniki) {
     //
     // Find all the required and optional arguments
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
-        'container_id'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Container'),
+        'product_id'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Product'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -33,27 +33,27 @@ function ciniki_herbalist_containerDelete(&$ciniki) {
     // Check access to business_id as owner
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.containerDelete');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.productDelete');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Get the current settings for the container
+    // Get the current settings for the product
     //
     $strsql = "SELECT id, uuid "
-        . "FROM ciniki_herbalist_containers "
+        . "FROM ciniki_herbalist_products "
         . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-        . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['container_id']) . "' "
+        . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
         . "";
-    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'container');
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'product');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    if( !isset($rc['container']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3380', 'msg'=>'Container does not exist.'));
+    if( !isset($rc['product']) ) {
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3451', 'msg'=>'Product does not exist.'));
     }
-    $container = $rc['container'];
+    $product = $rc['product'];
 
     //
     // Check the container is used in any products
@@ -80,6 +80,7 @@ function ciniki_herbalist_containerDelete(&$ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDelete');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsDelete');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
     $rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.herbalist');
     if( $rc['stat'] != 'ok' ) {
@@ -87,10 +88,20 @@ function ciniki_herbalist_containerDelete(&$ciniki) {
     }
 
     //
-    // Remove the container
+    // Remove the product tags
     //
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.container',
-        $args['container_id'], $container['uuid'], 0x04);
+    $rc = ciniki_core_tagsDelete($ciniki, 'ciniki.herbalist', 'tag', $args['business_id'], 
+        'ciniki_herbalist_tags', 'ciniki_herbalist_history', 'ref_id', $args['product_id']);
+    if( $rc['stat'] != 'ok' ) {
+        ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
+        return $rc;
+    }
+
+    //
+    // Remove the product
+    //
+    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.product',
+        $args['product_id'], $product['uuid'], 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
         return $rc;

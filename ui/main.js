@@ -25,7 +25,7 @@ function ciniki_herbalist_main() {
                 'cellClasses':[''],
                 'noData':'No Products',
                 'addTxt':'Add Product',
-                'addFn':'',
+                'addFn':'M.ciniki_herbalist_main.product.edit(\'M.ciniki_herbalist_main.menuShow();\',0);',
                 },
             'recipes':{'label':'Recipes', 'type':'simplegrid', 'num_cols':1, 
                 'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='recipes'?'yes':'no';},
@@ -99,87 +99,153 @@ function ciniki_herbalist_main() {
 		this.menu.addClose('Back');
 
 		//
-		// The profile panel 
+		// The panel for editing a product
 		//
-		this.artist = new M.panel('Artist Profile',
-			'ciniki_herbalist_main', 'artist',
-			'mc', 'medium mediumaside', 'sectioned', 'ciniki.herbalist.main.artist');
-		this.artist.data = {};
-		this.artist.artist_id = 0;
-		this.artist.sections = {
-            '_image':{'label':'', 'aside':'yes', 'type':'imageform', 'fields':{
-                'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'history':'no'},
-            }},
-			'_caption':{'label':'', 'aside':'yes', 'visible':function() {return M.ciniki_herbalist_main.artist.data.primary_image_caption!=''?'yes':'no';}, 'list':{
-				'primary_image_caption':{'label':'Caption', 'type':'text'},
+		this.product = new M.panel('Product',
+			'ciniki_herbalist_main', 'product',
+			'mc', 'medium mediumaside', 'sectioned', 'ciniki.herbalist.main.product');
+		this.product.data = {};
+		this.product.product_id = 0;
+        this.product.sections = { 
+			'_image':{'label':'Image', 'type':'imageform', 'aside':'yes', 'fields':{
+                'primary_image_id':{'label':'', 'type':'image_id', 'hidelabel':'yes', 'controls':'all', 'history':'no'},
 				}},
-			'info':{'label':'Service', 'aside':'yes', 'list':{
-				'name':{'label':'Name'},
-				'subname':{'label':'Sub Name'},
-				'status_text':{'label':'Status'},
-				'flags_text':{'label':'Options'},
-                'categories':{'label':'Categories'},
-            }},
-//            '_tabs':{'label':'', 'type':'paneltabs', 'selected':'recent', 'tabs':{
-//                'bio':{'label':'Overview', 'fn':'M.ciniki_herbalist_main.artistShow(null,null,"recent");'},
-//                'setup':{'label':'Trades', 'fn':'M.ciniki_herbalist_main.artistShow(null,null,"trades");'},
-//            }},
-            'synopsis':{'label':'Synopsis', 'type':'htmlcontent'},
-            'description':{'label':'Bio', 'type':'htmlcontent'},
-			'images':{'label':'Gallery', 'type':'simplethumbs'},
-			'_images':{'label':'', 'type':'simplegrid', 'num_cols':1,
-				'addTxt':'Add Image',
-				'addFn':'M.startApp(\'ciniki.herbalist.images\',null,\'M.ciniki_herbalist_main.artistShow();\',\'mc\',{\'artist_id\':M.ciniki_herbalist_main.artist.artist_id,\'add\':\'yes\'});',
-				},
-            'videos':{'label':'Videos', 'type':'simplegrid', 'num_cols':1,
-                'cellClasses':['multiline'],
-                'addTxt':'Add Video',
-				'addFn':'M.startApp(\'ciniki.herbalist.links\',null,\'M.ciniki_herbalist_main.artistShow();\',\'mc\',{\'artist_id\':M.ciniki_herbalist_main.artist.artist_id,\'add\':\'yes\'});',
-                },
-//            'audio':
-            'links':{'label':'Links', 'type':'simplegrid', 'num_cols':1,
-                'cellClasses':['multiline'],
-                'addTxt':'Add Link',
-				'addFn':'M.startApp(\'ciniki.herbalist.links\',null,\'M.ciniki_herbalist_main.artistShow();\',\'mc\',{\'artist_id\':M.ciniki_herbalist_main.artist.artist_id,\'add\':\'yes\'});',
-                },
-            '_buttons':{'label':'', 'buttons':{
-                
+            'general':{'label':'Product', 'aside':'yes', 'fields':{
+                'name':{'label':'Name', 'type':'text'},
+                'flags':{'label':'Options', 'type':'flags', 'flags':{'1':{'name':'Visible'}}},
+                }}, 
+			'_categories':{'label':'Categories', 'aside':'yes', 'fields':{
+                'categories':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':[], 'hint':'Enter a new category: '},
                 }},
-		};
-		this.artist.sectionData = function(s) {
-            if( s == 'info' || s == '_caption' ) { return this.sections[s].list; }
-            if( s == 'synopsis' || s == 'description' ) { return this.data[s].replace(/\n/g, '<br/>'); }
-			return this.data[s];
-		};
-        this.artist.noData = function(s) {
-            if( this.sections[s].noData != null ) { return this.sections[s].noData; }
-            return null;
+            'versions':{'label':'Purchase Options', 'aside':'yes', 'type':'simplegrid', 'num_cols':5,
+                'addTxt':'Add Option',
+                'addFn':'M.ciniki_herbalist_main.product.addVersion();',
+                },
+			'_synopsis':{'label':'Synopsis', 'fields':{
+                'synopsis':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'small', 'type':'textarea'},
+                }},
+			'_description':{'label':'Description', 'fields':{
+                'description':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'medium', 'type':'textarea'},
+                }},
+			'_notes':{'label':'Notes', 'fields':{
+                'notes':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'medium', 'type':'textarea'},
+                }},
+			'_buttons':{'label':'', 'buttons':{
+                'save':{'label':'Save', 'fn':'M.ciniki_herbalist_main.product.save();'},
+                'delete':{'label':'Delete', 'visible':function() {return M.ciniki_herbalist_main.product.product_id>0?'yes':'no';}, 'fn':'M.ciniki_herbalist_main.product.remove();'},
+                }},
+            };  
+        this.product.sectionData = function(s) { 
+            return this.data[s];
         }
-        this.artist.listLabel = function(s, i, d) {
-            return d.label;
+		this.product.fieldValue = function(s, i, d) { return this.data[i]; }
+		this.product.fieldHistoryArgs = function(s, i) {
+			return {'method':'ciniki.herbalist.productHistory', 'args':{'business_id':M.curBusinessID, 
+				'product_id':this.product_id, 'field':i}};
+		}
+        this.product.cellValue = function(s, i, j, d) {
+            switch(j) {
+                case 0: return d.name;
+                case 1: return d.cost_per_container_display;
+                case 2: return d.retail_price_display;
+                case 3: return d.wholesale_price_display;
+                case 4: return d.inventory;
+            }
+        }
+		this.product.addDropImage = function(iid) {
+			M.ciniki_herbalist_main.product.setFieldValue('primary_image_id', iid, null, null);
+			return true;
+		};
+		this.product.deleteImage = function(fid) {
+			this.setFieldValue(fid, 0, null, null);
+			return true;
+		};
+        this.product.rowFn = function(s, i, d) {
+            return 'M.ciniki_herbalist_main.recipeversion.edit(\'M.ciniki_herbalist_main.product.updateVersions();\',' + d.id + ');';
+        }
+        this.product.addVersion = function() {
+            if( this.product_id == 0 ) {
+                var c = this.serializeForm('yes');
+                M.api.postJSONCb('ciniki.herbalist.productAdd', {'business_id':M.curBusinessID, 'product_id':this.product_id}, c,
+                    function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        } 
+                        M.ciniki_herbalist_main.product.product_id = rsp.id;
+                        M.ciniki_herbalist_main.recipeversion.edit('M.ciniki_herbalist_main.product.updateVersion();',0,rsp.id);
+                    });
+            } else {
+                M.ciniki_herbalist_main.recipeversion.edit('M.ciniki_herbalist_main.product.updateVersion();',0,this.product_id);
+            }
+        }
+        this.product.updateVersions = function() {
+            M.api.getJSONCb('ciniki.herbalist.productGet', {'business_id':M.curBusinessID, 'product_id':this.product_id}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                var p = M.ciniki_herbalist_main.product;
+                p.data.versions = rsp.product.versions;
+                p.refreshSection('versions');
+                p.show();
+            });
         };
-		this.artist.listValue = function(s, i, d) {
-            return this.data[i];
-		};
-        this.artist.fieldValue = function(s, i, d) {
-            return this.data[i];
+        this.product.edit = function(cb, id) {
+            this.reset();
+            if( id != null ) { this.product_id = id; }
+            M.api.getJSONCb('ciniki.herbalist.productGet', {'business_id':M.curBusinessID, 'product_id':this.product_id}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                var p = M.ciniki_herbalist_main.product;
+                p.data = rsp.product;
+                p.sections._categories.fields.categories.tags = rsp.categories;
+                p.refresh();
+                p.show(cb);
+            });
         }
-        this.artist.cellValue = function(s, i, j, d) {
-            if( s == 'videos' || s == 'links' ) {
-                return '<span class="maintext">' + d.name + '</span><span class="subtext">' + d.url + '</span>';
+        this.product.save = function() {
+            if( this.product_id > 0 ) {
+                var c = this.serializeForm('no');
+                if( c != '' ) {
+                    M.api.postJSONCb('ciniki.herbalist.productUpdate', {'business_id':M.curBusinessID, 'product_id':this.product_id}, c,
+                        function(rsp) {
+                            if( rsp.stat != 'ok' ) {
+                                M.api.err(rsp);
+                                return false;
+                            } 
+                        M.ciniki_herbalist_main.product.close();
+                        });
+                } else {
+                    this.close();
+                }
+            } else {
+                var c = this.serializeForm('yes');
+                M.api.postJSONCb('ciniki.herbalist.productAdd', {'business_id':M.curBusinessID, 'product_id':this.product_id}, c,
+                    function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        } 
+                    M.ciniki_herbalist_main.product.close();
+                    });
             }
         };
-        this.artist.rowFn = function(s, i, d) {
-            if( s == 'videos' || s == 'links' ) {
-                return 'M.startApp(\'ciniki.herbalist.links\',null,\'M.ciniki_herbalist_main.artistShow();\',\'mc\',{\'link_id\':\'' + d.id + '\'});';
+        this.product.remove = function() {
+            if( confirm('Are you sure you want to remove this product?') ) {
+                M.api.getJSONCb('ciniki.herbalist.productDelete', {'business_id':M.curBusinessID, 'product_id':this.product_id}, function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    } 
+                    M.ciniki_herbalist_main.product.close();
+                });
             }
-            return '';
         };
-		this.artist.thumbFn = function(s, i, d) {
-			return 'M.startApp(\'ciniki.herbalist.images\',null,\'M.ciniki_herbalist_main.artistShow();\',\'mc\',{\'artist_image_id\':\'' + d.id + '\'});';
-		};
-        this.artist.addButton('edit', 'Edit', 'M.ciniki_herbalist_main.artistEdit(\'M.ciniki_herbalist_main.artistShow();\',M.ciniki_herbalist_main.artist.artist_id);');
-		this.artist.addClose('Back');
+		this.product.addButton('save', 'Save', 'M.ciniki_herbalist_main.product.save();');
+		this.product.addClose('Cancel');
 
 		//
 		// The panel for editing a recipe
@@ -417,7 +483,7 @@ function ciniki_herbalist_main() {
 		this.recipeingredient.addClose('Cancel');
 
 		//
-		// The panel for containering an artist
+		// The panel for containering an ingredient
 		//
 		this.ingredient = new M.panel('Ingredient',
 			'ciniki_herbalist_main', 'ingredient',

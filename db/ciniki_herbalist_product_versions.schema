@@ -11,14 +11,15 @@
 #
 # name:				    The name for the product.
 # permalink:            The permalink for the product, to be used on the website.
-#
-# flags:                The options for the product.
-#
-#                       0x01 - Visible on website
-#                       0x02 - Show retail price on website
-#                       0x04 - Show wholesale price on website  **future**
-#                       0x08 - For sale on website              **future**
 # 
+# recipe_id:            The ID of the recipe to make this product.
+#
+# recipe_quantity:      The quantity of the recipe used.
+#
+# container_id:         The container used for the product.
+#
+# cost_per_container:   The cost of the production for one container.
+#
 # notes:                The notes for the product.
 #
 # primary_image_id:     The ID of the image to be used as the main image for the product.
@@ -28,17 +29,20 @@
 # date_added:		    The UTC date and time the record was added.
 # last_updated:		    The UTC date and time the record was last updated.
 #
-create table ciniki_herbalist_products (
+create table ciniki_herbalist_product_versions (
 	id int not null auto_increment,
 	uuid char(36) not null,
 	business_id int not null,
+    product_id int not null,
     name varchar(250) not null,
     permalink varchar(250) not null,
-    flags tinyint unsigned not null,
-    notes varchar(5000) not null,
-    primary_image_id int not null,
-    synopsis varchar(1000) not null,
-    description varchar(20000) not null,
+    recipe_id int not null,
+    recipe_quantity decimal(10,2) not null,
+    container_id int not null,
+    cost_per_container decimal(19,4) not null,
+    inventory int not null,
+    wholesale_price decimal(19,4) not null,
+    retail_price decimal(19,4) not null,
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),
