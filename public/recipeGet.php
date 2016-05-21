@@ -60,9 +60,13 @@ function ciniki_herbalist_recipeGet($ciniki) {
         $recipe = array('id'=>0,
             'name'=>'',
             'units'=>'',
-            'yield'=>'0',
-            'cost_per_unit'=>'0',
+            'yield'=>'',
+            'production_time'=>'',
+            'materials_cost_per_unit'=>'',
+            'time_cost_per_unit'=>'',
+            'total_cost_per_unit'=>'',
             'ingredient_types'=>array(),
+            'notes'=>array(),
         );
     }
 
@@ -74,7 +78,10 @@ function ciniki_herbalist_recipeGet($ciniki) {
             . "ciniki_herbalist_recipes.name, "
             . "ciniki_herbalist_recipes.units, "
             . "ciniki_herbalist_recipes.yield, "
-            . "ciniki_herbalist_recipes.cost_per_unit "
+            . "ciniki_herbalist_recipes.production_time, "
+            . "ciniki_herbalist_recipes.materials_cost_per_unit, "
+            . "ciniki_herbalist_recipes.time_cost_per_unit, "
+            . "ciniki_herbalist_recipes.total_cost_per_unit "
             . "FROM ciniki_herbalist_recipes "
             . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
             . "AND ciniki_herbalist_recipes.id = '" . ciniki_core_dbQuote($ciniki, $args['recipe_id']) . "' "
@@ -88,7 +95,9 @@ function ciniki_herbalist_recipeGet($ciniki) {
             return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3385', 'msg'=>'Unable to find Recipe'));
         }
         $recipe = $rc['recipe'];
-        $recipe['cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $recipe['cost_per_unit'], $intl_currency);
+        $recipe['materials_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $recipe['materials_cost_per_unit'], $intl_currency);
+        $recipe['time_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $recipe['time_cost_per_unit'], $intl_currency);
+        $recipe['total_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $recipe['total_cost_per_unit'], $intl_currency);
 
         //
         // Get the list of recipe ingredients
@@ -99,7 +108,9 @@ function ciniki_herbalist_recipeGet($ciniki) {
             . "ciniki_herbalist_ingredients.name, "
             . "ciniki_herbalist_ingredients.sorttype, "
             . "ciniki_herbalist_ingredients.units, "
-            . "ciniki_herbalist_ingredients.cost_per_unit, "
+            . "ciniki_herbalist_ingredients.materials_cost_per_unit, "
+            . "ciniki_herbalist_ingredients.time_cost_per_unit, "
+            . "ciniki_herbalist_ingredients.total_cost_per_unit, "
             . "ciniki_herbalist_recipe_ingredients.quantity "
             . "FROM ciniki_herbalist_recipe_ingredients "
             . "LEFT JOIN ciniki_herbalist_ingredients ON ("
@@ -114,7 +125,7 @@ function ciniki_herbalist_recipeGet($ciniki) {
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.herbalist', array(
             array('container'=>'types', 'fname'=>'sorttype', 'fields'=>array('sorttype')),
             array('container'=>'ingredients', 'fname'=>'id', 
-                'fields'=>array('id', 'ingredient_id', 'name', 'cost_per_unit', 'units', 'quantity')),
+                'fields'=>array('id', 'ingredient_id', 'name', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'units', 'quantity')),
             ));
         if( $rc['stat'] != 'ok' ) {
             return $rc;

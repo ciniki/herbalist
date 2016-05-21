@@ -21,7 +21,11 @@ function ciniki_herbalist_recipeUpdate(&$ciniki) {
         'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'),
         'units'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Units'),
         'yield'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Yield'),
-        'cost_per_unit'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Cost per Unit'),
+        'production_time'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Production Time'),
+        'materials_cost_per_unit'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Materials Cost per Unit'),
+        'time_cost_per_unit'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Time Cost per Unit'),
+        'total_cost_per_unit'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Total Cost per Unit'),
+        'notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Notes'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -74,6 +78,15 @@ function ciniki_herbalist_recipeUpdate(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
     ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'herbalist');
+
+    //
+    // Run the costing updates
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'costingUpdate');
+    $rc = ciniki_herbalist_costingUpdate($ciniki, $args['business_id'], array());
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
 
     //
     // Update the web index if enabled

@@ -1,7 +1,9 @@
 #
 # Description
 # -----------
-# The products the herbalist produces.
+# This table stores the versions of a product that are available for sale. Each product
+# can have multiple versions of the product for sale. This allows different options
+# such as container sizes.
 #
 # Fields
 # ------
@@ -9,7 +11,11 @@
 # uuid:				    The Universal Unique ID.
 # business_id:		    The business the product is attached to.
 #
-# name:				    The name for the product.
+# product_id:           The ID of the product this version is for.
+#
+# name:				    The name for the version of the product. This name will be
+#                       appended to the product name in ciniki_herbalist_products table.
+#
 # permalink:            The permalink for the product, to be used on the website.
 # 
 # recipe_id:            The ID of the recipe to make this product.
@@ -18,13 +24,18 @@
 #
 # container_id:         The container used for the product.
 #
-# cost_per_container:   The cost of the production for one container.
+# materials_cost_per_container:     The cost of materials for 1 container worth of the ingredient.
+#                                   This is the recipe (materials_cost_per_unit * recipe_quantity) + the container cost_per_unit.
 #
-# notes:                The notes for the product.
+# time_cost_per_container:          The cost of time for 1 container.
 #
-# primary_image_id:     The ID of the image to be used as the main image for the product.
-# synopsis:             The synopsis of the product.
-# description:          The full description of the product.
+# total_cost_per_container:         The total cost per container of product.
+#
+# inventory:            The current number of this product in stock.
+#
+# wholesale_price:      The wholesale price of the product.
+#
+# retail_price:         The retail price of the product.
 #
 # date_added:		    The UTC date and time the record was added.
 # last_updated:		    The UTC date and time the record was last updated.
@@ -39,7 +50,9 @@ create table ciniki_herbalist_product_versions (
     recipe_id int not null,
     recipe_quantity decimal(10,2) not null,
     container_id int not null,
-    cost_per_container decimal(19,4) not null,
+    materials_cost_per_container decimal(19,4) not null,
+    time_cost_per_container decimal(19,4) not null,
+    total_cost_per_container decimal(19,4) not null,
     inventory int not null,
     wholesale_price decimal(19,4) not null,
     retail_price decimal(19,4) not null,
@@ -47,5 +60,6 @@ create table ciniki_herbalist_product_versions (
 	last_updated datetime not null,
 	primary key (id),
 	unique index (uuid),
+    index (product_id, recipe_id, container_id),
 	index sync (business_id, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

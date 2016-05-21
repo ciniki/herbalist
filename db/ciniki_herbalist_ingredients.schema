@@ -27,9 +27,12 @@
 #                   60 - millilitres
 #
 # costing_quantity: The quantity of the amount purchased in the units.
+# costing_time:     The time in minutes to acquire the ingredient or produce the recipe.
 # costing_price:    The price of the amount purchased.
 #
-# cost_per_unit:    The cost per 1 unit of ingredient.
+# materials_cost_per_unit:      The materials cost per 1 unit of ingredient.
+# time_cost_per_unit:           The time cost per 1 unit of ingredient.
+# total_cost_per_unit:          The total cost per 1 unit of ingredient, including materials and time.
 #
 # date_added:		The UTC date and time the record was added.
 # last_updated:		The UTC date and time the record was last updated.
@@ -44,8 +47,11 @@ create table ciniki_herbalist_ingredients (
     recipe_id int not null,
     units tinyint unsigned not null,
     costing_quantity decimal(19,4) not null,
+    costing_time int not null,
     costing_price decimal(19,4) not null,
-    cost_per_unit decimal(19,4) not null,
+    materials_cost_per_unit decimal(19,4) not null,
+    time_cost_per_unit decimal(19,4) not null,
+    total_cost_per_unit decimal(19,4) not null,
     notes varchar(5000) not null,
 	date_added datetime not null,
 	last_updated datetime not null,

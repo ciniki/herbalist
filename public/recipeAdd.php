@@ -24,7 +24,11 @@ function ciniki_herbalist_recipeAdd(&$ciniki) {
         'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'),
         'units'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Units'),
         'yield'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Yield'),
-        'cost_per_unit'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Cost per Unit'),
+        'production_time'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Production Time'),
+        'materials_cost_per_unit'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Materials Cost per Unit'),
+        'time_cost_per_unit'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Time Cost per Unit'),
+        'total_cost_per_unit'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Total Cost per Unit'),
+        'notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Notes'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;

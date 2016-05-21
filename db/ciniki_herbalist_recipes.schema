@@ -19,7 +19,11 @@
 #
 # yield:            The typical yield for the recipe.
 #
-# cost_per_unit:    The cost per 1 unit of ingredient.
+# production_time:          The amount of time in minutes taken to produce the yield.
+#
+# materials_cost_per_unit:  The cost of materials for 1 unit of ingredient.
+# time_cost_per_unit:       The cost of time for 1 unit of ingredient.
+# total_cost_per_unit:      The cost per 1 unit of ingredient, including materials and time.
 #
 # notes:            The notes for the recipe.
 #
@@ -33,7 +37,10 @@ create table ciniki_herbalist_recipes (
 	name varchar(150) not null,
     units tinyint unsigned not null,
     yield int not null,
-    cost_per_unit decimal(19,4) not null,
+    production_time int not null,
+    materials_cost_per_unit decimal(19,4) not null,
+    time_cost_per_unit int not null,
+    total_cost_per_unit decimal(19,4) not null,
     notes varchar(10000) not null,
 	date_added datetime not null,
 	last_updated datetime not null,

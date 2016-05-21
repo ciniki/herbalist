@@ -70,7 +70,9 @@ function ciniki_herbalist_ingredientList($ciniki) {
         . "ciniki_herbalist_ingredients.units AS units_display, "
         . "ciniki_herbalist_ingredients.costing_quantity, "
         . "ciniki_herbalist_ingredients.costing_price, "
-        . "ciniki_herbalist_ingredients.cost_per_unit, "
+        . "ciniki_herbalist_ingredients.materials_cost_per_unit, "
+        . "ciniki_herbalist_ingredients.time_cost_per_unit, "
+        . "ciniki_herbalist_ingredients.total_cost_per_unit, "
         . "ciniki_herbalist_ingredients.notes "
         . "FROM ciniki_herbalist_ingredients "
         . "WHERE ciniki_herbalist_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
@@ -83,7 +85,8 @@ function ciniki_herbalist_ingredientList($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'ingredients', 'fname'=>'id', 
-            'fields'=>array('id', 'name', 'plant_id', 'recipe_id', 'units', 'units_display', 'costing_quantity', 'costing_price', 'cost_per_unit', 'notes'),
+            'fields'=>array('id', 'name', 'plant_id', 'recipe_id', 'units', 'units_display', 'costing_quantity', 'costing_price', 
+                'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'notes'),
             'maps'=>array('units_display'=>$maps['ingredient']['units']),
             ),
         ));
@@ -93,7 +96,9 @@ function ciniki_herbalist_ingredientList($ciniki) {
     if( isset($rc['ingredients']) ) {
         $ingredients = $rc['ingredients'];
         foreach($ingredients as $iid => $ingredient) {
-            $ingredients[$iid]['cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, $ingredient['cost_per_unit'], $intl_currency) . '/' . $ingredient['units_display'];
+            $ingredients[$iid]['materials_cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, $ingredient['materials_cost_per_unit'], $intl_currency) . '/' . $ingredient['units_display'];
+            $ingredients[$iid]['time_cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, $ingredient['time_cost_per_unit'], $intl_currency) . '/' . $ingredient['units_display'];
+            $ingredients[$iid]['total_cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, $ingredient['total_cost_per_unit'], $intl_currency) . '/' . $ingredient['units_display'];
         }
     } else {
         $ingredients = array();

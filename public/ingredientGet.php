@@ -81,8 +81,11 @@ function ciniki_herbalist_ingredientGet($ciniki) {
             . "ciniki_herbalist_ingredients.recipe_id, "
             . "ciniki_herbalist_ingredients.units, "
             . "ciniki_herbalist_ingredients.costing_quantity, "
+            . "ciniki_herbalist_ingredients.costing_time, "
             . "ciniki_herbalist_ingredients.costing_price, "
-            . "ciniki_herbalist_ingredients.cost_per_unit, "
+            . "ciniki_herbalist_ingredients.materials_cost_per_unit, "
+            . "ciniki_herbalist_ingredients.time_cost_per_unit, "
+            . "ciniki_herbalist_ingredients.total_cost_per_unit, "
             . "ciniki_herbalist_ingredients.notes "
             . "FROM ciniki_herbalist_ingredients "
             . "WHERE ciniki_herbalist_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
@@ -99,7 +102,9 @@ function ciniki_herbalist_ingredientGet($ciniki) {
         $ingredient = $rc['ingredient'];
         $ingredient['costing_quantity'] = (float)$ingredient['costing_quantity'];
         $ingredient['costing_price'] = numfmt_format_currency($intl_currency_fmt, $ingredient['costing_price'], $intl_currency);
-        $ingredient['cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $ingredient['cost_per_unit'], $intl_currency);
+        $ingredient['materials_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $ingredient['materials_cost_per_unit'], $intl_currency);
+        $ingredient['time_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $ingredient['time_cost_per_unit'], $intl_currency);
+        $ingredient['total_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $ingredient['total_cost_per_unit'], $intl_currency);
     }
 
     //
