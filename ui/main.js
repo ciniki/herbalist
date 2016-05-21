@@ -76,7 +76,7 @@ function ciniki_herbalist_main() {
             } else if( s == 'ingredients' ) {
                 switch (j) {
                     case 0: return d.name;
-                    case 1: return d.cost_per_unit_display;
+                    case 1: return d.total_cost_per_unit_display;
                 }
             } else if( s == 'containers' ) {
                 switch (j) {
