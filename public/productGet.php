@@ -22,6 +22,7 @@ function ciniki_herbalist_productGet($ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
         'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'),
+		'images'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Images'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -105,7 +106,9 @@ function ciniki_herbalist_productGet($ciniki) {
             . "ciniki_herbalist_product_versions.recipe_id, "
             . "ciniki_herbalist_product_versions.recipe_quantity, "
             . "ciniki_herbalist_product_versions.container_id, "
-            . "ciniki_herbalist_product_versions.cost_per_container, "
+            . "ciniki_herbalist_product_versions.materials_cost_per_container, "
+            . "ciniki_herbalist_product_versions.time_cost_per_container, "
+            . "ciniki_herbalist_product_versions.total_cost_per_container, "
             . "ciniki_herbalist_product_versions.inventory, "
             . "ciniki_herbalist_product_versions.wholesale_price, "
             . "ciniki_herbalist_product_versions.retail_price "
@@ -115,7 +118,8 @@ function ciniki_herbalist_productGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
             array('container'=>'versions', 'fname'=>'id', 
-                'fields'=>array('id', 'product_id', 'name', 'permalink', 'recipe_id', 'recipe_quantity', 'container_id', 'cost_per_container', 'inventory', 'wholesale_price', 'retail_price')),
+                'fields'=>array('id', 'product_id', 'name', 'permalink', 'recipe_id', 'recipe_quantity', 'container_id', 
+                    'materials_cost_per_container', 'time_cost_per_container', 'total_cost_per_container', 'inventory', 'wholesale_price', 'retail_price')),
             ));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
@@ -123,7 +127,9 @@ function ciniki_herbalist_productGet($ciniki) {
         if( isset($rc['versions']) ) {
             $product['versions'] = $rc['versions'];
             foreach($product['versions'] as $vid => $version) {
-                $product['versions'][$vid]['cost_per_container_display'] = numfmt_format_currency($intl_currency_fmt, $version['cost_per_container'], $intl_currency);
+                $product['versions'][$vid]['materials_cost_per_container_display'] = numfmt_format_currency($intl_currency_fmt, $version['materials_cost_per_container'], $intl_currency);
+                $product['versions'][$vid]['time_cost_per_container_display'] = numfmt_format_currency($intl_currency_fmt, $version['time_cost_per_container'], $intl_currency);
+                $product['versions'][$vid]['total_cost_per_container_display'] = numfmt_format_currency($intl_currency_fmt, $version['total_cost_per_container'], $intl_currency);
                 $product['versions'][$vid]['wholesale_price_display'] = numfmt_format_currency($intl_currency_fmt, $version['wholesale_price'], $intl_currency);
                 $product['versions'][$vid]['retail_price_display'] = numfmt_format_currency($intl_currency_fmt, $version['retail_price'], $intl_currency);
             }
@@ -155,6 +161,43 @@ function ciniki_herbalist_productGet($ciniki) {
                 }
             }
         }
+
+        //
+        // Get the images
+        //
+		if( isset($args['images']) && $args['images'] == 'yes' ) {
+            $strsql = "SELECT id, "
+                . "name, "
+                . "flags, "
+				. "image_id, "
+				. "description "
+				. "FROM ciniki_herbalist_product_images "
+                . "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+		        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "";
+			$rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
+				array('container'=>'images', 'fname'=>'id', 'fields'=>array('id', 'name', 'flags', 'image_id', 'description')),
+			));
+			if( $rc['stat'] != 'ok' ) {
+				return $rc;
+			}
+			if( isset($rc['images']) ) {
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'private', 'loadCacheThumbnail');
+                $product['images'] = $rc['images'];
+				foreach($product['images'] as $img_id => $img) {
+					if( isset($img['image_id']) && $img['image_id'] > 0 ) {
+						$rc = ciniki_images_loadCacheThumbnail($ciniki, $args['business_id'], $img['image_id'], 75);
+						if( $rc['stat'] != 'ok' ) {
+							return $rc;
+						}
+						$product['images'][$img_id]['image_data'] = 'data:image/jpg;base64,' . base64_encode($rc['image']);
+					}
+				}
+			} else {
+                $product['images'] = array();
+            }
+        }
+
     }
 
     //
@@ -164,7 +207,7 @@ function ciniki_herbalist_productGet($ciniki) {
     $strsql = "SELECT DISTINCT tag_name FROM ciniki_herbalist_tags WHERE tag_type = 10 AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' ";
     $rc = ciniki_core_dbQueryList($ciniki, $strsql, 'ciniki.herbalist', 'categories', 'tag_name');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3449', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3471', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
     }
     if( isset($rc['categories']) ) {
         $categories = $rc['categories'];

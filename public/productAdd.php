@@ -29,6 +29,7 @@ function ciniki_herbalist_productAdd(&$ciniki) {
         'synopsis'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Synopsis'),
         'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'),
 		'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'),
+        'image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Additional Image'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -103,6 +104,39 @@ function ciniki_herbalist_productAdd(&$ciniki) {
 			return $rc;
 		}
 	}
+
+    //
+    // Add additional image if supplied
+    //
+    if( isset($args['image_id']) && $args['image_id'] > 0 ) {
+        //
+        // Get a UUID for use in permalink
+        //
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
+        $rc = ciniki_core_dbUUID($ciniki, 'ciniki.herbalist');
+        if( $rc['stat'] != 'ok' ) {
+            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3465', 'msg'=>'Unable to get a new UUID', 'err'=>$rc['err']));
+        }
+        $args['uuid'] = $rc['uuid'];
+
+        //
+        // Setup permalink
+        //
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
+        $args['permalink'] = ciniki_core_makePermalink($ciniki, $args['uuid']);
+        $args['name'] = '';
+
+        //
+        // Add the product image to the database
+        //
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+        $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.herbalist.productimage', $args, 0x04);
+        if( $rc['stat'] != 'ok' ) {
+            ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
+            return $rc;
+        }
+        $productimage_id = $rc['id'];
+    }
 
     //
     // Commit the transaction

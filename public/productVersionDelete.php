@@ -9,7 +9,7 @@
 // api_key:
 // auth_token:
 // business_id:            The ID of the business the product version is attached to.
-// version_id:            The ID of the product version to be removed.
+// productversion_id:            The ID of the product version to be removed.
 //
 // Returns
 // -------
@@ -22,7 +22,7 @@ function ciniki_herbalist_productVersionDelete(&$ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
-        'version_id'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Product Version'),
+        'productversion_id'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Product Version'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -44,14 +44,14 @@ function ciniki_herbalist_productVersionDelete(&$ciniki) {
     $strsql = "SELECT id, uuid "
         . "FROM ciniki_herbalist_product_versions "
         . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-        . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['version_id']) . "' "
+        . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['productversion_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'productversion');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
     if( !isset($rc['productversion']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3456', 'msg'=>'Product Version does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3476', 'msg'=>'Product Version does not exist.'));
     }
     $productversion = $rc['productversion'];
 
@@ -73,7 +73,7 @@ function ciniki_herbalist_productVersionDelete(&$ciniki) {
     // Remove the productversion
     //
     $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.productversion',
-        $args['version_id'], $productversion['uuid'], 0x04);
+        $args['productversion_id'], $productversion['uuid'], 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
         return $rc;

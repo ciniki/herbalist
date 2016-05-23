@@ -139,8 +139,10 @@ function ciniki_herbalist_recipeGet($ciniki) {
                         case '10': $units = ' gm'; break;
                         case '60': $units = ' ml'; break;
                     }  
-                    $recipe['ingredient_types'][$tid]['ingredients'][$iid]['quantity_display'] = $ingredient['quantity'] . ' ' . $units;
+                    $recipe['ingredient_types'][$tid]['ingredients'][$iid]['quantity_display'] = (float)$ingredient['quantity'] . ' ' . $units;
                     $recipe['ingredient_types'][$tid]['ingredients'][$iid]['quantity'] = (float)$ingredient['quantity'];
+                    $recipe['ingredient_types'][$tid]['ingredients'][$iid]['total_cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, 
+                        bcmul($ingredient['total_cost_per_unit'], $ingredient['quantity'], 4), $intl_currency);
                 }
             }
         } else {

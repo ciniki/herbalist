@@ -17,7 +17,7 @@
 function ciniki_herbalist_costingUpdateIngredient(&$ciniki, $business_id, $ingredient_id, &$recipes, &$ingredients, $minute_wage) {
 
     if( !isset($ingredients[$ingredient_id]) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3451', 'msg'=>'Ingredient does not exist'));
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3469', 'msg'=>'Ingredient does not exist'));
     }
     $ingredient = $ingredients[$ingredient_id];
     error_log('update ingredient ' . $ingredient_id);

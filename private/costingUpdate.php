@@ -110,8 +110,8 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
         . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.herbalist', array(
-        array('container'=>'containers', 'fname'=>'id', 'fields'=>array('id', 'name', 'recipe_id', 'recipe_quantity', 'container_id',
-            'materials_cost_per_container', 'time_cost_per_container', 'total_cost_per_container')),
+        array('container'=>'products', 'fname'=>'id', 'fields'=>array('id', 'name', 'recipe_id', 'recipe_quantity', 'container_id',
+            'materials_cost_per_container', 'time_cost_per_container', 'total_cost_per_container', 'verified')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -121,7 +121,6 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
     //
     // Update cost_per_unit for each ingredient that doesn't come from a recipe
     //
-    error_log('update ingredients');
     foreach($ingredients as $iid => $ingredient) {
         if( $ingredient['recipe_id'] == 0 && $ingredient['verified'] != 'yes' ) {
             $rc = ciniki_herbalist_costingUpdateIngredient($ciniki, $business_id, $iid, $recipes, $ingredients, $minute_wage);
@@ -146,7 +145,6 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
     //
     // Update the recipes
     //
-    error_log('update recipes');
     foreach($recipes as $rid => $recipe) {
         if( $recipe['verified'] == 'yes' ) {
             continue;
@@ -161,15 +159,14 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
     //
     // Update the containers
     //
-    error_log('update containers');
     foreach($containers as $cid => $container) {
         if( $container['verified'] == 'yes' ) {
             continue;
         }
-        
+       
         $cost_per_unit = bcadd(bcdiv($container['top_price'], $container['top_quantity'], 4), bcdiv($container['bottom_price'], $container['bottom_quantity'], 4), 4);
         if( $cost_per_unit != $container['cost_per_unit'] ) {
-            $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.ingredient', $ingredient['id'], array('cost_per_unit'=>$cost_per_unit));
+            $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.container', $container['id'], array('cost_per_unit'=>$cost_per_unit));
             if( $rc['stat'] != 'ok' && $rc['err']['code'] != '1344' ) {
                 return $rc;
             }
@@ -182,7 +179,6 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
     //
     // Update the products
     //
-    error_log('update products');
     foreach($products as $pid => $product) {
         if( $product['verified'] == 'yes' ) {
             continue;
@@ -201,6 +197,7 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
         if( $container_id > 0 && isset($containers[$container_id]) ) {
             $materials_cost_per_container = bcadd($materials_cost_per_container, $containers[$container_id]['cost_per_unit'], 4);
         }
+
         $total_cost_per_container = bcadd($materials_cost_per_container, $time_cost_per_container, 4);
 
         $update_args = array();

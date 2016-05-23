@@ -29,7 +29,7 @@ function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id
         $time_cost = 0;
         foreach($recipe['ingredients'] as $iid => $ingredient) {
             if( !isset($ingredients[$iid]) ) {
-                return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3450', 'msg'=>'Recipe ingredient does not exist'));
+                return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3468', 'msg'=>'Recipe ingredient does not exist'));
             }
             $ingredient = $ingredients[$iid];
             //

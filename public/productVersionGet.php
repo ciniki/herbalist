@@ -9,7 +9,7 @@
 // api_key:
 // auth_token:
 // business_id:         The ID of the business the product version is attached to.
-// version_id:          The ID of the product version to get the details for.
+// productversion_id:          The ID of the product version to get the details for.
 //
 // Returns
 // -------
@@ -21,7 +21,7 @@ function ciniki_herbalist_productVersionGet($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
-        'version_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product Version'),
+        'productversion_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product Version'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -56,7 +56,7 @@ function ciniki_herbalist_productVersionGet($ciniki) {
     //
     // Return default for new Product Version
     //
-    if( $args['version_id'] == 0 ) {
+    if( $args['productversion_id'] == 0 ) {
         $productversion = array('id'=>0,
             'product_id'=>'',
             'name'=>'',
@@ -64,7 +64,9 @@ function ciniki_herbalist_productVersionGet($ciniki) {
             'recipe_id'=>'0',
             'recipe_quantity'=>'0',
             'container_id'=>'0',
-            'cost_per_container'=>'0',
+            'materials_cost_per_container'=>'0',
+            'time_cost_per_container'=>'0',
+            'total_cost_per_container'=>'0',
             'inventory'=>'0',
             'wholesale_price'=>'0',
             'retail_price'=>'0',
@@ -82,25 +84,85 @@ function ciniki_herbalist_productVersionGet($ciniki) {
             . "ciniki_herbalist_product_versions.recipe_id, "
             . "ciniki_herbalist_product_versions.recipe_quantity, "
             . "ciniki_herbalist_product_versions.container_id, "
-            . "ciniki_herbalist_product_versions.cost_per_container, "
+            . "ciniki_herbalist_product_versions.materials_cost_per_container, "
+            . "ciniki_herbalist_product_versions.time_cost_per_container, "
+            . "ciniki_herbalist_product_versions.total_cost_per_container, "
             . "ciniki_herbalist_product_versions.inventory, "
             . "ciniki_herbalist_product_versions.wholesale_price, "
             . "ciniki_herbalist_product_versions.retail_price "
             . "FROM ciniki_herbalist_product_versions "
             . "WHERE ciniki_herbalist_product_versions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-            . "AND ciniki_herbalist_product_versions.id = '" . ciniki_core_dbQuote($ciniki, $args['version_id']) . "' "
+            . "AND ciniki_herbalist_product_versions.id = '" . ciniki_core_dbQuote($ciniki, $args['productversion_id']) . "' "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'productversion');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3457', 'msg'=>'Product Version not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3477', 'msg'=>'Product Version not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['productversion']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3458', 'msg'=>'Unable to find Product Version'));
+            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3478', 'msg'=>'Unable to find Product Version'));
         }
         $productversion = $rc['productversion'];
+        $productversion['recipe_quantity'] = (float)$productversion['recipe_quantity'];
+        $productversion['materials_cost_per_container'] = numfmt_format_currency($intl_currency_fmt, $productversion['materials_cost_per_container'], $intl_currency);
+        $productversion['time_cost_per_container'] = numfmt_format_currency($intl_currency_fmt, $productversion['time_cost_per_container'], $intl_currency);
+        $productversion['total_cost_per_container'] = numfmt_format_currency($intl_currency_fmt, $productversion['total_cost_per_container'], $intl_currency);
+        $productversion['wholesale_price'] = numfmt_format_currency($intl_currency_fmt, $productversion['wholesale_price'], $intl_currency);
+        $productversion['retail_price'] = numfmt_format_currency($intl_currency_fmt, $productversion['retail_price'], $intl_currency);
     }
 
-    return array('stat'=>'ok', 'productversion'=>$productversion);
+    //
+    // Get the list of recipes
+    //
+    $strsql = "SELECT ciniki_herbalist_recipes.id, "
+        . "ciniki_herbalist_recipes.name, "
+        . "ciniki_herbalist_recipes.materials_cost_per_unit, "
+        . "ciniki_herbalist_recipes.time_cost_per_unit, "
+        . "ciniki_herbalist_recipes.total_cost_per_unit "
+        . "FROM ciniki_herbalist_recipes "
+        . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "ORDER BY name "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
+        array('container'=>'recipes', 'fname'=>'id', 
+            'fields'=>array('id', 'name', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( isset($rc['recipes']) ) {
+        $recipes = $rc['recipes'];
+    } else {
+        $recipes = array();
+    }
+    array_unshift($recipes, array('id'=>'0', 'name'=>'None', 'materials_cost_per_unit'=>'0', 'time_cost_per_unit'=>'0', 'total_cost_per_unit'=>'0'));
+
+    //
+    // Get the list of containers
+    //
+    $strsql = "SELECT ciniki_herbalist_containers.id, "
+        . "ciniki_herbalist_containers.name, "
+        . "ciniki_herbalist_containers.cost_per_unit "
+        . "FROM ciniki_herbalist_containers "
+        . "WHERE ciniki_herbalist_containers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "ORDER BY name "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
+        array('container'=>'containers', 'fname'=>'id', 
+            'fields'=>array('id', 'name', 'cost_per_unit')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( isset($rc['containers']) ) {
+        $containers = $rc['containers'];
+    } else {
+        $containers = array();
+    }
+    array_unshift($containers, array('id'=>'0', 'name'=>'None', 'cost_per_unit'=>'0'));
+
+    return array('stat'=>'ok', 'productversion'=>$productversion, 'recipes'=>$recipes, 'containers'=>$containers);
 }
 ?>
