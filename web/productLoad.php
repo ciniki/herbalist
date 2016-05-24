@@ -17,6 +17,7 @@
 function ciniki_herbalist_web_productLoad($ciniki, $business_id, $args) {
     
     $strsql = "SELECT ciniki_herbalist_products.id, "
+        . "ciniki_herbalist_products.uuid, "
         . "ciniki_herbalist_products.name, "
         . "ciniki_herbalist_products.permalink, "
         . "ciniki_herbalist_products.flags, "
@@ -81,7 +82,8 @@ function ciniki_herbalist_web_productLoad($ciniki, $business_id, $args) {
     //
     if( isset($args['images']) && $args['images'] == 'yes' ) {
         $strsql = "SELECT id, "
-            . "name, "
+            . "name AS title, "
+            . "permalink, "
             . "flags, "
             . "image_id, "
             . "description "
@@ -90,25 +92,26 @@ function ciniki_herbalist_web_productLoad($ciniki, $business_id, $args) {
             . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
             . "";
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
-            array('container'=>'images', 'fname'=>'id', 'fields'=>array('id', 'name', 'flags', 'image_id', 'description')),
+            array('container'=>'images', 'fname'=>'id', 'fields'=>array('id', 'title', 'permalink', 'flags', 'image_id', 'description')),
         ));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
         if( isset($rc['images']) ) {
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'private', 'loadCacheThumbnail');
             $product['images'] = $rc['images'];
-            foreach($product['images'] as $img_id => $img) {
-                if( isset($img['image_id']) && $img['image_id'] > 0 ) {
-                    $rc = ciniki_images_loadCacheThumbnail($ciniki, $business_id, $img['image_id'], 75);
-                    if( $rc['stat'] != 'ok' ) {
-                        return $rc;
-                    }
-                    $product['images'][$img_id]['image_data'] = 'data:image/jpg;base64,' . base64_encode($rc['image']);
-                }
-            }
         } else {
             $product['images'] = array();
+        }
+        if( $product['primary_image_id'] > 0 ) {
+            $found = 'no';
+            foreach($product['images'] as $image) {
+                if( $image['image_id'] == $product['primary_image_id'] ) {
+                    $found = 'yes';
+                }
+            }
+            if( $found == 'no' ) {
+                array_unshift($product['images'], array('title'=>'', 'flags'=>1, 'permalink'=>$product['uuid'], 'image_id'=>$product['primary_image_id'], 'description'=>''));
+            }
         }
     }
 

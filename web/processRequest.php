@@ -10,7 +10,7 @@
 // settings:		The web settings structure.
 // business_id:		The ID of the business to get post for.
 //
-// args:			The possible arguments for posts
+// args:			The possible arguments for products
 //
 //
 // Returns
@@ -205,34 +205,69 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
             $product = $rc['product'];
             $page['title'] = $product['name'];
             $page['breadcrumbs'][] = array('name'=>$product['name'], 'url'=>$base_url . '/' . $product['permalink']);
-            $base_url .= '/' . $product['permalink'];
-            if( isset($product['primary_image_id']) && $product['primary_image_id'] > 0 ) {
-                $page['blocks'][] = array('type'=>'image', 'section'=>'primary-image', 'primary'=>'yes', 'image_id'=>$product['primary_image_id'], 
-                    'title'=>$product['name'], 'caption'=>$product['primary_image_caption']);
-            }
-            if( isset($product['description']) && $product['description'] != '' ) {
-                $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'title'=>'', 'content'=>$product['description']);
-            } elseif( isset($product['synopsis']) && $product['synopsis'] != '' ) {
-                $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'title'=>'', 'content'=>$product['synopsis']);
-            }
 
-            //
-            // Add the versions
-            //
-            if( isset($product['versions']) && count($product['versions']) > 0 ) {
-                $page['blocks'][] = array('type'=>'prices', 'title'=>'Options', 'section'=>'prices', 'prices'=>$product['versions']);
-            }
+            if( $display == 'productpic' ) {
+                if( !isset($product['images']) || count($product['images']) < 1 ) {
+                    $page['blocks'][] = array('type'=>'message', 'content'=>"I'm sorry, but we can't seem to find the image you requested.");
+                } else {
+                    ciniki_core_loadMethod($ciniki, 'ciniki', 'web', 'private', 'galleryFindNextPrev');
+                    $rc = ciniki_web_galleryFindNextPrev($ciniki, $product['images'], $image_permalink);
+                    if( $rc['stat'] != 'ok' ) {
+                        return $rc;
+                    }
+                    if( $rc['img'] == NULL ) {
+                        $page['blocks'][] = array('type'=>'message', 'content'=>"I'm sorry, but we can't seem to find the image you requested.");
+                    } else {
+                        $page['breadcrumbs'][] = array('name'=>$rc['img']['title'], 'url'=>$base_url . '/gallery/' . $image_permalink);
+                        if( $rc['img']['title'] != '' ) {
+                            $page['title'] .= ' - ' . $rc['img']['title'];
+                        }
+                        $block = array('type'=>'galleryimage', 'primary'=>'yes', 'image'=>$rc['img']);
+                        if( $rc['prev'] != null ) {
+                            $block['prev'] = array('url'=>$base_url . '/gallery/' . $rc['prev']['permalink'], 'image_id'=>$rc['prev']['image_id']);
+                        }
+                        if( $rc['next'] != null ) {
+                            $block['next'] = array('url'=>$base_url . '/gallery/' . $rc['next']['permalink'], 'image_id'=>$rc['next']['image_id']);
+                        }
+                        $page['blocks'][] = $block;
+                    }
+                }
 
-            //
-            // Add the ingredients if added
-            //
-            if( isset($product['ingredients']) && $product['ingredients'] != '' ) {
-                $page['blocks'][] = array('type'=>'content', 'section'=>'ingredients', 'title'=>'Ingredients', 'content'=>$product['ingredients']);
-            }
+            } else {
+                if( isset($product['primary_image_id']) && $product['primary_image_id'] > 0 ) {
+                    $page['blocks'][] = array('type'=>'image', 'section'=>'primary-image', 'primary'=>'yes', 'image_id'=>$product['primary_image_id'], 
+                        'title'=>$product['name'], 'caption'=>$product['primary_image_caption'], 'base_url'=>$base_url . '/gallery', 'permalink'=>$product['uuid']);
+                }
+                if( isset($product['description']) && $product['description'] != '' ) {
+                    $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'title'=>'', 'content'=>$product['description']);
+                } elseif( isset($product['synopsis']) && $product['synopsis'] != '' ) {
+                    $page['blocks'][] = array('type'=>'content', 'section'=>'content', 'title'=>'', 'content'=>$product['synopsis']);
+                }
 
-            // Add share buttons  
-            if( !isset($settings['page-products-share-buttons']) || $settings['page-products-share-buttons'] == 'yes' ) {
-                $page['blocks'][] = array('type'=>'sharebuttons', 'section'=>'share', 'pagetitle'=>$product['name'], 'tags'=>array());
+                //
+                // Add the versions
+                //
+                if( isset($product['versions']) && count($product['versions']) > 0 ) {
+                    $page['blocks'][] = array('type'=>'prices', 'title'=>'Options', 'section'=>'prices', 'prices'=>$product['versions']);
+                }
+
+                //
+                // Add the ingredients if added
+                //
+                if( isset($product['ingredients']) && $product['ingredients'] != '' ) {
+                    $page['blocks'][] = array('type'=>'content', 'section'=>'ingredients', 'title'=>'Ingredients', 'content'=>$product['ingredients']);
+                }
+
+                // Add share buttons  
+                if( !isset($settings['page-products-share-buttons']) || $settings['page-products-share-buttons'] == 'yes' ) {
+                    $page['blocks'][] = array('type'=>'sharebuttons', 'section'=>'share', 'pagetitle'=>$product['name'], 'tags'=>array());
+                }
+
+                // Add gallery
+                if( isset($product['images']) 
+                    && (($product['primary_image_id'] > 0 && count($product['images']) > 1 ) || ($product['primary_image_id'] == 0 && count($product['images']) > 0)) ) {
+                    $page['blocks'][] = array('type'=>'gallery', 'title'=>'Additional Images', 'base_url'=>$base_url . '/gallery', 'images'=>$product['images']);
+                }
             }
         }
     }
