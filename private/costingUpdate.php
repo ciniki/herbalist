@@ -39,9 +39,11 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
         $hourly_wage = $settings['production-hourly-wage'];
     }
     $minute_wage = 0;
+    error_log("hourly wage: " . $hourly_wage);
     if( $hourly_wage > 0 ) {
-        $minute_wage = bcdiv($hourly_wage, 60, 4);
+        $minute_wage = bcdiv($hourly_wage, 60, 10);
     }
+    error_log("minute wage: " . $minute_wage);
 
     //
     // Load all the recipes
@@ -163,8 +165,16 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
         if( $container['verified'] == 'yes' ) {
             continue;
         }
-       
-        $cost_per_unit = bcadd(bcdiv($container['top_price'], $container['top_quantity'], 4), bcdiv($container['bottom_price'], $container['bottom_quantity'], 4), 4);
+        
+        $top = 0;
+        $bottom = 0;
+        if( $container['top_price'] > 0 && $container['top_quantity'] > 0 ) {
+            $top = bcdiv($container['top_price'], $container['top_quantity'], 10);
+        }
+        if( $container['bottom_price'] > 0 && $container['bottom_quantity'] > 0 ) {
+            $bottom = bcdiv($container['bottom_price'], $container['bottom_quantity'], 10);
+        }
+        $cost_per_unit = bcadd($top, $bottom, 4);
         if( $cost_per_unit != $container['cost_per_unit'] ) {
             $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.container', $container['id'], array('cost_per_unit'=>$cost_per_unit));
             if( $rc['stat'] != 'ok' && $rc['err']['code'] != '1344' ) {
@@ -190,15 +200,15 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
     
         $recipe_id = $product['recipe_id'];
         if( $recipe_id > 0 && isset($recipes[$recipe_id]) ) {
-            $materials_cost_per_container = bcmul($product['recipe_quantity'], $recipes[$recipe_id]['materials_cost_per_unit'], 4);
-            $time_cost_per_container = bcmul($product['recipe_quantity'], $recipes[$recipe_id]['time_cost_per_unit'], 4);
+            $materials_cost_per_container = bcmul($product['recipe_quantity'], $recipes[$recipe_id]['materials_cost_per_unit'], 10);
+            $time_cost_per_container = bcmul($product['recipe_quantity'], $recipes[$recipe_id]['time_cost_per_unit'], 10);
         }
         $container_id = $product['container_id'];
         if( $container_id > 0 && isset($containers[$container_id]) ) {
-            $materials_cost_per_container = bcadd($materials_cost_per_container, $containers[$container_id]['cost_per_unit'], 4);
+            $materials_cost_per_container = bcadd($materials_cost_per_container, $containers[$container_id]['cost_per_unit'], 10);
         }
 
-        $total_cost_per_container = bcadd($materials_cost_per_container, $time_cost_per_container, 4);
+        $total_cost_per_container = bcadd($materials_cost_per_container, $time_cost_per_container, 10);
 
         $update_args = array();
         if( $materials_cost_per_container != $product['materials_cost_per_container'] ) {

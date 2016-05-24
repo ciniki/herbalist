@@ -42,28 +42,28 @@ function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id
                 }
             }
             
-            $materials_cost = bcadd($materials_cost, bcmul($ingredients[$iid]['materials_cost_per_unit'], $recipe['ingredients'][$iid]['quantity'], 4), 4);
-            $time_cost = bcadd($time_cost, bcmul($ingredients[$iid]['time_cost_per_unit'], $recipe['ingredients'][$iid]['quantity'], 4), 4);
+            $materials_cost = bcadd($materials_cost, bcmul($ingredients[$iid]['materials_cost_per_unit'], $recipe['ingredients'][$iid]['quantity'], 10), 10);
+            $time_cost = bcadd($time_cost, bcmul($ingredients[$iid]['time_cost_per_unit'], $recipe['ingredients'][$iid]['quantity'], 10), 10);
         }
 
         //
         // Add the time taken to produce the recipe
         //
         if( $recipe['production_time'] > 0 ) {
-            $time_cost = bcadd($time_cost, bcmul($recipe['production_time'], $minute_wage, 4), 4);
+            $time_cost = bcadd($time_cost, bcmul($recipe['production_time'], $minute_wage, 10), 10);
         }
     
         if( $materials_cost > 0 ) {
-            $materials_cost_per_unit = bcdiv($materials_cost, $recipe['yield'], 4);
+            $materials_cost_per_unit = bcdiv($materials_cost, $recipe['yield'], 10);
         } else {
             $materials_cost_per_unit = 0;
         }
         if( $time_cost > 0 ) {
-            $time_cost_per_unit = bcdiv($time_cost, $recipe['yield'], 4);
+            $time_cost_per_unit = bcdiv($time_cost, $recipe['yield'], 10);
         } else {
             $time_cost_per_unit = 0;
         }
-        $total_cost_per_unit = bcadd($materials_cost_per_unit, $time_cost_per_unit, 4);
+        $total_cost_per_unit = bcadd($materials_cost_per_unit, $time_cost_per_unit, 10);
         $update_args = array();
         if( $materials_cost_per_unit != $recipe['materials_cost_per_unit'] ) {
             $update_args['materials_cost_per_unit'] = $materials_cost_per_unit;

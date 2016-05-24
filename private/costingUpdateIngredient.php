@@ -49,12 +49,12 @@ function ciniki_herbalist_costingUpdateIngredient(&$ciniki, $business_id, $ingre
         $time_cost_per_unit = 0;
         $total_cost_per_unit = 0;
         if( $ingredient['costing_price'] > 0 && $ingredient['costing_quantity'] > 0 ) {
-            $materials_cost_per_unit = bcdiv($ingredient['costing_price'], $ingredient['costing_quantity'], 4);
+            $materials_cost_per_unit = bcdiv($ingredient['costing_price'], $ingredient['costing_quantity'], 10);
         }
         if( $ingredient['costing_time'] > 0 && $ingredient['costing_quantity'] > 0 && $minute_wage > 0 ) {
-            $time_cost_per_unit = bcdiv(bcmul($ingredient['costing_time'], $minute_wage, 4), $ingredient['costing_quantity'], 4);
+            $time_cost_per_unit = bcdiv(bcmul($ingredient['costing_time'], $minute_wage, 10), $ingredient['costing_quantity'], 10);
         }
-        $total_cost_per_unit = bcadd($materials_cost_per_unit, $time_cost_per_unit, 4);
+        $total_cost_per_unit = bcadd($materials_cost_per_unit, $time_cost_per_unit, 10);
     }
     
     //
