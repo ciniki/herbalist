@@ -1104,5 +1104,4 @@ function ciniki_herbalist_main() {
             p.show(cb);
         });
 	};
-
 };
