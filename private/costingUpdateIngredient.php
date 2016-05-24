@@ -20,7 +20,6 @@ function ciniki_herbalist_costingUpdateIngredient(&$ciniki, $business_id, $ingre
         return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3469', 'msg'=>'Ingredient does not exist'));
     }
     $ingredient = $ingredients[$ingredient_id];
-    error_log('update ingredient ' . $ingredient_id);
 
     //
     // Check if ingredient is a recipe
@@ -74,7 +73,6 @@ function ciniki_herbalist_costingUpdateIngredient(&$ciniki, $business_id, $ingre
         $ingredients[$ingredient_id]['total_cost_per_unit'] = $total_cost_per_unit;
     }
     if( count($update_args) > 0 ) {
-        error_log('updating ingredient');
         $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.ingredient', $ingredient['id'], $update_args);
         if( $rc['stat'] != 'ok' && $rc['err']['code'] != '1344' ) {
             return $rc;

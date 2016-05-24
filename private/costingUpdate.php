@@ -39,11 +39,9 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
         $hourly_wage = $settings['production-hourly-wage'];
     }
     $minute_wage = 0;
-    error_log("hourly wage: " . $hourly_wage);
     if( $hourly_wage > 0 ) {
         $minute_wage = bcdiv($hourly_wage, 60, 10);
     }
-    error_log("minute wage: " . $minute_wage);
 
     //
     // Load all the recipes
