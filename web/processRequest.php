@@ -181,6 +181,7 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
         } elseif( count($rc['rows']) == 1 ) {
             $display = 'product';
             $product_permalink = $rc['rows'][0]['permalink'];
+            $base_url .= '/' . $product_permalink;
         } else {
             $page['blocks'][] = array('type'=>'imagelist', 'base_url'=>$base_url, 'noimage'=>'yes', 'list'=>$rc['rows']);
         }
