@@ -65,6 +65,7 @@ function ciniki_herbalist_productVersionAdd(&$ciniki) {
         . "FROM ciniki_herbalist_product_versions "
         . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
         . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
+        . "AND product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'item');
     if( $rc['stat'] != 'ok' ) {
