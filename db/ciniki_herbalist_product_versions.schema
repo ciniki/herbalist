@@ -17,6 +17,12 @@
 #                       appended to the product name in ciniki_herbalist_products table.
 #
 # permalink:            The permalink for the product, to be used on the website.
+#
+# flags:                The options for the version.
+#
+#                       0x01 - Visible, available on the website.
+#
+# sequence:             The order to sort the product versions.
 # 
 # recipe_id:            The ID of the recipe to make this product.
 #
@@ -47,6 +53,8 @@ create table ciniki_herbalist_product_versions (
     product_id int not null,
     name varchar(250) not null,
     permalink varchar(250) not null,
+    flags tinyint unsigned not null,
+    sequence tinyint unsigned not null,
     recipe_id int not null,
     recipe_quantity decimal(10,2) not null,
     container_id int not null,

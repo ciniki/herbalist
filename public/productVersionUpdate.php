@@ -18,9 +18,10 @@ function ciniki_herbalist_productVersionUpdate(&$ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
         'productversion_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product Version'),
-        'product_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Product'),
         'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'),
         'permalink'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Permalink'),
+        'flags'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Options'),
+        'sequence'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Order'),
         'recipe_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Recipe'),
         'recipe_quantity'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Recipe Quantity'),
         'container_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Container'),
@@ -45,6 +46,25 @@ function ciniki_herbalist_productVersionUpdate(&$ciniki) {
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
+
+    //
+    // Get the current product version
+    //
+    $strsql = "SELECT ciniki_herbalist_product_versions.id, "
+        . "ciniki_herbalist_product_versions.product_id, "
+        . "ciniki_herbalist_product_versions.sequence "
+        . "FROM ciniki_herbalist_product_versions "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' " 
+		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['productversion_id']) . "' " 
+        . "";
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'item');
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( !isset($rc['item']) ) {
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3434', 'msg'=>'The product does not exist'));
+    }
+    $item = $rc['item'];
 
     if( isset($args['name']) ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
@@ -87,6 +107,18 @@ function ciniki_herbalist_productVersionUpdate(&$ciniki) {
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
         return $rc;
+    }
+
+    //
+    // Update the sequences
+    //
+    if( isset($args['sequence']) ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'sequencesUpdate');
+        $rc = ciniki_core_sequencesUpdate($ciniki, $args['business_id'], 'ciniki.herbalist.productversion', 'product_id', $item['product_id'], $args['sequence'], $item['sequence']);
+        if( $rc['stat'] != 'ok' ) {
+            ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
+            return $rc;
+        }
     }
 
     //

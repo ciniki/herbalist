@@ -103,10 +103,11 @@ function ciniki_herbalist_recipeIngredientGet($ciniki) {
         return $rc;
     }
     if( isset($rc['rows']) ) {
-        foreach($rc['rows'] as  $ingredient) {
+        $ingredients = $rc['rows'];
+        foreach($ingredients as $iid => $ingredient) {
             switch ($ingredient['units']) {
-                case 10: $ingredients[$ingredient['id']] = $ingredient['name'] . ' (gm)'; break;
-                case 60: $ingredients[$ingredient['id']] = $ingredient['name'] . ' (ml)'; break;
+                case 10: $ingredients[$iid]['name'] .= ' (gm)'; break;
+                case 60: $ingredients[$iid]['name'] .= ' (ml)'; break;
             }
         }
     }

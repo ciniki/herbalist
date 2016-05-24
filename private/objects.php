@@ -122,6 +122,8 @@ function ciniki_herbalist_objects($ciniki) {
             'product_id'=>array('name'=>'Product', 'ref'=>'ciniki.herbalist.product'),
             'name'=>array('name'=>'Name'),
             'permalink'=>array('name'=>'Permalink'),
+            'flags'=>array('name'=>'Options', 'default'=>'0'),
+            'sequence'=>array('name'=>'Order', 'default'=>'1'),
             'recipe_id'=>array('name'=>'Recipe', 'ref'=>'ciniki.herbalist.recipe', 'default'=>'0'),
             'recipe_quantity'=>array('name'=>'Recipe Quantity', 'default'=>'0'),
             'container_id'=>array('name'=>'Container', 'ref'=>'ciniki.herbalist.container', 'default'=>'0'),

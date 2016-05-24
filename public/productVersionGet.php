@@ -57,10 +57,17 @@ function ciniki_herbalist_productVersionGet($ciniki) {
     // Return default for new Product Version
     //
     if( $args['productversion_id'] == 0 ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'sequencesNext');
+        $rc = ciniki_core_sequencesNext($ciniki, $args['business_id'], 'ciniki.herbalist.productversion', 'product_id', $args['product_id']);
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
         $productversion = array('id'=>0,
             'product_id'=>'',
             'name'=>'',
             'permalink'=>'',
+            'flags'=>1,
+            'sequence'=>$rc['sequence'],
             'recipe_id'=>'0',
             'recipe_quantity'=>'0',
             'container_id'=>'0',
@@ -81,6 +88,8 @@ function ciniki_herbalist_productVersionGet($ciniki) {
             . "ciniki_herbalist_product_versions.product_id, "
             . "ciniki_herbalist_product_versions.name, "
             . "ciniki_herbalist_product_versions.permalink, "
+            . "ciniki_herbalist_product_versions.flags, "
+            . "ciniki_herbalist_product_versions.sequence, "
             . "ciniki_herbalist_product_versions.recipe_id, "
             . "ciniki_herbalist_product_versions.recipe_quantity, "
             . "ciniki_herbalist_product_versions.container_id, "

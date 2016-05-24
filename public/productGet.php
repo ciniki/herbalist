@@ -114,6 +114,8 @@ function ciniki_herbalist_productGet($ciniki) {
             . "ciniki_herbalist_product_versions.retail_price "
             . "FROM ciniki_herbalist_product_versions "
             . "WHERE ciniki_herbalist_product_versions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_herbalist_product_versions.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+            . "ORDER BY sequence, name "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(

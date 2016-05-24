@@ -124,8 +124,10 @@ function ciniki_herbalist_main() {
                 'name':{'label':'Name', 'type':'text'},
                 'flags':{'label':'Options', 'type':'flags', 'flags':{'1':{'name':'Visible'}}},
                 }}, 
-			'_categories':{'label':'Categories', 'aside':'yes', 'fields':{
-                'categories':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':[], 'hint':'Enter a new category: '},
+			'_categories':{'label':'Categories', 'aside':'yes', 
+                'visible':function() { return M.modFlagSet('ciniki.herbalist', 0x20);},
+                'fields':{
+                    'categories':{'label':'', 'hidelabel':'yes', 'type':'tags', 'tags':[], 'hint':'Enter a new category: '},
                 }},
             '_tabs':{'label':'', 'type':'paneltabs', 'selected':'options', 'tabs':{
                 'options':{'label':'Options', 'fn':'M.ciniki_herbalist_main.product.selectTab("options");'},
@@ -343,6 +345,8 @@ function ciniki_herbalist_main() {
                 'recipe_quantity':{'label':'Quantity', 'type':'text', 'size':'small', 'onkeyupFn':'M.ciniki_herbalist_main.productversion.updateCosts'},
                 'container_id':{'label':'Container', 'type':'select', 'options':{'0':'None'}, 'complex_options':{'name':'name', 'value':'id'}, 
                     'onchangeFn':'M.ciniki_herbalist_main.productversion.updateCosts'},
+                'flags':{'label':'Options', 'type':'flags', 'flags':{'1':{'name':'Visible'}}},
+                'sequence':{'label':'Order', 'type':'text', 'size':'small'},
                 'inventory':{'label':'Inventory', 'type':'text', 'size':'small'},
 				}},
             '_costs':{'label':'Cost/Container', 'fields':{
@@ -758,7 +762,7 @@ function ciniki_herbalist_main() {
         this.recipeingredient.recipeingredient_id = 0;
         this.recipeingredient.sections = { 
             'general':{'label':'Ingredient', 'fields':{
-                'ingredient_id':{'label':'Ingredient', 'type':'select', 'options':{}},
+                'ingredient_id':{'label':'Ingredient', 'type':'select', 'options':{}, 'complex_options':{'value':'id', 'name':'name'}},
                 'quantity':{'label':'Quantity', 'type':'text', 'size':'small'},
                 }}, 
 			'_buttons':{'label':'', 'buttons':{
