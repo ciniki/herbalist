@@ -109,6 +109,7 @@ function ciniki_herbalist_objects($ciniki) {
             'primary_image_id'=>array('name'=>'Image', 'default'=>'0'),
             'synopsis'=>array('name'=>'Synopsis', 'default'=>''),
             'description'=>array('name'=>'Description', 'default'=>''),
+            'ingredients'=>array('name'=>'Ingredients', 'default'=>''),
 			),
 		'history_table'=>'ciniki_herbalist_history',
 		);

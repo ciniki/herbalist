@@ -153,6 +153,11 @@ function ciniki_herbalist_main() {
                 'fields':{
                     'description':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'large', 'type':'textarea'},
                 }},
+			'_ingredients':{'label':'Ingredients', 
+                'visible':function() { return (M.ciniki_herbalist_main.product.sections._tabs.selected == 'web' ? 'yes':'hidden');},
+                'fields':{
+                    'ingredients':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'medium', 'type':'textarea'},
+                }},
 			'images':{'label':'Gallery', 'type':'simplethumbs',
                 'visible':function() { return (M.ciniki_herbalist_main.product.sections._tabs.selected == 'images' ? 'yes':'hidden');},
                 },
@@ -267,6 +272,7 @@ function ciniki_herbalist_main() {
             p.showHideSection('versions');
             p.showHideSection('_synopsis');
             p.showHideSection('_description');
+            p.showHideSection('_ingredients');
             p.showHideSection('images');
             p.showHideSection('_images');
             p.showHideSection('_notes');

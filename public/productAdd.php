@@ -28,6 +28,7 @@ function ciniki_herbalist_productAdd(&$ciniki) {
         'primary_image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Image'),
         'synopsis'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Synopsis'),
         'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'),
+        'ingredients'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ingredients'),
 		'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'),
         'image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Additional Image'),
         ));

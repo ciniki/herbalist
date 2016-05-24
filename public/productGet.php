@@ -66,6 +66,7 @@ function ciniki_herbalist_productGet($ciniki) {
             'primary_image_id'=>'0',
             'synopsis'=>'',
             'description'=>'',
+            'ingredients'=>'',
             'versions'=>array(),
         );
     }
@@ -81,7 +82,8 @@ function ciniki_herbalist_productGet($ciniki) {
             . "ciniki_herbalist_products.notes, "
             . "ciniki_herbalist_products.primary_image_id, "
             . "ciniki_herbalist_products.synopsis, "
-            . "ciniki_herbalist_products.description "
+            . "ciniki_herbalist_products.description, "
+            . "ciniki_herbalist_products.ingredients "
             . "FROM ciniki_herbalist_products "
             . "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
             . "AND ciniki_herbalist_products.id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "

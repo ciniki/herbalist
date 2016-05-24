@@ -222,6 +222,14 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
             if( isset($product['versions']) && count($product['versions']) > 0 ) {
                 $page['blocks'][] = array('type'=>'prices', 'title'=>'Options', 'section'=>'prices', 'prices'=>$product['versions']);
             }
+
+            //
+            // Add the ingredients if added
+            //
+            if( isset($product['ingredients']) && $product['ingredients'] != '' ) {
+                $page['blocks'][] = array('type'=>'content', 'section'=>'ingredients', 'title'=>'Ingredients', 'content'=>$product['ingredients']);
+            }
+
             // Add share buttons  
             if( !isset($settings['page-products-share-buttons']) || $settings['page-products-share-buttons'] == 'yes' ) {
                 $page['blocks'][] = array('type'=>'sharebuttons', 'section'=>'share', 'pagetitle'=>$product['name'], 'tags'=>array());

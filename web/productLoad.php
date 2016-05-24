@@ -24,7 +24,8 @@ function ciniki_herbalist_web_productLoad($ciniki, $business_id, $args) {
         . "ciniki_herbalist_products.primary_image_id, "
         . "'' AS primary_image_caption, "
         . "ciniki_herbalist_products.synopsis, "
-        . "ciniki_herbalist_products.description "
+        . "ciniki_herbalist_products.description, "
+        . "ciniki_herbalist_products.ingredients "
         . "FROM ciniki_herbalist_products "
         . "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
         . "";

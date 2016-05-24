@@ -44,15 +44,14 @@ function ciniki_herbalist_productList($ciniki) {
         . "ciniki_herbalist_products.flags, "
         . "ciniki_herbalist_products.notes, "
         . "ciniki_herbalist_products.primary_image_id, "
-        . "ciniki_herbalist_products.synopsis, "
-        . "ciniki_herbalist_products.description "
+        . "ciniki_herbalist_products.synopsis "
         . "FROM ciniki_herbalist_products "
         . "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'products', 'fname'=>'id', 
-            'fields'=>array('id', 'name', 'permalink', 'flags', 'notes', 'primary_image_id', 'synopsis', 'description')),
+            'fields'=>array('id', 'name', 'permalink', 'flags', 'notes', 'primary_image_id', 'synopsis')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
