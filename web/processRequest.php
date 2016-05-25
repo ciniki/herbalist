@@ -201,7 +201,7 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
             return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3457', 'msg'=>"We're sorry, the page you requested is not available."));
         }
         if( !isset($rc['product']) ) {
-            return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3457', 'msg'=>"We're sorry, the page you requested is not available."));
+            return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3480', 'msg'=>"We're sorry, the page you requested is not available."));
         } else {
             $product = $rc['product'];
             $page['title'] = $product['name'];
