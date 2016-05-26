@@ -38,19 +38,6 @@ function ciniki_herbalist_sapos_itemLookup($ciniki, $business_id, $args) {
 		if( $rc['stat'] != 'ok' ) {
 			return $rc;
 		}
-/*		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
-		$rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
-			array('container'=>'products', 'fname'=>'id',
-				'fields'=>array('id', 'price_id', 'parent_id', 'code', 'description'=>'name', 'product_flags',
-					'pricepoint_id', 
-					'unit_amount', 'unit_discount_amount', 'unit_discount_percentage',
-					'inventory_flags', 'inventory_current_num', 
-					'taxtype_id')),
-			));
-		if( !isset($rc['products']) || count($rc['products']) < 1 ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3483', 'msg'=>'No product found.'));		
-		}
-        */
         if( !isset($rc['product']) ) {
 			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3483', 'msg'=>'No product found.'));		
         }
