@@ -47,6 +47,7 @@ function ciniki_herbalist_recipeList($ciniki) {
         . "ciniki_herbalist_recipes.total_cost_per_unit "
         . "FROM ciniki_herbalist_recipes "
         . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "ORDER BY name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(

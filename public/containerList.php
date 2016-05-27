@@ -60,6 +60,7 @@ function ciniki_herbalist_containerList($ciniki) {
         . "ciniki_herbalist_containers.notes "
         . "FROM ciniki_herbalist_containers "
         . "WHERE ciniki_herbalist_containers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "ORDER BY name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
