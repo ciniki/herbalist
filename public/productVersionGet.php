@@ -167,6 +167,7 @@ function ciniki_herbalist_productVersionGet($ciniki) {
     }
     if( isset($rc['containers']) ) {
         $containers = $rc['containers'];
+        usort($containers, function($a, $b) { return strnatcmp($a['name'], $b['name']); });
     } else {
         $containers = array();
     }

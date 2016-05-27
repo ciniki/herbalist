@@ -75,6 +75,7 @@ function ciniki_herbalist_containerList($ciniki) {
         foreach($containers as $cid => $container) {
             $containers[$cid]['cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, $container['cost_per_unit'], $intl_currency);
         }
+        usort($containers, function($a, $b) { return strnatcmp($a['name'], $b['name']); });
     } else {
         $containers = array();
     }
