@@ -225,6 +225,7 @@ function ciniki_herbalist_productGet($ciniki) {
     $strsql = "SELECT ciniki_herbalist_recipes.id, ciniki_herbalist_recipes.name "
         . "FROM ciniki_herbalist_recipes "
         . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "ORDER BY name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList2');
     $rc = ciniki_core_dbQueryList2($ciniki, $strsql, 'ciniki.herbalist', 'recipes');
@@ -243,14 +244,15 @@ function ciniki_herbalist_productGet($ciniki) {
     $strsql = "SELECT ciniki_herbalist_containers.id, ciniki_herbalist_containers.name "
         . "FROM ciniki_herbalist_containers "
         . "WHERE ciniki_herbalist_containers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "ORDER BY CAST(name AS UNSIGNED), name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList2');
-    $rc = ciniki_core_dbQueryList2($ciniki, $strsql, 'ciniki.herbalist', 'containers');
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'containers');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    if( isset($rc['containers']) ) {
-        $containers = $rc['containers'];
+    if( isset($rc['rows']) ) {
+        $containers = $rc['rows'];
     } else {
         $containers = array();
     }

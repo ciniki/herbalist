@@ -155,7 +155,7 @@ function ciniki_herbalist_productVersionGet($ciniki) {
         . "ciniki_herbalist_containers.cost_per_unit "
         . "FROM ciniki_herbalist_containers "
         . "WHERE ciniki_herbalist_containers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-        . "ORDER BY name "
+        . "ORDER BY CAST(name AS UNSIGNED), name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
