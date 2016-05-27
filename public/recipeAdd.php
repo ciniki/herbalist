@@ -83,6 +83,15 @@ function ciniki_herbalist_recipeAdd(&$ciniki) {
     ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'herbalist');
 
     //
+    // Run the costing updates
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'costingUpdate');
+    $rc = ciniki_herbalist_costingUpdate($ciniki, $args['business_id'], array());
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+
+    //
     // Update the web index if enabled
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'hookExec');
