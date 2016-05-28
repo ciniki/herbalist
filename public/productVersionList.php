@@ -62,7 +62,7 @@ function ciniki_herbalist_productVersionList($ciniki) {
     //
     // Get the list of products
     //
-    $strsql = "SELECT ciniki_herbalist_products.id, "
+    $strsql = "SELECT ciniki_herbalist_product_versions.id, "
         . "ciniki_herbalist_products.name, "
         . "ciniki_herbalist_products.permalink, "
         . "ciniki_herbalist_products.flags, "

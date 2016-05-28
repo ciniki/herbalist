@@ -1142,6 +1142,7 @@ function ciniki_herbalist_main() {
         if( tab != null ) { this.menu.sections._tabs.selected = tab; }
         if( itab != null && this.menu.sections._tabs.selected == 'ingredients' ) { this.menu.sections._ingredient_tabs.selected = itab; }
         if( itab != null && this.menu.sections._tabs.selected == 'products' ) { this.menu.category = itab; }
+        if( itab != null && this.menu.sections._tabs.selected == 'inventory' ) { this.menu.category = itab; }
         if( this.menu.sections._tabs.selected == 'inventory' ) {
             this.menu.size = 'large narrowaside';
         } else if( this.menu.sections._tabs.selected == 'products' ) {
