@@ -78,7 +78,7 @@ function ciniki_herbalist_productVersionList($ciniki) {
     }
     $strsql .= "AND ciniki_herbalist_products.id = ciniki_herbalist_product_versions.product_id "
         . "AND ciniki_herbalist_product_versions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-        . "ORDER BY category, name ";
+        . "ORDER BY ciniki_herbalist_products.category, ciniki_herbalist_products.name, ciniki_herbalist_product_versions.name ";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'productversions', 'fname'=>'id', 

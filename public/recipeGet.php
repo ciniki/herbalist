@@ -52,6 +52,8 @@ function ciniki_herbalist_recipeGet($ciniki) {
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'datetimeFormat');
     $datetime_format = ciniki_users_datetimeFormat($ciniki, 'php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
+    $date_format = ciniki_users_dateFormat($ciniki, 'php');
 
     //
     // Return default for new Recipe
@@ -140,7 +142,7 @@ function ciniki_herbalist_recipeGet($ciniki) {
                         case '10': $units = ' gm'; break;
                         case '60': $units = ' ml'; break;
                     }  
-                    $recipe['ingredient_types'][$tid]['ingredients'][$iid]['quantity_display'] = (float)$ingredient['quantity'] . ' ' . $units;
+                    $recipe['ingredient_types'][$tid]['ingredients'][$iid]['quantity_display'] = (float)$ingredient['quantity'] . $units;
                     $recipe['ingredient_types'][$tid]['ingredients'][$iid]['quantity'] = (float)$ingredient['quantity'];
                     $recipe['ingredient_types'][$tid]['ingredients'][$iid]['total_cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, 
                         bcmul($ingredient['total_cost_per_unit'], $ingredient['quantity'], 4), $intl_currency);
@@ -148,6 +150,44 @@ function ciniki_herbalist_recipeGet($ciniki) {
             }
         } else {
             $recipe['ingredient_types'] = array();
+        }
+
+        //
+        // Get the list of recipe batches
+        //
+        $strsql = "SELECT ciniki_herbalist_recipe_batches.id, "
+            . "ciniki_herbalist_recipe_batches.production_date, "
+            . "ciniki_herbalist_recipe_batches.size, "
+            . "ciniki_herbalist_recipe_batches.yield, "
+            . "ciniki_herbalist_recipe_batches.production_time, "
+            . "ciniki_herbalist_recipe_batches.materials_cost_per_unit, "
+            . "ciniki_herbalist_recipe_batches.time_cost_per_unit, "
+            . "ciniki_herbalist_recipe_batches.total_cost_per_unit "
+            . "FROM ciniki_herbalist_recipe_batches "
+            . "WHERE ciniki_herbalist_recipe_batches.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_herbalist_recipe_batches.recipe_id = '" . ciniki_core_dbQuote($ciniki, $args['recipe_id']) . "' "
+            . "ORDER BY ciniki_herbalist_recipe_batches.production_date DESC "
+            . "";
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+        $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
+            array('container'=>'batches', 'fname'=>'id', 
+                'fields'=>array('id', 'production_date', 'size', 'yield', 'production_time', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit'),
+                'utctotz'=>array('production_date'=>array('format'=>$date_format, 'timezone'=>'UTC')),
+                ),
+            ));
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['batches']) ) {
+            $recipe['batches'] = $rc['batches'];
+            foreach($recipe['batches'] as $bid => $batch) {    
+                $recipe['batches'][$bid]['size'] = (float)$batch['size'];
+                $recipe['batches'][$bid]['materials_cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, $batch['materials_cost_per_unit'], $intl_currency);
+                $recipe['batches'][$bid]['time_cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, $batch['time_cost_per_unit'], $intl_currency);
+                $recipe['batches'][$bid]['total_cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, $batch['total_cost_per_unit'], $intl_currency);
+            }
+        } else {
+            $recipe['batches'] = array();
         }
     }
 

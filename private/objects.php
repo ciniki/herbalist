@@ -64,6 +64,25 @@ function ciniki_herbalist_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_herbalist_history',
 		);
+	$objects['recipebatch'] = array(
+		'name'=>'Recipe Batch',
+        'o_name'=>'recipebatch',
+        'o_container'=>'recipebatches',
+		'sync'=>'yes',
+		'table'=>'ciniki_herbalist_recipe_batches',
+		'fields'=>array(
+            'recipe_id'=>array('name'=>'Recipe', 'ref'=>'ciniki.herbalist.recipe'),
+            'production_date'=>array('name'=>'Production Date'),
+            'size'=>array('name'=>'Size'),
+            'yield'=>array('name'=>'Yield'),
+            'production_time'=>array('name'=>'Production Time'),
+            'materials_cost_per_unit'=>array('name'=>'Materials Cost per Unit', 'default'=>'0'),
+            'time_cost_per_unit'=>array('name'=>'Time Cost per Unit', 'default'=>'0'),
+            'total_cost_per_unit'=>array('name'=>'Total Cost per Unit', 'default'=>'0'),
+            'notes'=>array('name'=>'Notes', 'default'=>''),
+			),
+		'history_table'=>'ciniki_herbalist_history',
+		);
 	$objects['tag'] = array(
 		'name'=>'Tag',
         'o_name'=>'tag',
