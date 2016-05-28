@@ -79,6 +79,7 @@ function ciniki_herbalist_productGet($ciniki) {
             . "ciniki_herbalist_products.name, "
             . "ciniki_herbalist_products.permalink, "
             . "ciniki_herbalist_products.flags, "
+            . "ciniki_herbalist_products.category, "
             . "ciniki_herbalist_products.notes, "
             . "ciniki_herbalist_products.primary_image_id, "
             . "ciniki_herbalist_products.synopsis, "

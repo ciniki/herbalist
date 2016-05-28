@@ -105,6 +105,7 @@ function ciniki_herbalist_objects($ciniki) {
             'name'=>array('name'=>'Name'),
             'permalink'=>array('name'=>'Permalink'),
             'flags'=>array('name'=>'Options', 'default'=>'0'),
+            'category'=>array('name'=>'Category', 'default'=>''),
             'notes'=>array('name'=>'Notes', 'default'=>''),
             'primary_image_id'=>array('name'=>'Image', 'default'=>'0'),
             'synopsis'=>array('name'=>'Synopsis', 'default'=>''),
