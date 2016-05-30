@@ -847,6 +847,9 @@ function ciniki_herbalist_main() {
                 p.show(cb);
             });
         }
+        this.recipe.downloadPDF = function() {
+            M.api.openPDF('ciniki.herbalist.recipePDF', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id});
+        }
         this.recipe.save = function() {
             if( this.recipe_id > 0 ) {
                 var c = this.serializeForm('no');
@@ -886,6 +889,7 @@ function ciniki_herbalist_main() {
             }
         };
 		this.recipe.addButton('save', 'Save', 'M.ciniki_herbalist_main.recipe.save();');
+		this.recipe.addButton('print', 'Print', 'M.ciniki_herbalist_main.recipe.downloadPDF();');
 		this.recipe.addClose('Cancel');
 
 		//
@@ -1098,9 +1102,14 @@ function ciniki_herbalist_main() {
                 }
                 var p = M.ciniki_herbalist_main.recipebatch;
                 p.data = rsp.batch;
+                p.recipe_id = rsp.batch.recipe_id;
                 p.refresh();
                 p.show(cb);
             });
+        }
+        this.recipebatch.downloadPDF = function() {
+            var size = M.gE(this.panelUID + '_size').value;
+            M.api.openPDF('ciniki.herbalist.recipePDF', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id, 'size':size});
         }
         this.recipebatch.save = function() {
             if( this.batch_id > 0 ) {
@@ -1141,6 +1150,7 @@ function ciniki_herbalist_main() {
             }
         };
 		this.recipebatch.addButton('save', 'Save', 'M.ciniki_herbalist_main.recipebatch.save();');
+		this.recipebatch.addButton('print', 'Print', 'M.ciniki_herbalist_main.recipebatch.downloadPDF();');
 		this.recipebatch.addClose('Cancel');
 
 		//
