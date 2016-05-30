@@ -94,6 +94,20 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         );
         $dt = new DateTime('now', new DateTimeZone($intl_timezone));
         $batch['production_date'] = $dt->format($date_format);
+
+        $strsql = "SELECT yield, production_time "
+            . "FROM ciniki_herbalist_recipes "
+            . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_herbalist_recipes.id = '" . ciniki_core_dbQuote($ciniki, $args['recipe_id']) . "' "
+            . "";
+        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'recipe');
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['recipe']) ) {
+            $batch['yield'] = $rc['recipe']['yield'];
+            $batch['production_time'] = $rc['recipe']['production_time'];
+        }
     }
 
     //
@@ -184,9 +198,14 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         $batch['ingredient_types'] = array();
     }
 
-    $materials_cost_per_unit = bcdiv($materials_cost, $batch['yield'], 10);
+    if( $batch['yield'] > 0 ) {
+        $materials_cost_per_unit = bcdiv($materials_cost, $batch['yield'], 10);
+        $time_cost_per_unit = bcdiv($time_cost, $batch['yield'], 10);
+    } else {
+        $materials_cost_per_unit = 0;
+        $time_cost_per_unit = 0;
+    }
     $time_cost = bcadd($time_cost, bcmul($minute_wage, $batch['production_time'], 10), 10);
-    $time_cost_per_unit = bcdiv($time_cost, $batch['yield'], 10);
     $total_cost = bcadd($materials_cost, $time_cost, 10);
     $total_cost_per_unit = bcadd($materials_cost_per_unit, $time_cost_per_unit, 10);
 
