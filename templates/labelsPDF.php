@@ -31,7 +31,7 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $business_id, $args) {
     // Load the label definitions
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'labels');
-    $rc = ciniki_herbalist_labels($ciniki, $business_id, array());
+    $rc = ciniki_herbalist_labels($ciniki, $business_id, 'all');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -87,40 +87,48 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $business_id, $args) {
     $pdf->SetDrawColor(125);
     $pdf->SetLineWidth(0.05);
 
-    $label = $labels[$args['label']['label']];
+    $label = $labels[$args['label']];
 
-    $title = isset($args['label']['title']) ? $args['label']['title'] : '';
-    $ingredients = isset($args['label']['ingredients']) ? $args['label']['ingredients'] : '';
-    $batchdate = isset($args['label']['batchdate']) ? $args['label']['batchdate'] : '';
+    if( !isset($args['labels']) ) {
+        $title = isset($args['title']) ? $args['title'] : '';
+        $content = isset($args['content']) ? $args['content'] : '';
 
-    foreach($label['cell']['sections'] as $sid => $section) {
-        $label['cell']['sections'][$sid]['content'] = str_replace('{_title_}', $title, $label['cell']['sections'][$sid]['content']);
-        $label['cell']['sections'][$sid]['content'] = str_replace('{_ingredients_}', $ingredients, $label['cell']['sections'][$sid]['content']);
-        $label['cell']['sections'][$sid]['content'] = str_replace('{_batchdate_}', $batchdate, $label['cell']['sections'][$sid]['content']);
+        foreach($label['sections'] as $sid => $section) {
+            $label['sections'][$sid]['content'] = str_replace('{_title_}', $title, $label['sections'][$sid]['content']);
+            $label['sections'][$sid]['content'] = str_replace('{_content_}', $content, $label['sections'][$sid]['content']);
+        }
     }
 
+    $count = 0;
     foreach($label['rows'] as $rownum => $row) {
         $pdf->SetY($row['y']);
         if( isset($args['start_row']) && $args['start_row'] > $rownum ) {
             continue;
         }
-        if( isset($args['end_row']) && $args['end_row'] < $rownum ) {
+        if( isset($args['end_row']) && $args['end_row'] > 0 && $args['end_row'] < $rownum ) {
             break;
         }
         foreach($label['cols'] as $colnum => $col) {
             $pdf->SetX($col['x']);
-            if( isset($args['start_row']) && $args['start_row'] == $rownum && isset($args['start_col']) && $args['start_col'] > $colnum ) {
+            if( isset($args['start_row']) && $args['start_row'] == $rownum && isset($args['start_col']) && $args['start_col'] > 0 && $args['start_col'] > $colnum ) {
                 continue;
             }
-            if( isset($args['end_row']) && $args['end_row'] == $rownum && isset($args['end_col']) && $args['end_col'] < $colnum ) {
+            if( isset($args['end_row']) && $args['end_row'] > 0 && $args['end_row'] == $rownum && isset($args['end_col']) && $args['end_col'] > 0 && $args['end_col'] < $colnum ) {
+                break;
+            }
+            if( isset($args['number']) && $args['number'] > 0 && $args['number'] <= $count ) {
                 break;
             }
 
-            foreach($label['cell']['sections'] as $section) {
+            $count++;
+            foreach($label['sections'] as $section) {
                 $pdf->SetFont('', $section['font']['style'], $section['font']['size']);
                 $pdf->SetY($row['y'] + $section['y']);
                 $pdf->SetX($col['x'] + $section['x']);
-//                $pdf->MultiCell($section['width'], $section['height'], $section['content'], 0, $section['align']);
+                if( isset($args['labels']) ) {
+                    $section['content'] = str_replace('{_title_}', $title, $sections['content']);
+                    $section['content'] = str_replace('{_content_}', $content, $sections['content']);
+                }
                 $pdf->MultiCell($section['width'], $section['height'], $section['content'], 0, $section['align'], false, 0, '', '', true, 0, false, true, $section['height'], 'T', true);
             }
         }

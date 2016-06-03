@@ -23,6 +23,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
         'batch_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Recipe Batch'),
         'recipe_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Recipe ID'),
+        'labels'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Labels'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -175,15 +176,20 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
     }
     $materials_cost = 0;
     $time_cost = 0;
+    $ingredients = array();
     if( isset($rc['types']) ) {
         $batch['ingredient_types'] = $rc['types'];
+        //
+        // Setup the ingredients for display
+        //
         foreach($batch['ingredient_types'] as $tid => $itype) {    
             foreach($batch['ingredient_types'][$tid]['ingredients'] as $iid => $ingredient) {    
                 $units = '';
                 switch ($ingredient['units']) {
                     case '10': $units = 'gm'; break;
                     case '60': $units = 'ml'; break;
-                }  
+                }
+                $ingredients[] = $ingredient;
                 $quantity = bcmul($ingredient['quantity'], $batch['size'], 4);
                 $materials_cost = bcadd($materials_cost, bcmul($quantity, $ingredient['materials_cost_per_unit'], 10), 10);
                 $time_cost = bcadd($time_cost, bcmul($quantity, $ingredient['time_cost_per_unit'], 10), 10);
@@ -194,6 +200,16 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
                     bcmul($ingredient['total_cost_per_unit'], $quantity, 4), $intl_currency);
             }
         }
+        //
+        // sort the ingredients by quantity
+        //
+        uasort($ingredients, function($a, $b) { 
+            if( $a == $b ) {
+                return 0;
+            } 
+            return ($a < $b ? -1 : 1);
+        });
+       
     } else {
         $batch['ingredient_types'] = array();
     }
@@ -208,6 +224,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
     $time_cost = bcadd($time_cost, bcmul($minute_wage, $batch['production_time'], 10), 10);
     $total_cost = bcadd($materials_cost, $time_cost, 10);
     $total_cost_per_unit = bcadd($materials_cost_per_unit, $time_cost_per_unit, 10);
+
 
     //
     // Get the product versions that use this recipe
@@ -253,6 +270,31 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
     $batch['materials_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $batch['materials_cost_per_unit'], $intl_currency);
     $batch['time_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $batch['time_cost_per_unit'], $intl_currency);
     $batch['total_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $batch['total_cost_per_unit'], $intl_currency);
+
+    //
+    // Setup the labels if requested
+    //
+    if( isset($args['labels']) && $args['labels'] == 'yes' ) {
+        $strsql = "SELECT name "
+            . "FROM ciniki_herbalist_recipes "
+            . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $batch['recipe_id']) . "' "
+            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "";
+        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'recipe');
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        $recipe = $rc['recipe'];
+
+        $batch['label'] = array(
+            'title'=>$recipe['name'],
+            'ingredients'=>'', 
+            'batchdate'=>$batch['production_date'],
+            );
+        foreach($ingredients as $ingredient) {
+            $batch['label']['ingredients'] .= ($batch['label']['ingredients'] != '' ? ', ' : '') . $ingredient['name'];
+        }
+    }
 
     return array('stat'=>'ok', 'batch'=>$batch);
 }

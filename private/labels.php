@@ -10,40 +10,13 @@
 // Returns
 // -------
 //
-function ciniki_herbalist_labels($ciniki) {
-	$labels = array();
-	$labels['avery8927'] = array(
-        'name'=>'Avery 8927',
-        'cell'=>array(
-            'width'=>44,
-            'height'=>12.7,
-            'sections'=>array(
-                '0'=>array(
-                    'font'=>array(
-                        'size'=>7,
-                        'style'=>'B',
-                        ),
-                    'content'=>'{_title_}',
-                    'align'=>'C',
-                    'x'=>0,
-                    'y'=>0,
-                    'width'=>44,
-                    'height'=>7.5,
-                    ),
-                '1'=>array(
-                    'font'=>array(
-                        'size'=>5,
-                        'style'=>'',
-                        ),
-                    'content'=>'{_ingredients_} ({_batchdate_})',
-                    'align'=>'C',
-                    'x'=>0,
-                    'y'=>3.3,
-                    'width'=>44,
-                    'height'=>12,
-                    ),
-                ),
-            ),
+function ciniki_herbalist_labels($ciniki, $business_id, $format='all') {
+    //
+    // Define the start of each row/col
+    //
+    $rowscols = array();
+    $rowscols['avery5167'] = array(
+        'name'=>'1/2" x 1 3/4" - Avery Template 5167',
         'rows'=>array(
             '1'=>array('y'=>11),
             '2'=>array('y'=>23.7),
@@ -72,7 +45,74 @@ function ciniki_herbalist_labels($ciniki) {
             '3'=>array('x'=>111),
             '4'=>array('x'=>163),
             ),
-		);
+        'cell'=>array(
+            'width'=>44,
+            'height'=>12.7,
+            ),
+        );
+    $rowscols['avery5160'] = array(
+        'name'=>'1" x 2 5/8" - Avery Template 5160',
+        'rows'=>array(
+            '1'=>array('y'=>11),
+            '2'=>array('y'=>36.4),
+            '3'=>array('y'=>61.8),
+            '4'=>array('y'=>87.2),
+            '5'=>array('y'=>112.6),
+            '6'=>array('y'=>138),
+            '7'=>array('y'=>163.4),
+            '8'=>array('y'=>188.8),
+            '9'=>array('y'=>214.2),
+            '10'=>array('y'=>239.6),
+            ),
+        'cols'=>array(
+            '1'=>array('x'=>5),
+            '2'=>array('x'=>75.75),
+            '3'=>array('x'=>144.5),
+            ),
+        'cell'=>array(
+            'width'=>66,
+            'height'=>25,
+            ),
+        );
+
+
+	$labels = array();
+
+    //
+    // Ingredient labels for avery template 5167
+    //
+    if( $format == 'all' || $format == 'ingredients' ) {
+        $labels['ingredientsAvery5167'] = $rowscols['avery5167'];
+        $labels['ingredientsAvery5167']['sections'] = array(
+            '0'=>array(
+                'font'=>array('size'=>9, 'style'=>'B',),
+                'content'=>'{_title_}',
+                'align'=>'C', 'x'=>0, 'y'=>0, 'width'=>44, 'height'=>7.5,
+                ),
+            '1'=>array(
+                'font'=>array('size'=>8, 'style'=>'',),
+                'content'=>'{_content_}',
+                'align'=>'C', 'x'=>0, 'y'=>3.3, 'width'=>44, 'height'=>12,
+                ),
+            );
+
+        //
+        // 1" x 2 5/8"
+        //
+        $labels['ingredientsAvery5160'] = $rowscols['avery5160'];
+        $labels['ingredientsAvery5160']['sections'] = array(
+            '0'=>array(
+                'font'=>array('size'=>12, 'style'=>'B',),
+                'content'=>'{_title_}',
+                'align'=>'C', 'x'=>0, 'y'=>0, 'width'=>66, 'height'=>10,
+                ),
+            '1'=>array(
+                'font'=>array('size'=>10, 'style'=>'',),
+                'content'=>'{_content_}',
+                'align'=>'C', 'x'=>0, 'y'=>7, 'width'=>66, 'height'=>20,
+                ),
+            );
+    }
 
 	return array('stat'=>'ok', 'labels'=>$labels);
 }
