@@ -64,7 +64,7 @@ function ciniki_herbalist_recipeDelete(&$ciniki) {
         . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
-    $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.products', 'num');
+    $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.herbalist', 'num');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -81,7 +81,7 @@ function ciniki_herbalist_recipeDelete(&$ciniki) {
         . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
-    $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.products', 'num');
+    $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.herbalist', 'num');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
