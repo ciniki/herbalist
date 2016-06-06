@@ -68,6 +68,12 @@ function ciniki_herbalist_main() {
             'addTxt':'Add Container',
             'addFn':'M.ciniki_herbalist_main.container.edit(\'M.ciniki_herbalist_main.menu.open();\',0);',
             },
+        '_buttons':{'label':'', 'buttons':{
+            'namelabels':{'label':'Print Name Labels', 
+                'visible':function() { return (M.ciniki_herbalist_main.menu.sections._tabs.selected=='ingredients'?'yes':'no');},
+                'fn':'M.ciniki_herbalist_main.inamelabels.open(\'M.ciniki_herbalist_main.menu.open();\');',
+                },
+            }},
     };
     this.menu.sectionData = function(s) {
         return this.data[s];
@@ -1263,11 +1269,9 @@ function ciniki_herbalist_main() {
         args['start_col'] = this.formValue('start_col');
         args['start_row'] = this.formValue('start_row');
         args['number'] = this.formValue('number');
-        console.log(args);
         M.api.openPDF('ciniki.herbalist.labelsPDF', args);
     }
     this.labels.addClose('Back');
-
 
     //
     // The panel for containering an ingredient
@@ -1390,6 +1394,115 @@ function ciniki_herbalist_main() {
     };
     this.ingredient.addButton('save', 'Save', 'M.ciniki_herbalist_main.ingredient.save();');
     this.ingredient.addClose('Cancel');
+
+    //
+    // The panel for printing the ingredient name labels for apothecary
+    //
+    this.inamelabels = new M.panel('Labels', 'ciniki_herbalist_main', 'inamelabels', 'mc', 'large', 'sectioned', 'ciniki.herbalist.main.inamelabels');
+    this.inamelabels.data = {};
+    this.inamelabels.sections = { 
+        'general':{'label':'Title', 'aside':'yes', 'fields':{
+            'label':{'label':'Label', 'type':'select', 'options':{}, 'onchangeFn':'M.ciniki_herbalist_main.inamelabels.switchLabel'},
+            }},
+        'herbs':{'label':'Herbs', 'fields':{
+            'ingredients_30':{'label':'', 'hidelabel':'yes', 'type':'multiselect', 'none':'yes', 'options':{}},
+            }},
+        'liquids':{'label':'Liquids', 'fields':{
+            'ingredients_60':{'label':'', 'hidelabel':'yes', 'type':'multiselect', 'none':'yes', 'options':{}},
+            }},
+        'misc':{'label':'Misc', 'fields':{
+            'ingredients_90':{'label':'', 'hidelabel':'yes', 'type':'multiselect', 'none':'yes', 'options':{}},
+            }},
+        'startend':{'label':'', 'fields':{
+            'start_col':{'label':'Start Column', 'type':'toggle', 'default':'1', 'toggles':{}},
+            'start_row':{'label':'Start Row', 'type':'toggle', 'default':'1', 'toggles':{}},
+            }},
+        '_buttons':{'label':'', 'buttons':{
+            'selectall':{'label':'Select All', 'fn':'M.ciniki_herbalist_main.inamelabels.selectAll();'},
+            'selectnone':{'label':'Select None', 'fn':'M.ciniki_herbalist_main.inamelabels.selectNone();'},
+            'print':{'label':'Print', 'fn':'M.ciniki_herbalist_main.inamelabels.print();'},
+            }},
+        };  
+    this.inamelabels.fieldValue = function(s, i, d) { return this.data[i]; }
+    this.inamelabels.open = function(cb) {
+        this.reset();
+        M.api.getJSONCb('ciniki.herbalist.ingredientList', {'business_id':M.curBusinessID, 'labels':'yes'}, function(rsp) {
+            if( rsp.stat != 'ok' ) {
+                M.api.err(rsp);
+                return false;
+            }
+            var p = M.ciniki_herbalist_main.inamelabels;
+            p.data = rsp;
+            p.sections.general.fields.label.options = {};
+            for(var i in rsp.labels) {
+                p.sections.general.fields.label.options[i] = rsp.labels[i].name;
+            }
+            p.sections.herbs.fields.ingredients_30.options = {};
+            p.sections.liquids.fields.ingredients_60.options = {};
+            p.sections.misc.fields.ingredients_90.options = {};
+            for(i in rsp.ingredients) {
+                if( rsp.ingredients[i].sorttype == '30' ) {
+                    p.sections.herbs.fields.ingredients_30.options[rsp.ingredients[i].id] = rsp.ingredients[i].name;
+                } else if( rsp.ingredients[i].sorttype == '60' ) {
+                    p.sections.liquids.fields.ingredients_60.options[rsp.ingredients[i].id] = rsp.ingredients[i].name;
+                } else if( rsp.ingredients[i].sorttype == '90' ) {
+                    p.sections.misc.fields.ingredients_90.options[rsp.ingredients[i].id] = rsp.ingredients[i].name;
+                }
+            }
+            p.sections.startend.fields.start_col.toggles = {};
+            p.sections.startend.fields.start_row.toggles = {};
+            for(label in rsp.labels) break;
+            for(var i in rsp.labels[label].cols) {
+                p.sections.startend.fields.start_col.toggles[i] = i;
+            }
+            for(var i in rsp.labels[label].rows) {
+                p.sections.startend.fields.start_row.toggles[i] = i;
+            }
+            p.refresh();
+            p.show(cb);
+        });
+    }
+    this.inamelabels.switchLabel = function() {
+        var label = this.formValue('label');
+        this.sections.startend.fields.start_col.toggles = {};
+        this.sections.startend.fields.start_row.toggles = {};
+        for(var i in this.data.labels[label].cols) {
+            this.sections.startend.fields.start_col.toggles[i] = i;
+        }
+        for(var i in this.data.labels[label].rows) {
+            this.sections.startend.fields.start_row.toggles[i] = i;
+        }
+        this.refreshSection('startend');
+    }
+    this.inamelabels.selectAll = function() {
+        for(var i in this.data.ingredients) {
+            M.gE(this.panelUID + '_ingredients_' + this.data.ingredients[i].sorttype + '_' + this.data.ingredients[i].id).className = 'toggle_on';
+        }
+    }
+    this.inamelabels.selectNone = function() {
+        for(var i in this.data.ingredients) {
+            M.gE(this.panelUID + '_ingredients_' + this.data.ingredients[i].sorttype + '_' + this.data.ingredients[i].id).className = 'toggle_off';
+        }
+    }
+    this.inamelabels.print = function() {
+        var args = {'business_id':M.curBusinessID};
+        args['label'] = this.formValue('label');
+        args['start_col'] = this.formValue('start_col');
+        args['start_row'] = this.formValue('start_row');
+        args['ingredients'] = '';
+        for(var i in this.data.ingredients) {
+            if( M.gE(this.panelUID + '_ingredients_' + this.data.ingredients[i].sorttype + '_' + this.data.ingredients[i].id).className == 'toggle_on' ) {
+                args['ingredients'] += (args['ingredients'] != '' ? ',' : '') + this.data.ingredients[i].id;
+            }
+        }
+        if( args['ingredients'] == '' ) {
+            alert("You must specify at least one ingredient");
+            return false;
+        }
+        M.api.openPDF('ciniki.herbalist.ingredientNameLabelsPDF', args);
+    }
+    this.inamelabels.addClose('Back');
+
 
     //
     // The panel for editing containers

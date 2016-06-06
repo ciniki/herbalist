@@ -77,7 +77,6 @@ function ciniki_herbalist_labels($ciniki, $business_id, $format='all') {
 
 
 	$labels = array();
-
     //
     // Ingredient labels for avery template 5167
     //
@@ -110,6 +109,39 @@ function ciniki_herbalist_labels($ciniki, $business_id, $format='all') {
                 'font'=>array('size'=>10, 'style'=>'',),
                 'content'=>'{_content_}',
                 'align'=>'C', 'x'=>0, 'y'=>7, 'width'=>66, 'height'=>20,
+                ),
+            );
+    }
+
+    if( $format == 'all' || $format == 'names' ) {
+        $labels['namesAvery5167'] = $rowscols['avery5167'];
+        $labels['namesAvery5167']['sections'] = array(
+            '0'=>array(
+                'font'=>array('size'=>12, 'style'=>'B',),
+                'content'=>'{_title_}',
+                'align'=>'C', 'x'=>0, 'y'=>0, 'width'=>44, 'height'=>12,
+                ),
+            '1'=>array(
+                'font'=>array('size'=>8, 'style'=>'',),
+                'content'=>'{_content_}',
+                'align'=>'C', 'x'=>0, 'y'=>10, 'width'=>44, 'height'=>7.5,
+                ),
+            );
+
+        //
+        // 1" x 2 5/8"
+        //
+        $labels['namesAvery5160'] = $rowscols['avery5160'];
+        $labels['namesAvery5160']['sections'] = array(
+            '0'=>array(
+                'font'=>array('size'=>16, 'style'=>'B'),
+                'content'=>'{_title_}',
+                'align'=>'C', 'x'=>0, 'y'=>5, 'width'=>66, 'height'=>15,
+                ),
+            '1'=>array(
+                'font'=>array('size'=>12, 'style'=>'I'),
+                'content'=>'{_content_}',
+                'align'=>'C', 'x'=>0, 'y'=>12, 'width'=>66, 'height'=>12,
                 ),
             );
     }

@@ -21,6 +21,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
         'sorttype'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Type'),
+        'labels'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Labels'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -86,7 +87,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'ingredients', 'fname'=>'id', 
-            'fields'=>array('id', 'name', 'subname', 'plant_id', 'recipe_id', 'units', 'units_display', 'costing_quantity', 'costing_price', 
+            'fields'=>array('id', 'name', 'subname', 'sorttype', 'plant_id', 'recipe_id', 'units', 'units_display', 'costing_quantity', 'costing_price', 
                 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'notes'),
             'maps'=>array('units_display'=>$maps['ingredient']['units']),
             ),
@@ -105,6 +106,22 @@ function ciniki_herbalist_ingredientList($ciniki) {
         $ingredients = array();
     }
 
-    return array('stat'=>'ok', 'ingredients'=>$ingredients);
+    $rsp = array('stat'=>'ok', 'ingredients'=>$ingredients);
+
+    //
+    // Check if list of labels needs to be returned
+    //
+    if( isset($args['labels']) && $args['labels'] == 'yes' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'labels');
+        $rc = ciniki_herbalist_labels($ciniki, $args['business_id'], 'names');
+        if( $rc['stat'] != 'ok' ) { 
+            return $rc;
+        }
+        if( isset($rc['labels']) ) {
+            $rsp['labels'] = $rc['labels'];
+        }
+    }
+
+    return $rsp;
 }
 ?>

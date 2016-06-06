@@ -62,7 +62,6 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $business_id, $args) {
 	$pdf = new MYPDF('P', PDF_UNIT, 'LETTER', true, 'UTF-8', false);
 
 	$pdf->business_details = $business_details;
-    $pdf->recipe_name = $args['title'];
 
 	//
 	// Setup the PDF basics
@@ -89,6 +88,9 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $business_id, $args) {
 
     $label = $labels[$args['label']];
 
+    //
+    // If the same label is being repeated, run the title/content substitutions now
+    //
     if( !isset($args['labels']) ) {
         $title = isset($args['title']) ? $args['title'] : '';
         $content = isset($args['content']) ? $args['content'] : '';
@@ -97,40 +99,69 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $business_id, $args) {
             $label['sections'][$sid]['content'] = str_replace('{_title_}', $title, $label['sections'][$sid]['content']);
             $label['sections'][$sid]['content'] = str_replace('{_content_}', $content, $label['sections'][$sid]['content']);
         }
+        $total_number = 1;
+    } 
+   
+    //
+    // If each label is different, find the end column and row
+    //
+    else {
+        end($label['rows']);
+        $last_row = key($label['rows']);
+        end($label['cols']);
+        $last_col = key($label['cols']);
+        reset($label['rows']);
+        reset($label['cols']);
+        $total_number = count($args['labels']);
     }
 
     $count = 0;
-    foreach($label['rows'] as $rownum => $row) {
-        $pdf->SetY($row['y']);
-        if( isset($args['start_row']) && $args['start_row'] > $rownum ) {
-            continue;
-        }
-        if( isset($args['end_row']) && $args['end_row'] > 0 && $args['end_row'] < $rownum ) {
-            break;
-        }
-        foreach($label['cols'] as $colnum => $col) {
-            $pdf->SetX($col['x']);
-            if( isset($args['start_row']) && $args['start_row'] == $rownum && isset($args['start_col']) && $args['start_col'] > 0 && $args['start_col'] > $colnum ) {
+    while( $count < $total_number ) {
+        foreach($label['rows'] as $rownum => $row) {
+            $pdf->SetY($row['y']);
+            if( isset($args['start_row']) && $args['start_row'] > $rownum ) {
                 continue;
             }
-            if( isset($args['end_row']) && $args['end_row'] > 0 && $args['end_row'] == $rownum && isset($args['end_col']) && $args['end_col'] > 0 && $args['end_col'] < $colnum ) {
+            if( isset($args['end_row']) && $args['end_row'] > 0 && $args['end_row'] < $rownum ) {
                 break;
             }
-            if( isset($args['number']) && $args['number'] > 0 && $args['number'] <= $count ) {
+            if( isset($args['labels']) && count($args['labels']) <= $count ) {
                 break;
             }
-
-            $count++;
-            foreach($label['sections'] as $section) {
-                $pdf->SetFont('', $section['font']['style'], $section['font']['size']);
-                $pdf->SetY($row['y'] + $section['y']);
-                $pdf->SetX($col['x'] + $section['x']);
-                if( isset($args['labels']) ) {
-                    $section['content'] = str_replace('{_title_}', $title, $sections['content']);
-                    $section['content'] = str_replace('{_content_}', $content, $sections['content']);
+            foreach($label['cols'] as $colnum => $col) {
+                $pdf->SetX($col['x']);
+                if( isset($args['start_row']) && $args['start_row'] == $rownum && isset($args['start_col']) && $args['start_col'] > 0 && $args['start_col'] > $colnum ) {
+                    continue;
                 }
-                $pdf->MultiCell($section['width'], $section['height'], $section['content'], 0, $section['align'], false, 0, '', '', true, 0, false, true, $section['height'], 'T', true);
+                if( isset($args['end_row']) && $args['end_row'] > 0 && $args['end_row'] == $rownum && isset($args['end_col']) && $args['end_col'] > 0 && $args['end_col'] < $colnum ) {
+                    break;
+                }
+                if( isset($args['number']) && $args['number'] > 0 && $args['number'] <= $count ) {
+                    break;
+                }
+                if( isset($args['labels']) && count($args['labels']) <= $count ) {
+                    break;
+                }
+
+                foreach($label['sections'] as $section) {
+                    $pdf->SetFont('', $section['font']['style'], $section['font']['size']);
+                    $pdf->SetY($row['y'] + $section['y']);
+                    $pdf->SetX($col['x'] + $section['x']);
+                    if( isset($args['labels']) ) {
+                        $section['content'] = str_replace('{_title_}', $args['labels'][$count]['title'], $section['content']);
+                        $section['content'] = str_replace('{_content_}', $args['labels'][$count]['content'], $section['content']);
+                    }
+                    $pdf->MultiCell($section['width'], $section['height'], $section['content'], 0, $section['align'], false, 0, '', '', true, 0, false, true, $section['height'], 'T', true);
+                }
+                $count++;
             }
+        }
+        if( isset($args['labels']) && $total_number > $count && $rownum == $last_row && $colnum == $last_col ) {
+            reset($label['rows']);
+            reset($label['cols']);
+            $args['start_row'] = 0;
+            $args['start_col'] = 0;
+            $pdf->AddPage();
         }
     }
 
