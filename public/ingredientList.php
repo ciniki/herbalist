@@ -63,6 +63,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
     //
     $strsql = "SELECT ciniki_herbalist_ingredients.id, "
         . "ciniki_herbalist_ingredients.name, "
+        . "ciniki_herbalist_ingredients.subname, "
         . "ciniki_herbalist_ingredients.sorttype, "
         . "ciniki_herbalist_ingredients.plant_id, "
         . "ciniki_herbalist_ingredients.recipe_id, "
@@ -85,7 +86,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'ingredients', 'fname'=>'id', 
-            'fields'=>array('id', 'name', 'plant_id', 'recipe_id', 'units', 'units_display', 'costing_quantity', 'costing_price', 
+            'fields'=>array('id', 'name', 'subname', 'plant_id', 'recipe_id', 'units', 'units_display', 'costing_quantity', 'costing_price', 
                 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'notes'),
             'maps'=>array('units_display'=>$maps['ingredient']['units']),
             ),

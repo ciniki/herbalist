@@ -59,6 +59,7 @@ function ciniki_herbalist_ingredientGet($ciniki) {
     if( $args['ingredient_id'] == 0 ) {
         $ingredient = array('id'=>0,
             'name'=>'',
+            'subname'=>'',
             'sorttype'=>0,
             'plant_id'=>'0',
             'recipe_id'=>'0',
@@ -76,6 +77,7 @@ function ciniki_herbalist_ingredientGet($ciniki) {
     else {
         $strsql = "SELECT ciniki_herbalist_ingredients.id, "
             . "ciniki_herbalist_ingredients.name, "
+            . "ciniki_herbalist_ingredients.subname, "
             . "ciniki_herbalist_ingredients.sorttype, "
             . "ciniki_herbalist_ingredients.plant_id, "
             . "ciniki_herbalist_ingredients.recipe_id, "

@@ -20,6 +20,7 @@ function ciniki_herbalist_objects($ciniki) {
 		'table'=>'ciniki_herbalist_ingredients',
 		'fields'=>array(
 			'name'=>array('name'=>'Name'),
+			'subname'=>array('name'=>'Sub Name'),
 			'sorttype'=>array('name'=>'Type'),
             'plant_id'=>array('name'=>'Plant', 'ref'=>'ciniki.herbalist.plant', 'default'=>'0'),
             'recipe_id'=>array('name'=>'Recipe', 'ref'=>'ciniki.herbalist.recipe', 'default'=>'0'),

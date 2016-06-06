@@ -1278,6 +1278,7 @@ function ciniki_herbalist_main() {
     this.ingredient.sections = { 
         'general':{'label':'Ingredient', 'fields':{
             'name':{'label':'Name', 'type':'text'},
+            'subname':{'label':'Latin Name', 'type':'text'},
             'sorttype':{'label':'Type', 'type':'multitoggle', 'toggles':{'30':'Herb', '60':'Liquid', '90':'Misc'}},
             'recipe_id':{'label':'Recipe', 'type':'select', 'options':{'0':'None'}, 'onchangeFn':'M.ciniki_herbalist_main.ingredient.updateForm'},
             'units':{'label':'Units', 'type':'toggle', 'toggles':{'10':'gm', '60':'ml'} },

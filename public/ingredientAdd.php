@@ -22,6 +22,7 @@ function ciniki_herbalist_ingredientAdd(&$ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
         'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'),
+        'subname'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Sub Name'),
         'sorttype'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Type'),
         'plant_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Plant'),
         'recipe_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Recipe'),
