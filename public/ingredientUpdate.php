@@ -19,7 +19,7 @@ function ciniki_herbalist_ingredientUpdate(&$ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
         'ingredient_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Ingredient'),
         'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'),
-        'subname'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Sub Name'),
+        'subname'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sub Name'),
         'sorttype'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Type'),
         'plant_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Plant'),
         'recipe_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Recipe'),

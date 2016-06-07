@@ -1281,11 +1281,11 @@ function ciniki_herbalist_main() {
     this.ingredient.ingredient_id = 0;
     this.ingredient.sections = { 
         'general':{'label':'Ingredient', 'fields':{
-            'name':{'label':'Name', 'type':'text'},
+            'name':{'label':'Name', 'required':'yes', 'type':'text'},
             'subname':{'label':'Latin Name', 'type':'text'},
-            'sorttype':{'label':'Type', 'type':'multitoggle', 'toggles':{'30':'Herb', '60':'Liquid', '90':'Misc'}},
+            'sorttype':{'label':'Type', 'type':'multitoggle', 'required':'yes', 'toggles':{'30':'Herb', '60':'Liquid', '90':'Misc'}},
             'recipe_id':{'label':'Recipe', 'type':'select', 'options':{'0':'None'}, 'onchangeFn':'M.ciniki_herbalist_main.ingredient.updateForm'},
-            'units':{'label':'Units', 'type':'toggle', 'toggles':{'10':'gm', '60':'ml'} },
+            'units':{'label':'Units', 'type':'toggle', 'required':'yes', 'toggles':{'10':'gm', '60':'ml'} },
             }},
         'costing':{'label':'', 'visible':'hidden', 'fields':{
             'costing_quantity':{'label':'Quantity', 'type':'text', 'visible':'hidden', 'size':'small', 'onkeyupFn':'M.ciniki_herbalist_main.ingredient.updateCPU'},
@@ -1355,6 +1355,7 @@ function ciniki_herbalist_main() {
         });
     }
     this.ingredient.save = function() {
+        if( !this.checkForm() ) { return false; }
         if( this.ingredient_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
