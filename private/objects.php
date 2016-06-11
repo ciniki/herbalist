@@ -30,7 +30,7 @@ function ciniki_herbalist_objects($ciniki) {
             'materials_cost_per_unit'=>array('name'=>'Materials Cost per Unit', 'default'=>'0'),
             'time_cost_per_unit'=>array('name'=>'Time Cost per Unit', 'default'=>'0'),
             'total_cost_per_unit'=>array('name'=>'Total Cost per Unit', 'default'=>'0'),
-            'notes'=>array('name'=>'Notes', 'default'=>''),
+            'warnings'=>array('name'=>'Warnings', 'default'=>''),
 			),
 		'history_table'=>'ciniki_herbalist_history',
 		);

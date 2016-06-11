@@ -27,7 +27,7 @@ function ciniki_herbalist_ingredientUpdate(&$ciniki) {
         'costing_quantity'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Purchase Quantity'),
         'costing_price'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Purchase Price'),
         'cost_per_unit'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Cost per Unit'),
-        'notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Notes'),
+        'warnings'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Warnings'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;

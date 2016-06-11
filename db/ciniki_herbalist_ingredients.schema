@@ -35,6 +35,8 @@
 # time_cost_per_unit:           The time cost per 1 unit of ingredient.
 # total_cost_per_unit:          The total cost per 1 unit of ingredient, including materials and time.
 #
+# warnings:                     Any warnings, allergies or contrindications.
+#
 # date_added:		The UTC date and time the record was added.
 # last_updated:		The UTC date and time the record was last updated.
 #
@@ -54,7 +56,7 @@ create table ciniki_herbalist_ingredients (
     materials_cost_per_unit decimal(19,4) not null,
     time_cost_per_unit decimal(19,4) not null,
     total_cost_per_unit decimal(19,4) not null,
-    notes varchar(5000) not null,
+    warnings varchar(5000) not null,
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),

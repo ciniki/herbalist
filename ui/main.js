@@ -1295,8 +1295,8 @@ function ciniki_herbalist_main() {
 //                'time_cost_per_unit':{'label':'Time Cost/Unit', 'type':'text', 'editable':'no'},
             'total_cost_per_unit':{'label':'Total Cost/Unit', 'type':'text', 'visible':'hidden', 'editable':'no'},
             }}, 
-        '_notes':{'label':'Notes', 'fields':{
-            'notes':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'large', 'type':'textarea'},
+        '_warnings':{'label':'Allergies & Warnings', 'fields':{
+            'warnings':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'medium', 'type':'textarea'},
             }},
         '_buttons':{'label':'', 'buttons':{
             'save':{'label':'Save', 'fn':'M.ciniki_herbalist_main.ingredient.save();'},
