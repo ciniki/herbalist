@@ -390,7 +390,8 @@ function ciniki_herbalist_main() {
             p.show(cb);
         });
     }
-    this.product.save = function() {
+    this.product.save = function(cb) {
+        if( cb == null ) { cb = 'M.ciniki_herbalist_main.product.close();'; }
         if( this.product_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
@@ -400,10 +401,10 @@ function ciniki_herbalist_main() {
                             M.api.err(rsp);
                             return false;
                         } 
-                    M.ciniki_herbalist_main.product.close();
+                        eval(cb);
                     });
             } else {
-                this.close();
+                eval(cb);
             }
         } else {
             var c = this.serializeForm('yes');
@@ -413,7 +414,7 @@ function ciniki_herbalist_main() {
                         M.api.err(rsp);
                         return false;
                     } 
-                M.ciniki_herbalist_main.product.close();
+                    eval(cb);
                 });
         }
     };
@@ -428,6 +429,18 @@ function ciniki_herbalist_main() {
             });
         }
     };
+    this.product.nextButtonFn = function() {
+        if( this.nextPrevList != null && this.nextPrevList.indexOf('' + this.product_id) < (this.nextPrevList.length - 1) ) {
+            return 'M.ciniki_herbalist_main.product.save(\'M.ciniki_herbalist_main.product.edit(null,' + this.nextPrevList[this.nextPrevList.indexOf('' + this.product_id) + 1] + ');\');';
+        }
+        return null;
+    }
+    this.product.prevButtonFn = function() {
+        if( this.nextPrevList != null && this.nextPrevList.indexOf('' + this.product_id) > 0 ) {
+            return 'M.ciniki_herbalist_main.product.save(\'M.ciniki_herbalist_main.product.edit(null,' + this.nextPrevList[this.nextPrevList.indexOf('' + this.product_id) - 1] + ');\');';
+        }
+        return null;
+    }
     this.product.addButton('save', 'Save', 'M.ciniki_herbalist_main.product.save();');
     this.product.addClose('Cancel');
     this.product.addButton('next', 'Next');

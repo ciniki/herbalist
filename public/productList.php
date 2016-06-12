@@ -84,12 +84,16 @@ function ciniki_herbalist_productList($ciniki) {
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
+    $product_ids = array();
     if( isset($rc['products']) ) {
         $products = $rc['products'];
+        foreach($products as $product) {
+            $product_ids[] = $product['id'];
+        }
     } else {
         $products = array();
     }
 
-    return array('stat'=>'ok', 'categories'=>$categories, 'products'=>$products);
+    return array('stat'=>'ok', 'categories'=>$categories, 'products'=>$products, 'nextprevlist'=>$product_ids);
 }
 ?>
