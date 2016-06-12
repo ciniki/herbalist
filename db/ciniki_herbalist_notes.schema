@@ -1,0 +1,31 @@
+#
+# Description
+# -----------
+# This table stores the notes for the herbalist module. Each not can be linked to different objects 
+# in the ciniki_herbalist_note_refs table.
+#
+# Fields
+# ------
+# id:				The ID assigned to the recipe.
+# uuid:				The Universal Unique ID.
+# business_id:		The business the recipe is attached to.
+#
+# note_date:        The date for the note.
+#
+# content:          The content of the note.
+#
+# date_added:		The UTC date and time the record was added.
+# last_updated:		The UTC date and time the record was last updated.
+#
+create table ciniki_herbalist_notes (
+	id int not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	note_date date not null,
+    content varchar(10000) not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	unique index (uuid),
+	index sync (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

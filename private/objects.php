@@ -174,6 +174,31 @@ function ciniki_herbalist_objects($ciniki) {
 			),
 		'history_table'=>'ciniki_herbalist_history',
 		);
+	$objects['note'] = array(
+		'name'=>'Note',
+        'o_name'=>'note',
+        'o_container'=>'notes',
+		'sync'=>'yes',
+		'table'=>'ciniki_herbalist_notes',
+		'fields'=>array(
+			'note_date'=>array('name'=>'Date'),
+			'content'=>array('name'=>'Content'),
+			),
+		'history_table'=>'ciniki_herbalist_history',
+		);
+	$objects['noteref'] = array(
+		'name'=>'Note Ref',
+        'o_name'=>'noteref',
+        'o_container'=>'noterefs',
+		'sync'=>'yes',
+		'table'=>'ciniki_herbalist_note_refs',
+		'fields'=>array(
+			'note_id'=>array('name'=>'Note', 'ref'=>'ciniki.herbalist.note'),
+			'object'=>array('name'=>'Object'),
+			'object_id'=>array('name'=>'Object ID'),
+			),
+		'history_table'=>'ciniki_herbalist_history',
+		);
 	$objects['setting'] = array(
 		'type'=>'settings',
 		'name'=>'Herbalist Settings',

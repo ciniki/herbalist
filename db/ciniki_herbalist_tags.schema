@@ -15,6 +15,7 @@
 #
 #                   10 - Product Category
 #                   20 - Product Tag/Keyword
+#                   60 - Note Tag
 #
 # tag_name:         The name of the tag.
 # permalink:        The permalink for the tag.

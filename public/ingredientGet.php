@@ -50,8 +50,8 @@ function ciniki_herbalist_ingredientGet($ciniki) {
     $intl_currency_fmt = numfmt_create($rc['settings']['intl-default-locale'], NumberFormatter::CURRENCY);
     $intl_currency = $rc['settings']['intl-default-currency'];
 
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'datetimeFormat');
-    $datetime_format = ciniki_users_datetimeFormat($ciniki, 'php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
+    $date_format = ciniki_users_dateFormat($ciniki, 'mysql');
 
     //
     // Return default for new Ingredient
@@ -68,6 +68,7 @@ function ciniki_herbalist_ingredientGet($ciniki) {
             'costing_price'=>'0',
             'cost_per_unit'=>'0',
             'warnings'=>'',
+            'notes'=>array(),
         );
     }
 
@@ -107,6 +108,35 @@ function ciniki_herbalist_ingredientGet($ciniki) {
         $ingredient['materials_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $ingredient['materials_cost_per_unit'], $intl_currency);
         $ingredient['time_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $ingredient['time_cost_per_unit'], $intl_currency);
         $ingredient['total_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $ingredient['total_cost_per_unit'], $intl_currency);
+
+        //
+        // Get any notes for this ingredients
+        //
+        $strsql = "SELECT ciniki_herbalist_notes.id, "
+            . "IFNULL(DATE_FORMAT(ciniki_herbalist_notes.note_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS note_date, "
+            . "ciniki_herbalist_notes.content "
+            . "FROM ciniki_herbalist_note_refs "
+            . "LEFT JOIN ciniki_herbalist_notes ON ("
+                . "ciniki_herbalist_note_refs.note_id = ciniki_herbalist_notes.id "
+                . "AND ciniki_herbalist_notes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . ") "
+            . "WHERE ciniki_herbalist_note_refs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_herbalist_note_refs.object = 'ciniki.herbalist.ingredient' "
+            . "AND ciniki_herbalist_note_refs.object_id = '" . ciniki_core_dbQuote($ciniki, $args['ingredient_id']) . "' "
+            . "ORDER BY note_date "
+            . "";
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+        $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
+            array('container'=>'notes', 'fname'=>'id', 'fields'=>array('id', 'note_date', 'content')),
+            ));
+        if( $rc['stat'] != 'ok' ) {
+            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3518', 'msg'=>'Unable to get ingredient notes', 'err'=>$rc['err']));
+        }
+        if( isset($rc['notes']) ) {
+            $ingredient['notes'] = $rc['notes'];
+        } else {
+            $ingredient['notes'] = array();
+        }
     }
 
     //
