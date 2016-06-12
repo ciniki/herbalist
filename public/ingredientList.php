@@ -97,16 +97,19 @@ function ciniki_herbalist_ingredientList($ciniki) {
     }
     if( isset($rc['ingredients']) ) {
         $ingredients = $rc['ingredients'];
+        $ingredient_ids = array();
         foreach($ingredients as $iid => $ingredient) {
             $ingredients[$iid]['materials_cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, $ingredient['materials_cost_per_unit'], $intl_currency) . '/' . $ingredient['units_display'];
             $ingredients[$iid]['time_cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, $ingredient['time_cost_per_unit'], $intl_currency) . '/' . $ingredient['units_display'];
             $ingredients[$iid]['total_cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, $ingredient['total_cost_per_unit'], $intl_currency) . '/' . $ingredient['units_display'];
+            $ingredient_ids[] = $ingredient['id'];
         }
     } else {
         $ingredients = array();
+        $ingredient_ids = array();
     }
 
-    $rsp = array('stat'=>'ok', 'ingredients'=>$ingredients);
+    $rsp = array('stat'=>'ok', 'ingredients'=>$ingredients, 'nextprevlist'=>$ingredient_ids);
 
     //
     // Check if list of labels needs to be returned

@@ -51,15 +51,17 @@ function ciniki_herbalist_noteGet($ciniki) {
     $intl_currency_fmt = numfmt_create($rc['settings']['intl-default-locale'], NumberFormatter::CURRENCY);
     $intl_currency = $rc['settings']['intl-default-currency'];
 
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'datetimeFormat');
-    $datetime_format = ciniki_users_datetimeFormat($ciniki, 'php');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
+    $php_date_format = ciniki_users_dateFormat($ciniki, 'php');
+    $mysql_date_format = ciniki_users_dateFormat($ciniki, 'mysql');
 
     //
     // Return default for new Note
     //
     if( $args['note_id'] == 0 ) {
+        $dt = new DateTime('now', new DateTimeZone($intl_timezone));
         $note = array('id'=>0,
-            'note_date'=>'',
+            'note_date'=>$dt->format($php_date_format),
             'content'=>'',
         );
     }
@@ -69,7 +71,7 @@ function ciniki_herbalist_noteGet($ciniki) {
     //
     else {
         $strsql = "SELECT ciniki_herbalist_notes.id, "
-            . "ciniki_herbalist_notes.note_date, "
+            . "DATE_FORMAT(ciniki_herbalist_notes.note_date, '" . ciniki_core_dbQuote($ciniki, $mysql_date_format) . "') AS note_date, "
             . "ciniki_herbalist_notes.content "
             . "FROM ciniki_herbalist_notes "
             . "WHERE ciniki_herbalist_notes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "

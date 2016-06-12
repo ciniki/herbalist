@@ -70,9 +70,11 @@ function ciniki_herbalist_containerList($ciniki) {
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
+    $container_ids = array();
     if( isset($rc['containers']) ) {
         $containers = $rc['containers'];
         foreach($containers as $cid => $container) {
+            $container_ids[] = $container['id'];
             $containers[$cid]['cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, $container['cost_per_unit'], $intl_currency);
         }
         usort($containers, function($a, $b) { return strnatcmp($a['name'], $b['name']); });
@@ -80,6 +82,6 @@ function ciniki_herbalist_containerList($ciniki) {
         $containers = array();
     }
 
-    return array('stat'=>'ok', 'containers'=>$containers);
+    return array('stat'=>'ok', 'containers'=>$containers, 'nextprevlist'=>$container_ids);
 }
 ?>

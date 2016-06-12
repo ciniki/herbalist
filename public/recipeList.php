@@ -57,12 +57,16 @@ function ciniki_herbalist_recipeList($ciniki) {
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
+    $recipe_ids = array();
     if( isset($rc['recipes']) ) {
         $recipes = $rc['recipes'];
+        foreach($recipes as $recipe) {
+            $recipe_ids[] = $recipe['id'];
+        }
     } else {
         $recipes = array();
     }
 
-    return array('stat'=>'ok', 'recipes'=>$recipes);
+    return array('stat'=>'ok', 'recipes'=>$recipes, 'nextprevlist'=>$recipe_ids);
 }
 ?>

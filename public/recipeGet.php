@@ -105,6 +105,7 @@ function ciniki_herbalist_recipeGet($ciniki) {
         //
         // Get the list of recipe ingredients
         //
+        $recipe['recipeingredient_ids'] = array();
         $strsql = "SELECT ciniki_herbalist_recipe_ingredients.id, "
             . "ciniki_herbalist_recipe_ingredients.recipe_id, "
             . "ciniki_herbalist_recipe_ingredients.ingredient_id, "
@@ -137,6 +138,7 @@ function ciniki_herbalist_recipeGet($ciniki) {
             $recipe['ingredient_types'] = $rc['types'];
             foreach($recipe['ingredient_types'] as $tid => $itype) {    
                 foreach($recipe['ingredient_types'][$tid]['ingredients'] as $iid => $ingredient) {    
+                    $recipe['recipeingredient_ids'][] = $ingredient['id'];
                     $units = '';
                     switch ($ingredient['units']) {
                         case '10': $units = ' gm'; break;

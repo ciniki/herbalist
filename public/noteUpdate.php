@@ -72,10 +72,11 @@ function ciniki_herbalist_noteUpdate(&$ciniki) {
         . "FROM ciniki_herbalist_note_refs "
         . "WHERE ciniki_herbalist_note_refs.note_id = '" . ciniki_core_dbQuote($ciniki, $args['note_id']) . "' "
         . "AND ciniki_herbalist_note_refs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "ORDER BY object, object_id "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.herbalist', array(
-        array('container'=>'objects', 'fname'=>'object', 'fields'=>array()),
-        array('container'=>'refs', 'fname'=>'object_id', 'fields'=>array('id', 'uuid')),
+        array('container'=>'objects', 'fname'=>'object', 'fields'=>array('object')),
+        array('container'=>'refs', 'fname'=>'object_id', 'fields'=>array('id', 'uuid', 'object_id')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -90,7 +91,6 @@ function ciniki_herbalist_noteUpdate(&$ciniki) {
             $objects[$obj] = $refs;
         }
     }
-    error_log(print_r($objects, true));
 
     //
     // Update the ingredient refs
@@ -117,8 +117,7 @@ function ciniki_herbalist_noteUpdate(&$ciniki) {
         // Check for deletions
         //
         foreach($objects['ciniki.herbalist.ingredient']['refs'] as $ref) {
-            error_log('test');
-            if( !isset($args['ingredients'][$ref['id']]) ) {
+            if( !in_array($ref['object_id'], $args['ingredients']) ) {
                 $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', $ref['id'], $ref['uuid'], 0x04);
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
