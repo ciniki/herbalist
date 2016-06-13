@@ -94,6 +94,7 @@ function ciniki_herbalist_noteGet($ciniki) {
             . "FROM ciniki_herbalist_note_refs "
             . "WHERE ciniki_herbalist_note_refs.note_id = '" . ciniki_core_dbQuote($ciniki, $args['note_id']) . "' "
             . "AND ciniki_herbalist_note_refs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "ORDER BY object, object_id "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.herbalist', array(
@@ -108,9 +109,11 @@ function ciniki_herbalist_noteGet($ciniki) {
         if( isset($rc['objects']) ) {
             if( isset($rc['objects']['ciniki.herbalist.ingredient']['refs']) ) {
                 $note['ingredients'] = $rc['objects']['ciniki.herbalist.ingredient']['refs'];
-            } elseif( isset($rc['objects']['ciniki.herbalist.action']['refs']) ) {
+            } 
+            if( isset($rc['objects']['ciniki.herbalist.action']['refs']) ) {
                 $note['actions'] = $rc['objects']['ciniki.herbalist.action']['refs'];
-            } elseif( isset($rc['objects']['ciniki.herbalist.ailment']['refs']) ) {
+            } 
+            if( isset($rc['objects']['ciniki.herbalist.ailment']['refs']) ) {
                 $note['ailments'] = $rc['objects']['ciniki.herbalist.ailment']['refs'];
             }
         }
@@ -167,7 +170,7 @@ function ciniki_herbalist_noteGet($ciniki) {
 		} else {
             $rsp['ingredients'] = array();
         }
-/*
+
         //
         // Get the list of actions
         //
@@ -209,7 +212,7 @@ function ciniki_herbalist_noteGet($ciniki) {
 		} else {
             $rsp['ailments'] = array();
         }
-*/
+
         //
         // Get the categories
         //
@@ -217,7 +220,7 @@ function ciniki_herbalist_noteGet($ciniki) {
         $strsql = "SELECT DISTINCT tag_name FROM ciniki_herbalist_tags WHERE tag_type = 60 AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' ";
         $rc = ciniki_core_dbQueryList($ciniki, $strsql, 'ciniki.herbalist', 'tags', 'tag_name');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3471', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3518', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
         }
         if( isset($rc['tags']) ) {
             $rsp['tags'] = $rc['tags'];

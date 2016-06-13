@@ -12,6 +12,30 @@
 function ciniki_herbalist_objects($ciniki) {
 	
 	$objects = array();
+	$objects['action'] = array(
+		'name'=>'Action',
+        'o_name'=>'action',
+        'o_container'=>'actions',
+		'sync'=>'yes',
+		'table'=>'ciniki_herbalist_actions',
+		'fields'=>array(
+			'name'=>array('name'=>'Name'),
+            'description'=>array('name'=>'Description', 'default'=>''),
+			),
+		'history_table'=>'ciniki_herbalist_history',
+		);
+	$objects['ailment'] = array(
+		'name'=>'Ailment',
+        'o_name'=>'ailment',
+        'o_container'=>'ailments',
+		'sync'=>'yes',
+		'table'=>'ciniki_herbalist_ailments',
+		'fields'=>array(
+			'name'=>array('name'=>'Name'),
+            'description'=>array('name'=>'Description', 'default'=>''),
+			),
+		'history_table'=>'ciniki_herbalist_history',
+		);
 	$objects['ingredient'] = array(
 		'name'=>'Ingredient',
         'o_name'=>'ingredient',
@@ -183,6 +207,8 @@ function ciniki_herbalist_objects($ciniki) {
 		'fields'=>array(
 			'note_date'=>array('name'=>'Date'),
 			'content'=>array('name'=>'Content'),
+			'keywords'=>array('name'=>'Keywords', 'default'=>''),
+			'keywords_index'=>array('name'=>'Keywords Index', 'default'=>''),
 			),
 		'history_table'=>'ciniki_herbalist_history',
 		);

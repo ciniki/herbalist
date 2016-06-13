@@ -1,0 +1,30 @@
+#
+# Description
+# -----------
+# This table stores the ailments that an ingredient can have.
+#
+# Fields
+# ------
+# id:				The ID assigned to the ailment.
+# uuid:				The Universal Unique ID.
+# business_id:		The business the ailment is attached to.
+#
+# name:				The name for the actio.
+#
+# description:      The description for the ailment.
+#
+# date_added:		The UTC date and time the record was added.
+# last_updated:		The UTC date and time the record was last updated.
+#
+create table ciniki_herbalist_ailments (
+	id int not null auto_increment,
+	uuid char(36) not null,
+	business_id int not null,
+	name varchar(150) not null,
+    description varchar(5000) not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (id),
+	unique index (uuid),
+	index sync (business_id, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

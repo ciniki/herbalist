@@ -53,12 +53,12 @@ function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id
             $time_cost = bcadd($time_cost, bcmul($recipe['production_time'], $minute_wage, 10), 10);
         }
     
-        if( $materials_cost > 0 ) {
+        if( $materials_cost > 0 && $recipe['yield'] > 0 ) {
             $materials_cost_per_unit = bcdiv($materials_cost, $recipe['yield'], 10);
         } else {
             $materials_cost_per_unit = 0;
         }
-        if( $time_cost > 0 ) {
+        if( $time_cost > 0 && $recipe['yield'] > 0 ) {
             $time_cost_per_unit = bcdiv($time_cost, $recipe['yield'], 10);
         } else {
             $time_cost_per_unit = 0;

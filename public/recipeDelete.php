@@ -104,10 +104,32 @@ function ciniki_herbalist_recipeDelete(&$ciniki) {
     }
 
     //
+    // Remove the recipe ingredients
+    //
+    $strsql = "SELECT id, uuid "
+        . "FROM ciniki_herbalist_recipe_ingredients "
+        . "WHERE recipe_id = '" . ciniki_core_dbQuote($ciniki, $args['recipe_id']) . "' "
+        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "";
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'ingredient');
+    if( $rc['stat'] != 'ok' ) {
+        ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
+        return $rc;
+    }
+    if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
+        foreach($rc['rows'] as $row) {
+            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.recipeingredient', $row['id'], $row['uuid'], 0x04);
+            if( $rc['stat'] != 'ok' ) {
+                ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
+                return $rc;
+            }
+        }
+    }
+
+    //
     // Remove the recipe
     //
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.recipe',
-        $args['recipe_id'], $recipe['uuid'], 0x04);
+    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.recipe', $args['recipe_id'], $recipe['uuid'], 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
         return $rc;

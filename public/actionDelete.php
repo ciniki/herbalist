@@ -2,27 +2,27 @@
 //
 // Description
 // -----------
-// This method will delete an ingredient.
+// This method will delete an action.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:            The ID of the business the ingredient is attached to.
-// ingredient_id:            The ID of the ingredient to be removed.
+// business_id:            The ID of the business the action is attached to.
+// action_id:            The ID of the action to be removed.
 //
 // Returns
 // -------
 // <rsp stat="ok">
 //
-function ciniki_herbalist_ingredientDelete(&$ciniki) {
+function ciniki_herbalist_actionDelete(&$ciniki) {
     //
     // Find all the required and optional arguments
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
-        'ingredient_id'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Ingredient'),
+        'action_id'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Action'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -33,44 +33,27 @@ function ciniki_herbalist_ingredientDelete(&$ciniki) {
     // Check access to business_id as owner
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.ingredientDelete');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.actionDelete');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Get the current settings for the ingredient
+    // Get the current settings for the action
     //
     $strsql = "SELECT id, uuid "
-        . "FROM ciniki_herbalist_ingredients "
+        . "FROM ciniki_herbalist_actions "
         . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-        . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['ingredient_id']) . "' "
+        . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['action_id']) . "' "
         . "";
-    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'ingredient');
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'action');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
-    if( !isset($rc['ingredient']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3390', 'msg'=>'Ingredient does not exist.'));
+    if( !isset($rc['action']) ) {
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3519', 'msg'=>'Action does not exist.'));
     }
-    $ingredient = $rc['ingredient'];
-
-    //
-    // Check to make sure the ingredient is not used in any recipes
-    //
-    $strsql = "SELECT COUNT(*) AS num_recipes "
-        . "FROM ciniki_herbalist_recipe_ingredients "
-        . "WHERE ingredient_id = '" . ciniki_core_dbQuote($ciniki, $args['ingredient_id']) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-        . "";
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
-    $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.herbalist', 'num');
-    if( $rc['stat'] != 'ok' ) {
-        return $rc;
-    }
-    if( $rc['num'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3444', 'msg'=>'You still have ' . $rc['num'] . ' recipe' . ($rc['num']>1?'s':'') .' using this ingredient.'));
-    }
+    $action = $rc['action'];
 
     //
     // Start transaction
@@ -90,16 +73,16 @@ function ciniki_herbalist_ingredientDelete(&$ciniki) {
     // Remove any note references
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'objectNotesRefsDelete');
-    $rc = ciniki_herbalist_objectNotesRefsDelete($ciniki, $args['business_id'], 'ciniki.herbalist.ingredient', $args['ingredient_id']);
+    $rc = ciniki_herbalist_objectNotesRefsDelete($ciniki, $args['business_id'], 'ciniki.herbalist.action', $args['action_id']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Remove the ingredient
+    // Remove the action
     //
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.ingredient',
-        $args['ingredient_id'], $ingredient['uuid'], 0x04);
+    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.action',
+        $args['action_id'], $action['uuid'], 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
         return $rc;

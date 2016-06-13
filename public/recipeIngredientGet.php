@@ -89,25 +89,10 @@ function ciniki_herbalist_recipeIngredientGet($ciniki) {
         //
         // Get any notes for this ingredients
         //
-        $strsql = "SELECT ciniki_herbalist_notes.id, "
-            . "IFNULL(DATE_FORMAT(ciniki_herbalist_notes.note_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS note_date, "
-            . "ciniki_herbalist_notes.content "
-            . "FROM ciniki_herbalist_note_refs "
-            . "LEFT JOIN ciniki_herbalist_notes ON ("
-                . "ciniki_herbalist_note_refs.note_id = ciniki_herbalist_notes.id "
-                . "AND ciniki_herbalist_notes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-                . ") "
-            . "WHERE ciniki_herbalist_note_refs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-            . "AND ciniki_herbalist_note_refs.object = 'ciniki.herbalist.ingredient' "
-            . "AND ciniki_herbalist_note_refs.object_id = '" . ciniki_core_dbQuote($ciniki, $recipeingredient['ingredient_id']) . "' "
-            . "ORDER BY note_date "
-            . "";
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
-        $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
-            array('container'=>'notes', 'fname'=>'id', 'fields'=>array('id', 'note_date', 'content')),
-            ));
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'objectNotes');
+        $rc = ciniki_herbalist_objectNotes($ciniki, $args['business_id'], 'ciniki.herbalist.ingredient', $recipeingredient['ingredient_id']);
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3518', 'msg'=>'Unable to get ingredient notes', 'err'=>$rc['err']));
+            return $rc;
         }
         if( isset($rc['notes']) ) {
             $recipeingredient['notes'] = $rc['notes'];
