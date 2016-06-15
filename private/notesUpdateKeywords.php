@@ -15,6 +15,10 @@
 // -------
 //
 function ciniki_herbalist_notesUpdateKeywords($ciniki, $business_id) {
+    
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList2');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
 
     //
     // Get the list of notes
@@ -33,7 +37,6 @@ function ciniki_herbalist_notesUpdateKeywords($ciniki, $business_id) {
         . "WHERE ciniki_herbalist_notes.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
         . "ORDER BY ciniki_herbalist_notes.id, object, object_id "
         . "";
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'notes', 'fname'=>'id', 'fields'=>array('id', 'content', 'keywords', 'keywords_index')),
         array('container'=>'objects', 'fname'=>'object', 'fields'=>array('object')),
@@ -73,7 +76,6 @@ function ciniki_herbalist_notesUpdateKeywords($ciniki, $business_id) {
         . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
         . "ORDER BY id "
         . "";
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList2');
     $rc = ciniki_core_dbQueryList2($ciniki, $strsql, 'ciniki.herbalist', 'ingredients');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -88,7 +90,6 @@ function ciniki_herbalist_notesUpdateKeywords($ciniki, $business_id) {
         . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
         . "ORDER BY id "
         . "";
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList2');
     $rc = ciniki_core_dbQueryList2($ciniki, $strsql, 'ciniki.herbalist', 'actions');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -103,7 +104,6 @@ function ciniki_herbalist_notesUpdateKeywords($ciniki, $business_id) {
         . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
         . "ORDER BY id "
         . "";
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList2');
     $rc = ciniki_core_dbQueryList2($ciniki, $strsql, 'ciniki.herbalist', 'ailments');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
