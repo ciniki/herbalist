@@ -109,6 +109,15 @@ function ciniki_herbalist_productUpdate(&$ciniki) {
         return $rc;
     }
 
+	//
+	// Update the note keywords
+	//
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'notesUpdateKeywords');
+    $rc = ciniki_herbalist_notesUpdateKeywords($ciniki, $args['business_id']);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+
     //
     // Update the last_change date in the business modules
     // Ignore the result, as we don't want to stop user updates if this fails.

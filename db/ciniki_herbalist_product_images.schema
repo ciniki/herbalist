@@ -14,7 +14,7 @@
 # name:				The name for the image.
 # permalink:		The permalink for the image, to be used in the url.
 #
-# webflags:			The flags for displaying on the website.  
+# flags:			The flags for displaying on the website.  
 #
 #					0x01 - Visible, show on the website
 #

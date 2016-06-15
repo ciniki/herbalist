@@ -62,12 +62,12 @@ function ciniki_herbalist_productGet($ciniki) {
             'name'=>'',
             'permalink'=>'',
             'flags'=>0x01,
-            'notes'=>'',
             'primary_image_id'=>'0',
             'synopsis'=>'',
             'description'=>'',
             'ingredients'=>'',
             'versions'=>array(),
+            'notes'=>array(),
         );
     }
 
@@ -80,7 +80,6 @@ function ciniki_herbalist_productGet($ciniki) {
             . "ciniki_herbalist_products.permalink, "
             . "ciniki_herbalist_products.flags, "
             . "ciniki_herbalist_products.category, "
-            . "ciniki_herbalist_products.notes, "
             . "ciniki_herbalist_products.primary_image_id, "
             . "ciniki_herbalist_products.synopsis, "
             . "ciniki_herbalist_products.description, "
@@ -203,6 +202,19 @@ function ciniki_herbalist_productGet($ciniki) {
             }
         }
 
+        //
+        // Get any notes for this product
+        //
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'objectNotes');
+        $rc = ciniki_herbalist_objectNotes($ciniki, $args['business_id'], 'ciniki.herbalist.product', $args['product_id']);
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['notes']) ) {
+            $product['notes'] = $rc['notes'];
+        } else {
+            $product['notes'] = array();
+        }
     }
 
     //

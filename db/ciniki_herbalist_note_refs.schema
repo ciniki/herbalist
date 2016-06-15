@@ -16,6 +16,8 @@
 #                   ciniki.herbalist.ingredient
 #                   ciniki.herbalist.action
 #                   ciniki.herbalist.ailment
+#                   ciniki.herbalist.recipe
+#                   ciniki.herbalist.product
 #
 # object_id:        The ID of the object.
 #

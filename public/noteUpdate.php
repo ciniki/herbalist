@@ -23,6 +23,8 @@ function ciniki_herbalist_noteUpdate(&$ciniki) {
         'ingredients'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Ingredients'),
         'actions'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Actions'),
         'ailments'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Ailments'),
+        'recipes'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Recipes'),
+        'products'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Products'),
         'tags'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Tags'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -93,102 +95,46 @@ function ciniki_herbalist_noteUpdate(&$ciniki) {
     }
 
     //
-    // Update the ingredient refs
+    // Update the refs
     //
-    if( isset($args['ingredients']) ) {
+    $reftypes = array(
+        'ingredients'=>'ciniki.herbalist.ingredient',
+        'actions'=>'ciniki.herbalist.action',
+        'ailments'=>'ciniki.herbalist.ailment',
+        'recipes'=>'ciniki.herbalist.recipe',
+        'products'=>'ciniki.herbalist.product',
+        );
+    foreach($reftypes as $arg => $object) {
         //
-        // Check for additions
+        // Update the ingredient refs
         //
-        foreach($args['ingredients'] as $ingredient_id) {
-            if( !isset($objects['ciniki.herbalist.ingredient']['refs'][$ingredient_id]) ) {
-                $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', array(
-                    'note_id'=>$args['note_id'],
-                    'object'=>'ciniki.herbalist.ingredient',
-                    'object_id'=>$ingredient_id,
-                    ), 0x04);
-                if( $rc['stat'] != 'ok' ) {
-                    ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
-                    return $rc;
+        if( isset($args[$arg]) ) {
+            //
+            // Check for additions
+            //
+            foreach($args[$arg] as $ref_id) {
+                if( !isset($objects[$object]['refs'][$ref_id]) ) {
+                    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', array(
+                        'note_id'=>$args['note_id'],
+                        'object'=>$object,
+                        'object_id'=>$ref_id,
+                        ), 0x04);
+                    if( $rc['stat'] != 'ok' ) {
+                        ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
+                        return $rc;
+                    }
                 }
             }
-        }
 
-        //
-        // Check for deletions
-        //
-        foreach($objects['ciniki.herbalist.ingredient']['refs'] as $ref) {
-            if( !in_array($ref['object_id'], $args['ingredients']) ) {
-                $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', $ref['id'], $ref['uuid'], 0x04);
-                if( $rc['stat'] != 'ok' ) {
-                    return $rc;
-                }
-            }
-        }
-    }
-
-    //
-    // Update the action refs
-    //
-    if( isset($args['actions']) ) {
-        //
-        // Check for additions
-        //
-        foreach($args['actions'] as $action_id) {
-            if( !isset($objects['ciniki.herbalist.action']['refs'][$action_id]) ) {
-                $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', array(
-                    'note_id'=>$args['note_id'],
-                    'object'=>'ciniki.herbalist.action',
-                    'object_id'=>$action_id,
-                    ), 0x04);
-                if( $rc['stat'] != 'ok' ) {
-                    ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
-                    return $rc;
-                }
-            }
-        }
-
-        //
-        // Check for deletions
-        //
-        foreach($objects['ciniki.herbalist.action']['refs'] as $ref) {
-            if( !in_array($ref['object_id'], $args['actions']) ) {
-                $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', $ref['id'], $ref['uuid'], 0x04);
-                if( $rc['stat'] != 'ok' ) {
-                    return $rc;
-                }
-            }
-        }
-    }
-
-    //
-    // Update the ailment refs
-    //
-    if( isset($args['ailments']) ) {
-        //
-        // Check for additions
-        //
-        foreach($args['ailments'] as $ailment_id) {
-            if( !isset($objects['ciniki.herbalist.ailment']['refs'][$ailment_id]) ) {
-                $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', array(
-                    'note_id'=>$args['note_id'],
-                    'object'=>'ciniki.herbalist.ailment',
-                    'object_id'=>$ailment_id,
-                    ), 0x04);
-                if( $rc['stat'] != 'ok' ) {
-                    ciniki_core_dbTransailmentRollback($ciniki, 'ciniki.herbalist');
-                    return $rc;
-                }
-            }
-        }
-
-        //
-        // Check for deletions
-        //
-        foreach($objects['ciniki.herbalist.ailment']['refs'] as $ref) {
-            if( !in_array($ref['object_id'], $args['ailments']) ) {
-                $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', $ref['id'], $ref['uuid'], 0x04);
-                if( $rc['stat'] != 'ok' ) {
-                    return $rc;
+            //
+            // Check for deletions
+            //
+            foreach($objects[$object]['refs'] as $ref) {
+                if( !in_array($ref['object_id'], $args[$arg]) ) {
+                    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', $ref['id'], $ref['uuid'], 0x04);
+                    if( $rc['stat'] != 'ok' ) {
+                        return $rc;
+                    }
                 }
             }
         }

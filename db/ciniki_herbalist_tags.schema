@@ -9,13 +9,13 @@
 # uuid:				The Universal Unique ID.
 # business_id:		The business the ingredient is attached to.
 #
-# object_id:        The ID for the herbalist object the tag is attached to.
+# ref_id:           The ID for the herbalist object the tag is attached to.
 #
 # tag_type:         The type of the tag.
 #
-#                   10 - Product Category
-#                   20 - Product Tag/Keyword
-#                   60 - Note Tag
+#                   10 - Product Category, used for object ciniki.herbalist.product
+#                   20 - Product Tag/Keyword, used for object ciniki.herbalist.product **future**
+#                   60 - Note Tag, used for additional tags on notes, object ciniki.herbalist.note
 #
 # tag_name:         The name of the tag.
 # permalink:        The permalink for the tag.

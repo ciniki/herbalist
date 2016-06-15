@@ -116,6 +116,12 @@ function ciniki_herbalist_noteGet($ciniki) {
             if( isset($rc['objects']['ciniki.herbalist.ailment']['refs']) ) {
                 $note['ailments'] = $rc['objects']['ciniki.herbalist.ailment']['refs'];
             }
+            if( isset($rc['objects']['ciniki.herbalist.recipe']['refs']) ) {
+                $note['recipes'] = $rc['objects']['ciniki.herbalist.recipe']['refs'];
+            }
+            if( isset($rc['objects']['ciniki.herbalist.product']['refs']) ) {
+                $note['products'] = $rc['objects']['ciniki.herbalist.product']['refs'];
+            }
         }
 
         //
@@ -211,6 +217,48 @@ function ciniki_herbalist_noteGet($ciniki) {
 			$rsp['ailments'] = $rc['ailments'];
 		} else {
             $rsp['ailments'] = array();
+        }
+
+        //
+        // Get the list of recipes
+        //
+		$strsql = "SELECT ciniki_herbalist_recipes.id, "
+			. "ciniki_herbalist_recipes.name "
+			. "FROM ciniki_herbalist_recipes "
+			. "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "ORDER BY ciniki_herbalist_recipes.name "
+			. "";
+		$rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
+			array('container'=>'recipes', 'fname'=>'id', 'fields'=>array('id', 'name')),
+		));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['recipes']) ) {
+			$rsp['recipes'] = $rc['recipes'];
+		} else {
+            $rsp['recipes'] = array();
+        }
+
+        //
+        // Get the list of products
+        //
+		$strsql = "SELECT ciniki_herbalist_products.id, "
+			. "ciniki_herbalist_products.name "
+			. "FROM ciniki_herbalist_products "
+			. "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+			. "ORDER BY ciniki_herbalist_products.name "
+			. "";
+		$rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
+			array('container'=>'products', 'fname'=>'id', 'fields'=>array('id', 'name')),
+		));
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		if( isset($rc['products']) ) {
+			$rsp['products'] = $rc['products'];
+		} else {
+            $rsp['products'] = array();
         }
 
         //

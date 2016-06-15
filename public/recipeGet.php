@@ -83,8 +83,7 @@ function ciniki_herbalist_recipeGet($ciniki) {
             . "ciniki_herbalist_recipes.production_time, "
             . "ciniki_herbalist_recipes.materials_cost_per_unit, "
             . "ciniki_herbalist_recipes.time_cost_per_unit, "
-            . "ciniki_herbalist_recipes.total_cost_per_unit, "
-            . "ciniki_herbalist_recipes.notes "
+            . "ciniki_herbalist_recipes.total_cost_per_unit "
             . "FROM ciniki_herbalist_recipes "
             . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
             . "AND ciniki_herbalist_recipes.id = '" . ciniki_core_dbQuote($ciniki, $args['recipe_id']) . "' "
@@ -190,6 +189,20 @@ function ciniki_herbalist_recipeGet($ciniki) {
             }
         } else {
             $recipe['batches'] = array();
+        }
+
+        //
+        // Get any notes for this recipe
+        //
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'objectNotes');
+        $rc = ciniki_herbalist_objectNotes($ciniki, $args['business_id'], 'ciniki.herbalist.recipe', $args['recipe_id']);
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['notes']) ) {
+            $recipe['notes'] = $rc['notes'];
+        } else {
+            $recipe['notes'] = array();
         }
     }
 

@@ -26,6 +26,8 @@ function ciniki_herbalist_noteAdd(&$ciniki) {
         'ingredients'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Ingredients'),
         'actions'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Actions'),
         'ailments'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Ailments'),
+        'recipes'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Recipes'),
+        'products'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'idlist', 'name'=>'Products'),
         'tags'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Tags'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -108,6 +110,40 @@ function ciniki_herbalist_noteAdd(&$ciniki) {
                 'note_id'=>$note_id,
                 'object'=>'ciniki.herbalist.ailment',
                 'object_id'=>$ailment_id,
+                ), 0x04);
+            if( $rc['stat'] != 'ok' ) {
+                ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
+                return $rc;
+            }
+        }
+    }
+
+    //
+    // Add any recipe references
+    //
+    if( isset($args['recipes']) ) {
+        foreach($args['recipes'] as $recipe_id) {
+            $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', array(
+                'note_id'=>$note_id,
+                'object'=>'ciniki.herbalist.recipe',
+                'object_id'=>$recipe_id,
+                ), 0x04);
+            if( $rc['stat'] != 'ok' ) {
+                ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
+                return $rc;
+            }
+        }
+    }
+
+    //
+    // Add any product references
+    //
+    if( isset($args['products']) ) {
+        foreach($args['products'] as $product_id) {
+            $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', array(
+                'note_id'=>$note_id,
+                'object'=>'ciniki.herbalist.product',
+                'object_id'=>$product_id,
                 ), 0x04);
             if( $rc['stat'] != 'ok' ) {
                 ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');

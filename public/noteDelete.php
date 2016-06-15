@@ -70,10 +70,30 @@ function ciniki_herbalist_noteDelete(&$ciniki) {
     }
 
     //
+    // Remove all references for the note
+    //
+    $strsql = "SELECT id, uuid "
+        . "FROM ciniki_herbalist_note_refs "
+        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND note_id = '" . ciniki_core_dbQuote($ciniki, $args['note_id']) . "' "
+        . "";
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'item');
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
+        foreach($rc['rows'] as $row) {  
+            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', $row['id'], $row['uuid'], 0x04);
+            if( $rc['stat'] != 'ok' ) {
+                return $rc;
+            }
+        }
+    }
+
+    //
     // Remove the note
     //
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.note',
-        $args['note_id'], $note['uuid'], 0x04);
+    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.note', $args['note_id'], $note['uuid'], 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
         return $rc;

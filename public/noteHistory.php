@@ -44,6 +44,11 @@ function ciniki_herbalist_noteHistory($ciniki) {
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
+    
+    if( $args['field'] == 'note_date' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistoryReformat');
+        return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'ciniki.herbalist', 'ciniki_herbalist_history', $args['business_id'], 'ciniki_herbalist_notes', $args['note_id'], $args['field'], 'date');
+    }
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');
     return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.herbalist', 'ciniki_herbalist_history', $args['business_id'], 'ciniki_herbalist_notes', $args['note_id'], $args['field']);

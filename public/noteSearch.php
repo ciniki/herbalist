@@ -40,9 +40,11 @@ function ciniki_herbalist_noteSearch($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
     $mysql_date_format = ciniki_users_dateFormat($ciniki, 'mysql');
 
-    $keywords = explode(' ', $args['search_str']);
+    $keywords = explode(' ', trim($args['search_str']));
     sort($keywords);
     $keywords = implode('% ', $keywords);
+
+    error_log($keywords);
 
     //
     // Get the list of notes

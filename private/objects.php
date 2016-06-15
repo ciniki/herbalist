@@ -72,7 +72,6 @@ function ciniki_herbalist_objects($ciniki) {
             'materials_cost_per_unit'=>array('name'=>'Materials Cost per Unit', 'default'=>'0'),
             'time_cost_per_unit'=>array('name'=>'Time Cost per Unit', 'default'=>'0'),
             'total_cost_per_unit'=>array('name'=>'Total Cost per Unit', 'default'=>'0'),
-            'notes'=>array('name'=>'Notes', 'default'=>''),
 			),
 		'history_table'=>'ciniki_herbalist_history',
 		);
@@ -150,7 +149,6 @@ function ciniki_herbalist_objects($ciniki) {
             'permalink'=>array('name'=>'Permalink'),
             'flags'=>array('name'=>'Options', 'default'=>'0'),
             'category'=>array('name'=>'Category', 'default'=>''),
-            'notes'=>array('name'=>'Notes', 'default'=>''),
             'primary_image_id'=>array('name'=>'Image', 'default'=>'0'),
             'synopsis'=>array('name'=>'Synopsis', 'default'=>''),
             'description'=>array('name'=>'Description', 'default'=>''),

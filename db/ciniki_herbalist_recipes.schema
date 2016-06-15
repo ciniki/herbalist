@@ -25,8 +25,6 @@
 # time_cost_per_unit:       The cost of time for 1 unit of ingredient.
 # total_cost_per_unit:      The cost per 1 unit of ingredient, including materials and time.
 #
-# notes:            The notes for the recipe.
-#
 # date_added:		The UTC date and time the record was added.
 # last_updated:		The UTC date and time the record was last updated.
 #
@@ -41,7 +39,6 @@ create table ciniki_herbalist_recipes (
     materials_cost_per_unit decimal(19,4) not null,
     time_cost_per_unit decimal(19,4) not null,
     total_cost_per_unit decimal(19,4) not null,
-    notes varchar(10000) not null,
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),

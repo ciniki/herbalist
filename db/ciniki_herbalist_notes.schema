@@ -14,6 +14,10 @@
 #
 # content:          The content of the note.
 #
+# keywords:         The keywords are a combination of ingredients, ailments, actions and tags for a note.
+#
+# keywords_index:   The keywords with commas removed, and sorted and duplicate words removed. This is used for searching notes by keyword.
+#
 # date_added:		The UTC date and time the record was added.
 # last_updated:		The UTC date and time the record was last updated.
 #
