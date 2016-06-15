@@ -22,6 +22,7 @@ function ciniki_herbalist_recipeAdd(&$ciniki) {
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
         'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'),
+        'flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Options'),
         'units'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Units'),
         'yield'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Yield'),
         'production_time'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Production Time'),

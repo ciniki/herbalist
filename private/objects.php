@@ -66,6 +66,7 @@ function ciniki_herbalist_objects($ciniki) {
 		'table'=>'ciniki_herbalist_recipes',
 		'fields'=>array(
 			'name'=>array('name'=>'Name'),
+            'flags'=>array('name'=>'Options'),
             'units'=>array('name'=>'Units'),
             'yield'=>array('name'=>'Yield', 'default'=>'0'),
             'production_time'=>array('name'=>'Production Time', 'default'=>'0'),
@@ -97,6 +98,8 @@ function ciniki_herbalist_objects($ciniki) {
 		'fields'=>array(
             'recipe_id'=>array('name'=>'Recipe', 'ref'=>'ciniki.herbalist.recipe'),
             'production_date'=>array('name'=>'Production Date'),
+            'pressing_date'=>array('name'=>'Pressing Date'),
+            'status'=>array('name'=>'Status', 'default'=>'60'),
             'size'=>array('name'=>'Size'),
             'yield'=>array('name'=>'Yield'),
             'production_time'=>array('name'=>'Production Time'),

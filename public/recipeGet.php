@@ -61,6 +61,7 @@ function ciniki_herbalist_recipeGet($ciniki) {
     if( $args['recipe_id'] == 0 ) {
         $recipe = array('id'=>0,
             'name'=>'',
+            'flags'=>0,
             'units'=>'',
             'yield'=>'',
             'production_time'=>'',
@@ -78,6 +79,7 @@ function ciniki_herbalist_recipeGet($ciniki) {
     else {
         $strsql = "SELECT ciniki_herbalist_recipes.id, "
             . "ciniki_herbalist_recipes.name, "
+            . "ciniki_herbalist_recipes.flags, "
             . "ciniki_herbalist_recipes.units, "
             . "ciniki_herbalist_recipes.yield, "
             . "ciniki_herbalist_recipes.production_time, "

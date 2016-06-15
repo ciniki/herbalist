@@ -23,6 +23,8 @@ function ciniki_herbalist_recipeBatchAdd(&$ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
         'recipe_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Recipe'),
         'production_date'=>array('required'=>'yes', 'blank'=>'no', 'type'=>'date', 'name'=>'Production Date'),
+        'pressing_date'=>array('required'=>'yes', 'blank'=>'yes', 'type'=>'date', 'name'=>'Pressing Date'),
+        'status'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Status'),
         'size'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Size'),
         'yield'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Yield'),
         'production_time'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Production Time'),

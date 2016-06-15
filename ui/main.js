@@ -752,6 +752,9 @@ function ciniki_herbalist_main() {
         '_name':{'label':'Recipe Name', 'aside':'yes', 'fields':{
             'name':{'label':'', 'hidelabel':'yes', 'type':'text'},
             }},
+        '_options':{'label':'Options', 'aside':'yes', 'fields':{
+            'flags_1':{'label':'Pressing', 'type':'flagtoggle', 'bit':0x01, 'field':'flags', 'default':'no'},
+            }},
         '_yield':{'label':'Expected Yield', 'aside':'yes',
             'fields':{
                 'yield':{'label':'Yield', 'type':'text', 'size':'small', 'onkeyupFn':'M.ciniki_herbalist_main.recipe.updateCPU'},
@@ -1149,7 +1152,14 @@ function ciniki_herbalist_main() {
     this.recipebatch.batch_id = 0;
     this.recipebatch.sections = { 
         'general':{'label':'Batch', 'aside':'yes', 'fields':{
-            'production_date':{'label':'Date', 'type':'date', 'size':'small'},
+            'production_date':{'label':'Made', 'type':'date', 'size':'small'},
+            'pressing_date':{'label':'Pressed', 'type':'date', 'size':'small',
+                'visible':function() {return ((M.ciniki_herbalist_main.recipebatch.data.recipeflags&0x01) > 0 ? 'yes' : 'no'); },
+                },
+            'status':{'label':'Status', 'type':'toggle', 'default':'10',
+                'visible':function() {return ((M.ciniki_herbalist_main.recipebatch.data.recipeflags&0x01) > 0 ? 'yes' : 'no'); },
+                'toggles':{'10':'Started', '60':'Completed'},
+                },
             'size':{'label':'Size', 'type':'text', 'size':'small', 'onkeyupFn':'M.ciniki_herbalist_main.recipebatch.updateCPU'},
             'yield':{'label':'Yield', 'type':'text', 'size':'small', 'onkeyupFn':'M.ciniki_herbalist_main.recipebatch.updateCPU'},
             'production_time':{'label':'Time', 'type':'text', 'size':'small', 'onkeyupFn':'M.ciniki_herbalist_main.recipebatch.updateCPU'},

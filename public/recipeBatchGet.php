@@ -85,6 +85,8 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         $batch = array('id'=>0,
             'recipe_id'=>$args['recipe_id'],
             'production_date'=>'',
+            'pressing_date'=>'',
+            'status'=>'60',
             'size'=>1,
             'yield'=>'',
             'production_time'=>'',
@@ -96,7 +98,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         $dt = new DateTime('now', new DateTimeZone($intl_timezone));
         $batch['production_date'] = $dt->format($date_format);
 
-        $strsql = "SELECT yield, production_time "
+        $strsql = "SELECT flags, yield, production_time "
             . "FROM ciniki_herbalist_recipes "
             . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
             . "AND ciniki_herbalist_recipes.id = '" . ciniki_core_dbQuote($ciniki, $args['recipe_id']) . "' "
@@ -108,6 +110,10 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         if( isset($rc['recipe']) ) {
             $batch['yield'] = $rc['recipe']['yield'];
             $batch['production_time'] = $rc['recipe']['production_time'];
+            $batch['recipeflags'] = $rc['recipe']['flags'];
+            if( ($batch['recipeflags']&0x01) == 0x01 ) {
+                $batch['status'] = 10;
+            }
         }
     }
 
@@ -141,7 +147,26 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
 
         $dt = new DateTime($batch['production_date'], new DateTimeZone('UTC'));
         $batch['production_date'] = $dt->format($date_format);
+
+        //
+        // Get the recipe flags
+        //
+        if( $batch['recipe_id'] > 0 ) {
+            $strsql = "SELECT flags, yield, production_time "
+                . "FROM ciniki_herbalist_recipes "
+                . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "AND ciniki_herbalist_recipes.id = '" . ciniki_core_dbQuote($ciniki, $batch['recipe_id']) . "' "
+                . "";
+            $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'recipe');
+            if( $rc['stat'] != 'ok' ) {
+                return $rc;
+            }
+            if( isset($rc['recipe']) ) {
+                $batch['recipeflags'] = $rc['recipe']['flags'];
+            }
+        }
     }
+
 
     //
     // Get the list of recipe ingredients
