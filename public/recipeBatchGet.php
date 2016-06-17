@@ -211,7 +211,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
             foreach($batch['ingredient_types'][$tid]['ingredients'] as $iid => $ingredient) {    
                 $units = '';
                 switch ($ingredient['units']) {
-                    case '10': $units = 'gm'; break;
+                    case '10': $units = 'g'; break;
                     case '60': $units = 'ml'; break;
                 }
                 $ingredients[] = $ingredient;

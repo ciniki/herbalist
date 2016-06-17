@@ -89,7 +89,8 @@ function ciniki_herbalist_templates_recipePDF(&$ciniki, $business_id, $recipe) {
     // set font
     $pdf->AddPage();
     $pdf->SetFont('times', 'B', 12);
-    $pdf->SetCellPaddings(2, 1.5, 2, 1.5);
+//    $pdf->SetCellPaddings(1.5, 1, 1.5, 1);
+    $pdf->SetCellPaddings(1, 0, 0, 0);
     $pdf->SetFillColor(255);
     $pdf->SetTextColor(0);
     $pdf->SetDrawColor(125);
@@ -106,8 +107,11 @@ function ciniki_herbalist_templates_recipePDF(&$ciniki, $business_id, $recipe) {
         $pdf->SetFont('', '', 13); 
 
         foreach($type['ingredients'] as $ingredient) {
-            $pdf->Cell(120, 8, $ingredient['name'], 'TLB', false, 'L', 0, '', 0, false, 'T', 'M');
-            $pdf->Cell(50, 8, $ingredient['quantity_display'], 'TRB', false, 'R', 0, '', 0, false, 'T', 'M');
+            $pdf->Cell(20, 8, $ingredient['quantity'], 0, false, 'R', 0, '', 0, false, 'T', 'M');
+            $pdf->Cell(8, 8, $ingredient['units'], 0, false, 'L', 0, '', 0, false, 'T', 'M');
+            $pdf->Cell(120, 8, $ingredient['name'], 0, false, 'L', 0, '', 0, false, 'T', 'M');
+//            $pdf->Cell(50, 8, $ingredient['quantity_display'], 'TLB', false, 'R', 0, '', 0, false, 'T', 'M');
+//            $pdf->Cell(120, 8, $ingredient['name'], 'TRB', false, 'L', 0, '', 0, false, 'T', 'M');
             $pdf->Ln();
         }
         $pdf->Ln();

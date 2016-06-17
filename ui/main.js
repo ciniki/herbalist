@@ -758,7 +758,7 @@ function ciniki_herbalist_main() {
         '_yield':{'label':'Expected Yield', 'aside':'yes',
             'fields':{
                 'yield':{'label':'Yield', 'type':'text', 'size':'small', 'onkeyupFn':'M.ciniki_herbalist_main.recipe.updateCPU'},
-                'units':{'label':'Units', 'type':'toggle', 'toggles':{'10':'gm', '60':'ml'}},
+                'units':{'label':'Units', 'type':'toggle', 'toggles':{'10':'g', '60':'ml'}},
                 'production_time':{'label':'Time (minutes)', 'type':'text', 'size':'small', 'onkeyupFn':'M.ciniki_herbalist_main.recipe.updateCPU'},
             }},
         '_costs':{'label':'Expected Cost/Unit', 'aside':'yes', 'fields':{
@@ -1434,7 +1434,7 @@ function ciniki_herbalist_main() {
             'subname':{'label':'Latin Name', 'type':'text'},
             'sorttype':{'label':'Type', 'type':'multitoggle', 'required':'yes', 'toggles':{'30':'Herb', '60':'Liquid', '90':'Misc'}},
             'recipe_id':{'label':'Recipe', 'type':'select', 'options':{'0':'None'}, 'onchangeFn':'M.ciniki_herbalist_main.ingredient.updateForm'},
-            'units':{'label':'Units', 'type':'toggle', 'required':'yes', 'toggles':{'10':'gm', '60':'ml'} },
+            'units':{'label':'Units', 'type':'toggle', 'required':'yes', 'toggles':{'10':'g', '60':'ml'} },
             }},
         'costing':{'label':'', 'visible':'hidden', 'aside':'yes', 'fields':{
             'costing_quantity':{'label':'Quantity', 'type':'text', 'visible':'hidden', 'size':'small', 'onkeyupFn':'M.ciniki_herbalist_main.ingredient.updateCPU'},

@@ -13,7 +13,7 @@
 function ciniki_herbalist_maps($ciniki) {
     $maps = array();
     $maps['ingredient'] = array('units'=>array(
-        '10'=>'gm',
+        '10'=>'g',
         '60'=>'ml',
         ));
 

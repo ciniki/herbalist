@@ -121,7 +121,7 @@ function ciniki_herbalist_recipePDF($ciniki) {
             foreach($recipe['ingredient_types'][$tid]['ingredients'] as $iid => $ingredient) {    
                 $units = '';
                 switch ($ingredient['units']) {
-                    case '10': $units = 'gm'; break;
+                    case '10': $units = 'g'; break;
                     case '60': $units = 'ml'; break;
                 }  
                 $recipe['ingredient_types'][$tid]['ingredients'][$iid]['units'] = $units;
@@ -143,7 +143,7 @@ function ciniki_herbalist_recipePDF($ciniki) {
         $recipe['yield'] = bcmul($recipe['yield'], $args['size'], 10);
     }
     switch ($recipe['units']) {
-        case '10': $recipe['units_display'] = 'gm'; break;
+        case '10': $recipe['units_display'] = 'g'; break;
         case '60': $recipe['units_display'] = 'ml'; break;
     }  
 

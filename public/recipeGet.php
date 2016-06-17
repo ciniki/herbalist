@@ -142,7 +142,7 @@ function ciniki_herbalist_recipeGet($ciniki) {
                     $recipe['recipeingredient_ids'][] = $ingredient['id'];
                     $units = '';
                     switch ($ingredient['units']) {
-                        case '10': $units = ' gm'; break;
+                        case '10': $units = ' g'; break;
                         case '60': $units = ' ml'; break;
                     }  
                     $recipe['ingredient_types'][$tid]['ingredients'][$iid]['quantity_display'] = (float)$ingredient['quantity'] . $units;
