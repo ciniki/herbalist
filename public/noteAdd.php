@@ -152,18 +152,18 @@ function ciniki_herbalist_noteAdd(&$ciniki) {
         }
     }
 
-	//
-	// Update the categories
-	//
-	if( isset($args['tags']) ) {
-		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
-		$rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.herbalist', 'tag', $args['business_id'],
-			'ciniki_herbalist_tags', 'ciniki_herbalist_history', 'ref_id', $note_id, 60, $args['tags']);
-		if( $rc['stat'] != 'ok' ) {
-			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
-			return $rc;
-		}
-	}
+    //
+    // Update the categories
+    //
+    if( isset($args['tags']) ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
+        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.herbalist', 'tag', $args['business_id'],
+            'ciniki_herbalist_tags', 'ciniki_herbalist_history', 'ref_id', $note_id, 60, $args['tags']);
+        if( $rc['stat'] != 'ok' ) {
+            ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
+            return $rc;
+        }
+    }
 
     //
     // Commit the transaction
@@ -173,9 +173,9 @@ function ciniki_herbalist_noteAdd(&$ciniki) {
         return $rc;
     }
 
-	//
-	// Update the note keywords
-	//
+    //
+    // Update the note keywords
+    //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'notesUpdateKeywords');
     $rc = ciniki_herbalist_notesUpdateKeywords($ciniki, $args['business_id']); 
     if( $rc['stat'] != 'ok' ) {

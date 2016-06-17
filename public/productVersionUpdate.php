@@ -54,8 +54,8 @@ function ciniki_herbalist_productVersionUpdate(&$ciniki) {
         . "ciniki_herbalist_product_versions.product_id, "
         . "ciniki_herbalist_product_versions.sequence "
         . "FROM ciniki_herbalist_product_versions "
-		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' " 
-		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['productversion_id']) . "' " 
+        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' " 
+        . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['productversion_id']) . "' " 
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'item');
     if( $rc['stat'] != 'ok' ) {
@@ -142,9 +142,9 @@ function ciniki_herbalist_productVersionUpdate(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'costingUpdate');
     $rc = ciniki_herbalist_costingUpdate($ciniki, $args['business_id'], array());
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
 
     //
     // Update the web index if enabled

@@ -40,22 +40,22 @@ function ciniki_herbalist_productImageUpdate(&$ciniki) {
         return $rc;
     }
 
-	//
-	// Get the existing image details
-	//
-	$strsql = "SELECT product_id, uuid, image_id "
+    //
+    // Get the existing image details
+    //
+    $strsql = "SELECT product_id, uuid, image_id "
         . "FROM ciniki_herbalist_product_images "
-		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['productimage_id']) . "' "
-		. "";
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'item');
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-	if( !isset($rc['item']) ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3470', 'msg'=>'Product image not found'));
-	}
-	$item = $rc['item'];
+        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['productimage_id']) . "' "
+        . "";
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'item');
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( !isset($rc['item']) ) {
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3470', 'msg'=>'Product image not found'));
+    }
+    $item = $rc['item'];
 
     if( isset($args['name']) ) {
         if( $args['name'] != '' ) {

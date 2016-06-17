@@ -66,9 +66,9 @@ function ciniki_herbalist_ailmentUpdate(&$ciniki) {
         return $rc;
     }
 
-	//
-	// Update the note keywords
-	//
+    //
+    // Update the note keywords
+    //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'notesUpdateKeywords');
     $rc = ciniki_herbalist_notesUpdateKeywords($ciniki, $args['business_id']);
     if( $rc['stat'] != 'ok' ) {

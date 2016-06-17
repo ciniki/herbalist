@@ -76,7 +76,7 @@ function ciniki_herbalist_labels($ciniki, $business_id, $format='all') {
         );
 
 
-	$labels = array();
+    $labels = array();
     //
     // Ingredient labels for avery template 5167
     //
@@ -146,6 +146,6 @@ function ciniki_herbalist_labels($ciniki, $business_id, $format='all') {
             );
     }
 
-	return array('stat'=>'ok', 'labels'=>$labels);
+    return array('stat'=>'ok', 'labels'=>$labels);
 }
 ?>

@@ -42,26 +42,26 @@ function ciniki_herbalist_productImageAdd(&$ciniki) {
         return $rc;
     }
 
-	//
-	// Get a UUID for use in permalink
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
-	$rc = ciniki_core_dbUUID($ciniki, 'ciniki.events');
-	if( $rc['stat'] != 'ok' ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3466', 'msg'=>'Unable to get a new UUID', 'err'=>$rc['err']));
-	}
-	$args['uuid'] = $rc['uuid'];
+    //
+    // Get a UUID for use in permalink
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
+    $rc = ciniki_core_dbUUID($ciniki, 'ciniki.events');
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3466', 'msg'=>'Unable to get a new UUID', 'err'=>$rc['err']));
+    }
+    $args['uuid'] = $rc['uuid'];
 
-	//
-	// Determine the permalink
-	//
-	if( !isset($args['permalink']) || $args['permalink'] == '' ) {
-		if( isset($args['name']) && $args['name'] != '' ) {
-			$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
-		} else {
-			$args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($args['uuid'])));
-		}
-	}
+    //
+    // Determine the permalink
+    //
+    if( !isset($args['permalink']) || $args['permalink'] == '' ) {
+        if( isset($args['name']) && $args['name'] != '' ) {
+            $args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 \-]/', '', strtolower($args['name'])));
+        } else {
+            $args['permalink'] = preg_replace('/ /', '-', preg_replace('/[^a-z0-9 ]/', '', strtolower($args['uuid'])));
+        }
+    }
 
     //
     // Make sure the permalink is unique

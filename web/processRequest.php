@@ -7,10 +7,10 @@
 // Arguments
 // ---------
 // ciniki:
-// settings:		The web settings structure.
-// business_id:		The ID of the business to get post for.
+// settings:        The web settings structure.
+// business_id:        The ID of the business to get post for.
 //
-// args:			The possible arguments for products
+// args:            The possible arguments for products
 //
 //
 // Returns
@@ -18,28 +18,28 @@
 //
 function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, $args) {
 
-	if( !isset($ciniki['business']['modules']['ciniki.herbalist']) ) {
-		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3455', 'msg'=>"I'm sorry, the page you requested does not exist."));
-	}
-	$page = array(
-		'title'=>$args['page_title'],
-		'breadcrumbs'=>$args['breadcrumbs'],
-		'blocks'=>array(),
-		);
+    if( !isset($ciniki['business']['modules']['ciniki.herbalist']) ) {
+        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3455', 'msg'=>"I'm sorry, the page you requested does not exist."));
+    }
+    $page = array(
+        'title'=>$args['page_title'],
+        'breadcrumbs'=>$args['breadcrumbs'],
+        'blocks'=>array(),
+        );
 
-	//
-	// Setup titles
-	//
-	if( count($page['breadcrumbs']) == 0 ) {
-		$page['breadcrumbs'][] = array('name'=>'Products', 'url'=>$args['base_url']);
-	}
+    //
+    // Setup titles
+    //
+    if( count($page['breadcrumbs']) == 0 ) {
+        $page['breadcrumbs'][] = array('name'=>'Products', 'url'=>$args['base_url']);
+    }
 
-	$display = '';
-	$ciniki['response']['head']['og']['url'] = $args['domain_base_url'];
+    $display = '';
+    $ciniki['response']['head']['og']['url'] = $args['domain_base_url'];
 
-	//
-	// Parse the url to determine what was requested
-	//
+    //
+    // Parse the url to determine what was requested
+    //
     $categories = array();
     if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.herbalist', 0x20) ) {
         $strsql = "SELECT ciniki_herbalist_products.primary_image_id AS image_id, "
@@ -64,17 +64,17 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
             $categories = $rc['categories'];
         }
     }
-	
-	//
-	// Setup the base url as the base url for this page. This may be altered below
-	// as the uri_split is processed, but we do not want to alter the original passed in.
-	//
-	$base_url = $args['base_url'];
+    
+    //
+    // Setup the base url as the base url for this page. This may be altered below
+    // as the uri_split is processed, but we do not want to alter the original passed in.
+    //
+    $base_url = $args['base_url'];
 
-	//
-	// Check if we are to display an image, from the gallery, or latest images
-	//
-	$display = '';
+    //
+    // Check if we are to display an image, from the gallery, or latest images
+    //
+    $display = '';
 
     $uri_split = $args['uri_split'];
    
@@ -96,32 +96,32 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
     //
     // Check for an product
     //
-	if( isset($uri_split[0]) && $uri_split[0] != '' ) {
-		$product_permalink = $uri_split[0];
-		$display = 'product';
-		//
-		// Check for gallery pic request
-		//
-		if( isset($uri_split[1]) && $uri_split[1] == 'gallery'
-			&& isset($uri_split[2]) && $uri_split[2] != '' 
-			) {
-			$image_permalink = $uri_split[2];
-			$display = 'productpic';
-		}
-		$ciniki['response']['head']['og']['url'] .= '/' . $product_permalink;
-		$base_url .= '/' . $product_permalink;
-	}
+    if( isset($uri_split[0]) && $uri_split[0] != '' ) {
+        $product_permalink = $uri_split[0];
+        $display = 'product';
+        //
+        // Check for gallery pic request
+        //
+        if( isset($uri_split[1]) && $uri_split[1] == 'gallery'
+            && isset($uri_split[2]) && $uri_split[2] != '' 
+            ) {
+            $image_permalink = $uri_split[2];
+            $display = 'productpic';
+        }
+        $ciniki['response']['head']['og']['url'] .= '/' . $product_permalink;
+        $base_url .= '/' . $product_permalink;
+    }
 
-	//
-	// A category was found, so display the list of products in that category
-	//
+    //
+    // A category was found, so display the list of products in that category
+    //
     elseif( isset($category) ) {
         $display = 'categorylist';
     }
 
-	//
-	// There is a list of categories, so display the list
-	//
+    //
+    // There is a list of categories, so display the list
+    //
     elseif( isset($categories) && count($categories) > 0 ) {
         $display = 'categories';
     }
@@ -129,9 +129,9 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
     //
     // No categories, display the list
     //
-	else {
-		$display = 'list';
-	}
+    else {
+        $display = 'list';
+    }
 
     if( $display == 'list' ) {
         //
@@ -191,7 +191,7 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
         $page['blocks'][] = array('type'=>'tagimages', 'base_url'=>$base_url, 'tags'=>$categories);
     }
 
-	if( $display == 'product' || $display == 'productpic' ) {
+    if( $display == 'product' || $display == 'productpic' ) {
         if( isset($category) ) {
             $ciniki['response']['head']['links'][] = array('rel'=>'canonical', 'href'=>$args['base_url'] . '/' . $product_permalink);
         }
@@ -273,13 +273,13 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
         }
     }
 
-	//
-	// Return error if nothing found to display
-	//
-	if( $display == '' ) {
-		return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3456', 'msg'=>"We're sorry, the page you requested is not available."));
-	}
+    //
+    // Return error if nothing found to display
+    //
+    if( $display == '' ) {
+        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3456', 'msg'=>"We're sorry, the page you requested is not available."));
+    }
 
-	return array('stat'=>'ok', 'page'=>$page);
+    return array('stat'=>'ok', 'page'=>$page);
 }
 ?>

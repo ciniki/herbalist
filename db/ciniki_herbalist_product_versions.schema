@@ -7,13 +7,13 @@
 #
 # Fields
 # ------
-# id:				    The ID assigned to the product.
-# uuid:				    The Universal Unique ID.
-# business_id:		    The business the product is attached to.
+# id:                    The ID assigned to the product.
+# uuid:                    The Universal Unique ID.
+# business_id:            The business the product is attached to.
 #
 # product_id:           The ID of the product this version is for.
 #
-# name:				    The name for the version of the product. This name will be
+# name:                    The name for the version of the product. This name will be
 #                       appended to the product name in ciniki_herbalist_products table.
 #
 # permalink:            The permalink for the product, to be used on the website.
@@ -43,13 +43,13 @@
 #
 # retail_price:         The retail price of the product.
 #
-# date_added:		    The UTC date and time the record was added.
-# last_updated:		    The UTC date and time the record was last updated.
+# date_added:            The UTC date and time the record was added.
+# last_updated:            The UTC date and time the record was last updated.
 #
 create table ciniki_herbalist_product_versions (
-	id int not null auto_increment,
-	uuid char(36) not null,
-	business_id int not null,
+    id int not null auto_increment,
+    uuid char(36) not null,
+    business_id int not null,
     product_id int not null,
     name varchar(250) not null,
     permalink varchar(250) not null,
@@ -64,10 +64,10 @@ create table ciniki_herbalist_product_versions (
     inventory int not null,
     wholesale_price decimal(19,4) not null,
     retail_price decimal(19,4) not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (id),
-	unique index (uuid),
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (uuid),
     index (product_id, recipe_id, container_id),
-	index sync (business_id, uuid, last_updated)
+    index sync (business_id, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

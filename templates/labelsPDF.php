@@ -16,16 +16,16 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $business_id, $args) {
     //
     // Load the business details
     //
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'businessDetails');
-	$rc = ciniki_businesses_businessDetails($ciniki, $business_id);
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-	if( isset($rc['details']) && is_array($rc['details']) ) {	
-		$business_details = $rc['details'];
-	} else {
-		$business_details = array();
-	}
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'businessDetails');
+    $rc = ciniki_businesses_businessDetails($ciniki, $business_id);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( isset($rc['details']) && is_array($rc['details']) ) {    
+        $business_details = $rc['details'];
+    } else {
+        $business_details = array();
+    }
 
     //
     // Load the label definitions
@@ -37,50 +37,50 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $business_id, $args) {
     }
     $labels = $rc['labels'];
 
-	//
-	// Load TCPDF library
-	//
-	$rsp = array('stat'=>'ok');
-	require_once($ciniki['config']['ciniki.core']['lib_dir'] . '/tcpdf/tcpdf.php');
+    //
+    // Load TCPDF library
+    //
+    $rsp = array('stat'=>'ok');
+    require_once($ciniki['config']['ciniki.core']['lib_dir'] . '/tcpdf/tcpdf.php');
 
-	class MYPDF extends TCPDF {
-		public $left_margin = 7;
-		public $right_margin = 7;
-		public $top_margin = 0;
+    class MYPDF extends TCPDF {
+        public $left_margin = 7;
+        public $right_margin = 7;
+        public $top_margin = 0;
 
-		public function Header() {
-		}
+        public function Header() {
+        }
 
-		// Page footer
-		public function Footer() {
-		}
-	}
+        // Page footer
+        public function Footer() {
+        }
+    }
 
-	//
-	// Start a new document
-	//
-	$pdf = new MYPDF('P', PDF_UNIT, 'LETTER', true, 'UTF-8', false);
+    //
+    // Start a new document
+    //
+    $pdf = new MYPDF('P', PDF_UNIT, 'LETTER', true, 'UTF-8', false);
 
-	$pdf->business_details = $business_details;
+    $pdf->business_details = $business_details;
 
-	//
-	// Setup the PDF basics
-	//
-	$pdf->SetCreator('Ciniki');
-	$pdf->SetAuthor($business_details['name']);
-	$pdf->SetTitle($args['title']);
-	$pdf->SetSubject('');
-	$pdf->SetKeywords('');
+    //
+    // Setup the PDF basics
+    //
+    $pdf->SetCreator('Ciniki');
+    $pdf->SetAuthor($business_details['name']);
+    $pdf->SetTitle($args['title']);
+    $pdf->SetSubject('');
+    $pdf->SetKeywords('');
 
-	// set margins
-	$pdf->SetMargins(0, 0, 0);
-	$pdf->SetHeaderMargin(0);
+    // set margins
+    $pdf->SetMargins(0, 0, 0);
+    $pdf->SetHeaderMargin(0);
     $pdf->SetAutoPageBreak(false);
 
-	// set font
+    // set font
     $pdf->AddPage();
-	$pdf->SetFont('helvetica', '', 8);
-	$pdf->SetCellPadding(2);
+    $pdf->SetFont('helvetica', '', 8);
+    $pdf->SetCellPadding(2);
     $pdf->SetFillColor(255);
     $pdf->SetTextColor(0);
     $pdf->SetDrawColor(125);
@@ -165,6 +165,6 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $business_id, $args) {
         }
     }
 
-	return array('stat'=>'ok', 'pdf'=>$pdf);
+    return array('stat'=>'ok', 'pdf'=>$pdf);
 }
 ?>

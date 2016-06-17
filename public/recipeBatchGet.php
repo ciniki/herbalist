@@ -40,14 +40,14 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         return $rc;
     }
 
-	//
-	// Get the settings
-	//
+    //
+    // Get the settings
+    //
     $settings = array();
-	$rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_herbalist_settings', 'business_id', $args['business_id'], 'ciniki.herbalist', 'settings', '');
-	if( $rc['stat'] == 'ok' && isset($rc['settings']) ) {
-		$settings = $rc['settings'];
-	}
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_herbalist_settings', 'business_id', $args['business_id'], 'ciniki.herbalist', 'settings', '');
+    if( $rc['stat'] == 'ok' && isset($rc['settings']) ) {
+        $settings = $rc['settings'];
+    }
 
     //
     // Load the production hourly wage

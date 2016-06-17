@@ -8,21 +8,21 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:		The ID of the business to search.
-// field:			The field to search.  Possible fields available to search are:
+// business_id:        The ID of the business to search.
+// field:            The field to search.  Possible fields available to search are:
 //
-//					- category
+//                    - category
 //
-// start_needle:	The search string to search the field for.
+// start_needle:    The search string to search the field for.
 //
-// limit:			(optional) Limit the number of results to be returned. 
-//					If the limit is not specified, the default is 25.
+// limit:            (optional) Limit the number of results to be returned. 
+//                    If the limit is not specified, the default is 25.
 // 
 // Returns
 // -------
 // <results>
-//		<result name="Landscape" />
-//		<result name="Portrait" />
+//        <result name="Landscape" />
+//        <result name="Portrait" />
 // </results>
 //
 function ciniki_herbalist_productSearchField($ciniki) {
@@ -32,7 +32,7 @@ function ciniki_herbalist_productSearchField($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
-		'field'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Field'),
+        'field'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Field'),
         'start_needle'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Search'), 
         'limit'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Limit'), 
         )); 
@@ -45,45 +45,45 @@ function ciniki_herbalist_productSearchField($ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this business
     //  
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
     $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.productSearchField'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
 
-	//
-	// Reject if an unknown field
-	//
-	if( $args['field'] != 'category') {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3491', 'msg'=>'Unvalid search field'));
-	}
-	//
-	// Get the number of faqs in each status for the business, 
-	// if no rows found, then return empty array
-	//
+    //
+    // Reject if an unknown field
+    //
+    if( $args['field'] != 'category') {
+        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3491', 'msg'=>'Unvalid search field'));
+    }
+    //
+    // Get the number of faqs in each status for the business, 
+    // if no rows found, then return empty array
+    //
     $strsql = "SELECT DISTINCT " . $args['field'] . " AS name "
-	    . "FROM ciniki_herbalist_products "
-		. "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND (" . $args['field']  . " LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
-			. "AND " . $args['field'] . " <> '' "
-			. ") "
+        . "FROM ciniki_herbalist_products "
+        . "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND (" . $args['field']  . " LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "AND " . $args['field'] . " <> '' "
+            . ") "
         . "ORDER BY " . $args['field'] . " "
         . "";
-	if( isset($args['limit']) && $args['limit'] != '' && $args['limit'] > 0 ) {
-		$strsql .= "LIMIT " . ciniki_core_dbQuote($ciniki, $args['limit']) . " ";
-	} else {
-		$strsql .= "LIMIT 25 ";
-	}
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
-	$rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
-		array('container'=>'results', 'fname'=>'name', 'name'=>'result', 'fields'=>array('name')),
-		));
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-	if( !isset($rc['results']) || !is_array($rc['results']) ) {
-		return array('stat'=>'ok', 'results'=>array());
-	}
-	return array('stat'=>'ok', 'results'=>$rc['results']);
+    if( isset($args['limit']) && $args['limit'] != '' && $args['limit'] > 0 ) {
+        $strsql .= "LIMIT " . ciniki_core_dbQuote($ciniki, $args['limit']) . " ";
+    } else {
+        $strsql .= "LIMIT 25 ";
+    }
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
+        array('container'=>'results', 'fname'=>'name', 'name'=>'result', 'fields'=>array('name')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( !isset($rc['results']) || !is_array($rc['results']) ) {
+        return array('stat'=>'ok', 'results'=>array());
+    }
+    return array('stat'=>'ok', 'results'=>$rc['results']);
 }
 ?>

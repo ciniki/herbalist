@@ -30,7 +30,7 @@ function ciniki_herbalist_productAdd(&$ciniki) {
         'synopsis'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Synopsis'),
         'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'),
         'ingredients'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Ingredients'),
-		'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'),
+        'categories'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'list', 'delimiter'=>'::', 'name'=>'Categories'),
         'image_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Additional Image'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -94,18 +94,18 @@ function ciniki_herbalist_productAdd(&$ciniki) {
     }
     $product_id = $rc['id'];
 
-	//
-	// Update the categories
-	//
-	if( isset($args['categories']) ) {
-		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
-		$rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.herbalist', 'tag', $args['business_id'],
-			'ciniki_herbalist_tags', 'ciniki_herbalist_history', 'ref_id', $product_id, 10, $args['categories']);
-		if( $rc['stat'] != 'ok' ) {
-			ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
-			return $rc;
-		}
-	}
+    //
+    // Update the categories
+    //
+    if( isset($args['categories']) ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
+        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.herbalist', 'tag', $args['business_id'],
+            'ciniki_herbalist_tags', 'ciniki_herbalist_history', 'ref_id', $product_id, 10, $args['categories']);
+        if( $rc['stat'] != 'ok' ) {
+            ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
+            return $rc;
+        }
+    }
 
     //
     // Add additional image if supplied
@@ -160,9 +160,9 @@ function ciniki_herbalist_productAdd(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'costingUpdate');
     $rc = ciniki_herbalist_costingUpdate($ciniki, $args['business_id'], array());
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
 
     //
     // Update the web index if enabled

@@ -5,9 +5,9 @@
 #
 # Fields
 # ------
-# id:				The ID assigned to the recipe.
-# uuid:				The Universal Unique ID.
-# business_id:		The business the recipe is attached to.
+# id:                The ID assigned to the recipe.
+# uuid:                The Universal Unique ID.
+# business_id:        The business the recipe is attached to.
 #
 # note_id:          The ID of the note.
 #
@@ -21,19 +21,19 @@
 #
 # object_id:        The ID of the object.
 #
-# date_added:		The UTC date and time the record was added.
-# last_updated:		The UTC date and time the record was last updated.
+# date_added:        The UTC date and time the record was added.
+# last_updated:        The UTC date and time the record was last updated.
 #
 create table ciniki_herbalist_note_refs (
-	id int not null auto_increment,
-	uuid char(36) not null,
-	business_id int not null,
-	note_id int not null,
+    id int not null auto_increment,
+    uuid char(36) not null,
+    business_id int not null,
+    note_id int not null,
     object varchar(150) not null,
     object_id varchar(150) not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (id),
-	unique index (uuid),
-	index sync (business_id, uuid, last_updated)
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (uuid),
+    index sync (business_id, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

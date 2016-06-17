@@ -21,15 +21,15 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'costingUpdateIngredient');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'costingUpdateRecipe');
    
-	//
-	// Get the settings
-	//
+    //
+    // Get the settings
+    //
     $settings = array();
-	$rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_herbalist_settings', 'business_id', 
-		$business_id, 'ciniki.herbalist', 'settings', '');
-	if( $rc['stat'] == 'ok' && isset($rc['settings']) ) {
-		$settings = $rc['settings'];
-	}
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_herbalist_settings', 'business_id', 
+        $business_id, 'ciniki.herbalist', 'settings', '');
+    if( $rc['stat'] == 'ok' && isset($rc['settings']) ) {
+        $settings = $rc['settings'];
+    }
 
     //
     // Load the production hourly wage

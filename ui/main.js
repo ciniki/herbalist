@@ -175,7 +175,7 @@ function ciniki_herbalist_main() {
         }
     };
     this.menu.open = function(cb, tab, itab) {
-		this.data = {};
+        this.data = {};
         if( tab != null ) { this.sections._tabs.selected = tab; }
         if( itab != null && this.sections._tabs.selected == 'ingredients' ) { this.sections._ingredient_tabs.selected = itab; }
         if( itab != null && this.sections._tabs.selected == 'products' ) { this.category = itab; }
@@ -222,7 +222,7 @@ function ciniki_herbalist_main() {
                 p.show(cb);
             });
         }
-	};
+    };
     this.menu.addClose('Back');
 
     //
@@ -1116,7 +1116,7 @@ function ciniki_herbalist_main() {
         }
     };
     this.recipeingredient.remove = function() {
-        if( confirm('Are you sure you want to remove this recipe?') ) {
+        if( confirm('Are you sure you want to remove this ingredient?') ) {
             M.api.getJSONCb('ciniki.herbalist.recipeIngredientDelete', {'business_id':M.curBusinessID, 'recipeingredient_id':this.recipeingredient_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -2178,7 +2178,7 @@ function ciniki_herbalist_main() {
     // Arguments:
     // aG - The arguments to be parsed into args
     //
-	this.start = function(cb, appPrefix, aG) {
+    this.start = function(cb, appPrefix, aG) {
         args = {};
         if( aG != null ) { args = eval(aG); }
 
