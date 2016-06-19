@@ -188,7 +188,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
             . ") "
         . "WHERE ciniki_herbalist_recipe_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
         . "AND ciniki_herbalist_recipe_ingredients.recipe_id = '" . ciniki_core_dbQuote($ciniki, $batch['recipe_id']) . "' "
-        . "ORDER BY sorttype, ciniki_herbalist_ingredients.name "
+        . "ORDER BY sorttype, ciniki_herbalist_recipe_ingredients.quantity DESC, ciniki_herbalist_ingredients.name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.herbalist', array(
@@ -208,6 +208,8 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         // Setup the ingredients for display
         //
         foreach($batch['ingredient_types'] as $tid => $itype) {    
+            // Remove the ID references, to make plain array for sorting
+            $batch['ingredient_types'][$tid]['ingredients'] = array_values($batch['ingredient_types'][$tid]['ingredients']);
             foreach($batch['ingredient_types'][$tid]['ingredients'] as $iid => $ingredient) {    
                 $units = '';
                 switch ($ingredient['units']) {
@@ -224,17 +226,22 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
                 $batch['ingredient_types'][$tid]['ingredients'][$iid]['total_cost_per_unit_display'] = numfmt_format_currency($intl_currency_fmt, 
                     bcmul($ingredient['total_cost_per_unit'], $quantity, 4), $intl_currency);
             }
+            uasort($batch['ingredient_types'][$tid]['ingredients'], function($a, $b) { 
+                if( $a['quantity'] == $b['quantity'] ) {
+                    return strcmp($a['name'], $b['name']);
+                } 
+                return ($a['quantity'] > $b['quantity'] ? -1 : 1);
+            });
         }
         //
         // sort the ingredients by quantity
         //
         uasort($ingredients, function($a, $b) { 
-            if( $a == $b ) {
-                return 0;
+            if( $a['quantity'] == $b['quantity'] ) {
+                return strcmp($a['name'], $b['name']);
             } 
-            return ($a['quantity'] < $b['quantity'] ? -1 : 1);
+            return ($a['quantity'] > $b['quantity'] ? -1 : 1);
         });
-       
     } else {
         $batch['ingredient_types'] = array();
     }
