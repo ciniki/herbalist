@@ -232,7 +232,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
             if( $a == $b ) {
                 return 0;
             } 
-            return ($a < $b ? -1 : 1);
+            return ($a['quantity'] < $b['quantity'] ? -1 : 1);
         });
        
     } else {
