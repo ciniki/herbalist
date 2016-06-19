@@ -260,7 +260,7 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
                 }
 
                 // Add share buttons  
-                if( !isset($settings['page-products-share-buttons']) || $settings['page-products-share-buttons'] == 'yes' ) {
+                if( !isset($settings['page-herbalist-share-buttons']) || $settings['page-herbalist-share-buttons'] == 'yes' ) {
                     $page['blocks'][] = array('type'=>'sharebuttons', 'section'=>'share', 'pagetitle'=>$product['name'], 'tags'=>array());
                 }
 
