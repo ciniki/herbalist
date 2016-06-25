@@ -94,6 +94,11 @@ function ciniki_herbalist_main() {
             'hint':'Search notes', 
             'noData':'No notes found',
             },
+        '_addnote':{'label':'', 
+            'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='notes'?'yes':'no';},
+            'buttons':{
+                'add':{'label':'Add', 'fn':'M.ciniki_herbalist_main.note.edit(\'M.ciniki_herbalist_main.menu.open();\',0);'},
+            }},
         '_buttons':{'label':'', 'buttons':{
             'namelabels':{'label':'Print Name Labels', 
                 'visible':function() { return (M.ciniki_herbalist_main.menu.sections._tabs.selected=='ingredients'?'yes':'no');},
