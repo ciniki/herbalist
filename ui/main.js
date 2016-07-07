@@ -297,10 +297,6 @@ function ciniki_herbalist_main() {
             'addTxt':'Add Additional Image',
             'addFn':'M.ciniki_herbalist_main.product.save("M.ciniki_herbalist_main.productimage.edit(\'M.ciniki_herbalist_main.product.refreshImages();\',0,M.ciniki_herbalist_main.product.product_id);");',
             },
-//        '_notes':{'label':'Notes', 
-//            'fields':{
-//                'notes':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'large', 'type':'textarea'},
-//            }},
         'notes':{'label':'Notes', 'type':'simplegrid', 'num_cols':1, 
             'visible':function() { return (M.ciniki_herbalist_main.product.sections._tabs.selected == 'notes' ? 'yes':'hidden');},
             'cellClasses':['multiline'],
