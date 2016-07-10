@@ -49,6 +49,7 @@ function ciniki_herbalist_recipeBatchList($ciniki) {
         . "ciniki_herbalist_recipe_batches.materials_cost_per_unit, "
         . "ciniki_herbalist_recipe_batches.time_cost_per_unit, "
         . "ciniki_herbalist_recipe_batches.total_cost_per_unit, "
+        . "ciniki_herbalist_recipe_batches.total_time_per_unit, "
         . "ciniki_herbalist_recipe_batches.notes "
         . "FROM ciniki_herbalist_recipe_batches "
         . "WHERE ciniki_herbalist_recipe_batches.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
@@ -57,7 +58,7 @@ function ciniki_herbalist_recipeBatchList($ciniki) {
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'recipebatches', 'fname'=>'id', 
             'fields'=>array('id', 'recipe_id', 'production_date', 'pressing_date', 'status', 'status_text', 
-                'yield', 'production_time', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'notes'),
+                'yield', 'production_time', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'total_time_per_unit', 'notes'),
             'maps'=>array('status_text'=>$maps['recipebatch']['status'])),
         ));
     if( $rc['stat'] != 'ok' ) {

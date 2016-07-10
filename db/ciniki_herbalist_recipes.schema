@@ -28,12 +28,13 @@
 #
 # production_time:          The amount of time in minutes taken to produce the yield.
 #
-# materials_cost_per_unit:  The cost of materials for 1 unit of ingredient.
-# time_cost_per_unit:       The cost of time for 1 unit of ingredient.
-# total_cost_per_unit:      The cost per 1 unit of ingredient, including materials and time.
+# materials_cost_per_unit:  The cost of materials for 1 unit of recipe.
+# time_cost_per_unit:       The cost of time for 1 unit of recipe.
+# total_cost_per_unit:      The cost per 1 unit of recipe, including materials and time.
+# total_time_per_unit:      The seconds to produce 1 unit of the recipe, including any time to produce ingredients.
 #
-# date_added:        The UTC date and time the record was added.
-# last_updated:        The UTC date and time the record was last updated.
+# date_added:               The UTC date and time the record was added.
+# last_updated:             The UTC date and time the record was last updated.
 #
 create table ciniki_herbalist_recipes (
     id int not null auto_increment,
@@ -47,6 +48,7 @@ create table ciniki_herbalist_recipes (
     materials_cost_per_unit decimal(19,4) not null,
     time_cost_per_unit decimal(19,4) not null,
     total_cost_per_unit decimal(19,4) not null,
+    total_time_per_unit decimal(19,3) not null,
     date_added datetime not null,
     last_updated datetime not null,
     primary key (id),

@@ -43,10 +43,12 @@ function ciniki_herbalist_costingUpdateIngredient(&$ciniki, $business_id, $ingre
         $materials_cost_per_unit = $recipes[$recipe_id]['materials_cost_per_unit'];
         $time_cost_per_unit = $recipes[$recipe_id]['time_cost_per_unit'];
         $total_cost_per_unit = $recipes[$recipe_id]['total_cost_per_unit'];
+        $total_time_per_unit = $recipes[$recipe_id]['total_time_per_unit'];
     } else {
         $materials_cost_per_unit = 0;
         $time_cost_per_unit = 0;
         $total_cost_per_unit = 0;
+        $total_time_per_unit = 0;
         if( $ingredient['costing_price'] > 0 && $ingredient['costing_quantity'] > 0 ) {
             $materials_cost_per_unit = bcdiv($ingredient['costing_price'], $ingredient['costing_quantity'], 10);
         }
@@ -54,6 +56,10 @@ function ciniki_herbalist_costingUpdateIngredient(&$ciniki, $business_id, $ingre
             $time_cost_per_unit = bcdiv(bcmul($ingredient['costing_time'], $minute_wage, 10), $ingredient['costing_quantity'], 10);
         }
         $total_cost_per_unit = bcadd($materials_cost_per_unit, $time_cost_per_unit, 10);
+        // Convert costing_time into seconds and divide by quantity
+        if( $ingredient['costing_time'] > 0 ) {
+            $total_time_per_unit = bcdiv(bcmul($ingredient['costing_time'], 60, 3), $ingredient['costing_quantity'], 3);
+        }
     }
     
     //
@@ -71,6 +77,10 @@ function ciniki_herbalist_costingUpdateIngredient(&$ciniki, $business_id, $ingre
     if( $total_cost_per_unit != $ingredient['total_cost_per_unit'] ) {
         $update_args['total_cost_per_unit'] = $total_cost_per_unit;
         $ingredients[$ingredient_id]['total_cost_per_unit'] = $total_cost_per_unit;
+    }
+    if( $total_time_per_unit != $ingredient['total_time_per_unit'] ) {
+        $update_args['total_time_per_unit'] = $total_time_per_unit;
+        $ingredients[$ingredient_id]['total_time_per_unit'] = $total_time_per_unit;
     }
     if( count($update_args) > 0 ) {
         $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.ingredient', $ingredient['id'], $update_args);

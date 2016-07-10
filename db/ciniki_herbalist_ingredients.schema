@@ -5,18 +5,18 @@
 #
 # Fields
 # ------
-# id:                The ID assigned to the ingredient.
-# uuid:                The Universal Unique ID.
-# business_id:        The business the ingredient is attached to.
+# id:               The ID assigned to the ingredient.
+# uuid:             The Universal Unique ID.
+# business_id:      The business the ingredient is attached to.
 #
-# name:                The name for the ingredient.
-# subname:            The sub name or latin name for the ingredient.
+# name:             The name for the ingredient.
+# subname:          The sub name or latin name for the ingredient.
 #
 # sorttype:         The type of ingrident, to be used when ingredients are added to a recipe.
 #
-#                   30 - Herb
-#                   60 - Liquid
-#                   90 - Misc
+#                       30 - Herb
+#                       60 - Liquid
+#                       90 - Misc
 #
 # plant_id:         The ID of the plant in the materia medica  **future**
 #
@@ -24,8 +24,8 @@
 #
 # units:            The units to work with the ingredient.
 #
-#                   10 - grams
-#                   60 - millilitres
+#                       10 - grams
+#                       60 - millilitres
 #
 # costing_quantity: The quantity of the amount purchased in the units.
 # costing_time:     The time in minutes to acquire the ingredient or produce the recipe.
@@ -34,11 +34,12 @@
 # materials_cost_per_unit:      The materials cost per 1 unit of ingredient.
 # time_cost_per_unit:           The time cost per 1 unit of ingredient.
 # total_cost_per_unit:          The total cost per 1 unit of ingredient, including materials and time.
+# total_time_per_unit:          The seconds to produce 1 unit of ingredient.
 #
 # warnings:                     Any warnings, allergies or contrindications.
 #
-# date_added:        The UTC date and time the record was added.
-# last_updated:        The UTC date and time the record was last updated.
+# date_added:                   The UTC date and time the record was added.
+# last_updated:                 The UTC date and time the record was last updated.
 #
 create table ciniki_herbalist_ingredients (
     id int not null auto_increment,
@@ -56,6 +57,7 @@ create table ciniki_herbalist_ingredients (
     materials_cost_per_unit decimal(19,4) not null,
     time_cost_per_unit decimal(19,4) not null,
     total_cost_per_unit decimal(19,4) not null,
+    total_time_per_unit decimal(19,3) not null,
     warnings varchar(5000) not null,
     date_added datetime not null,
     last_updated datetime not null,

@@ -44,7 +44,8 @@ function ciniki_herbalist_recipeList($ciniki) {
         . "ciniki_herbalist_recipes.yield, "
         . "ciniki_herbalist_recipes.materials_cost_per_unit, "
         . "ciniki_herbalist_recipes.time_cost_per_unit, "
-        . "ciniki_herbalist_recipes.total_cost_per_unit "
+        . "ciniki_herbalist_recipes.total_cost_per_unit, "
+        . "ciniki_herbalist_recipes.total_time_per_unit "
         . "FROM ciniki_herbalist_recipes "
         . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
         . "ORDER BY name "
@@ -52,7 +53,7 @@ function ciniki_herbalist_recipeList($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'recipes', 'fname'=>'id', 
-            'fields'=>array('id', 'name', 'units', 'yield', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit')),
+            'fields'=>array('id', 'name', 'units', 'yield', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'total_time_per_unit')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;

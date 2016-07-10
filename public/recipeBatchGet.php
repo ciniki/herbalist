@@ -90,9 +90,10 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
             'size'=>1,
             'yield'=>'',
             'production_time'=>'',
-            'materials_cost_per_unit'=>'0',
-            'time_cost_per_unit'=>'0',
-            'total_cost_per_unit'=>'0',
+            'materials_cost_per_unit'=>'',
+            'time_cost_per_unit'=>'',
+            'total_cost_per_unit'=>'',
+            'total_time_per_unit'=>'',
             'notes'=>'',
         );
         $dt = new DateTime('now', new DateTimeZone($intl_timezone));
@@ -130,6 +131,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
             . "ciniki_herbalist_recipe_batches.materials_cost_per_unit, "
             . "ciniki_herbalist_recipe_batches.time_cost_per_unit, "
             . "ciniki_herbalist_recipe_batches.total_cost_per_unit, "
+            . "ciniki_herbalist_recipe_batches.total_time_per_unit, "
             . "ciniki_herbalist_recipe_batches.notes "
             . "FROM ciniki_herbalist_recipe_batches "
             . "WHERE ciniki_herbalist_recipe_batches.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
@@ -180,6 +182,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         . "ciniki_herbalist_ingredients.materials_cost_per_unit, "
         . "ciniki_herbalist_ingredients.time_cost_per_unit, "
         . "ciniki_herbalist_ingredients.total_cost_per_unit, "
+        . "ciniki_herbalist_ingredients.total_time_per_unit, "
         . "ciniki_herbalist_recipe_ingredients.quantity "
         . "FROM ciniki_herbalist_recipe_ingredients "
         . "LEFT JOIN ciniki_herbalist_ingredients ON ("
@@ -194,13 +197,14 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'types', 'fname'=>'sorttype', 'fields'=>array('sorttype')),
         array('container'=>'ingredients', 'fname'=>'id', 
-            'fields'=>array('id', 'ingredient_id', 'name', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'units', 'quantity')),
+            'fields'=>array('id', 'ingredient_id', 'name', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'total_time_per_unit', 'units', 'quantity')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
     $materials_cost = 0;
     $time_cost = 0;
+    $total_time = 0;
     $ingredients = array();
     if( isset($rc['types']) ) {
         $batch['ingredient_types'] = $rc['types'];
@@ -220,6 +224,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
                 $quantity = bcmul($ingredient['quantity'], $batch['size'], 4);
                 $materials_cost = bcadd($materials_cost, bcmul($quantity, $ingredient['materials_cost_per_unit'], 10), 10);
                 $time_cost = bcadd($time_cost, bcmul($quantity, $ingredient['time_cost_per_unit'], 10), 10);
+                $total_time = bcadd($total_time, bcmul($quantity, $ingredient['total_time_per_unit'], 3), 3);
                 $batch['ingredient_types'][$tid]['ingredients'][$iid]['units'] = $units;
                 $batch['ingredient_types'][$tid]['ingredients'][$iid]['quantity_display'] = (float)$quantity . ' ' . $units;
                 $batch['ingredient_types'][$tid]['ingredients'][$iid]['quantity'] = (float)$ingredient['quantity'];
@@ -246,17 +251,24 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         $batch['ingredient_types'] = array();
     }
 
+    $total_time_per_unit = 0;
     if( $batch['yield'] > 0 ) {
         $materials_cost_per_unit = bcdiv($materials_cost, $batch['yield'], 10);
         $time_cost_per_unit = bcdiv($time_cost, $batch['yield'], 10);
+        if( $batch['production_time'] > 0 ) {
+            $total_time = bcadd($total_time, bcmul($batch['production_time'], 60, 3), 3);
+        }
+        if( $total_time > 0 ) {
+            $total_time_per_unit = bcdiv($total_time, $batch['yield'], 3);
+        }
     } else {
         $materials_cost_per_unit = 0;
         $time_cost_per_unit = 0;
     }
     $time_cost = bcadd($time_cost, bcmul($minute_wage, $batch['production_time'], 10), 10);
     $total_cost = bcadd($materials_cost, $time_cost, 10);
+    $time_cost_per_unit = bcadd($time_cost_per_unit, bcdiv($time_cost, $batch['yield'], 10), 10);
     $total_cost_per_unit = bcadd($materials_cost_per_unit, $time_cost_per_unit, 10);
-
 
     //
     // Get the product versions that use this recipe
@@ -265,6 +277,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         . "ciniki_herbalist_product_versions.name, "
         . "ciniki_herbalist_product_versions.recipe_quantity, "
         . "IFNULL(ciniki_herbalist_containers.cost_per_unit, 0) AS container_cost, "
+        . "ciniki_herbalist_product_versions.materials_cost_per_container, "
         . "ciniki_herbalist_product_versions.wholesale_price, "
         . "ciniki_herbalist_product_versions.retail_price "
         . "FROM ciniki_herbalist_product_versions "
@@ -279,7 +292,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'productversions', 'fname'=>'id', 
-            'fields'=>array('id', 'name', 'recipe_quantity', 'container_cost', 'wholesale_price', 'retail_price')),
+            'fields'=>array('id', 'name', 'recipe_quantity', 'container_cost', 'materials_cost_per_container', 'wholesale_price', 'retail_price')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -287,9 +300,32 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
     if( isset($rc['productversions']) ) {
         $batch['productversions'] = $rc['productversions'];
         foreach($batch['productversions'] as $vid => $version) {
-            $total_cost = $version['container_cost'] + bcmul($version['recipe_quantity'], $total_cost_per_unit, 10);
+            error_log('container_cost: ' . $version['container_cost']);
+            error_log('total_cost_per_unit: ' . $total_cost_per_unit);
+            $total_cost = bcadd($version['container_cost'], bcmul($version['recipe_quantity'], $total_cost_per_unit, 10), 10);
             $batch['productversions'][$vid]['total_cost'] = $total_cost;
             $batch['productversions'][$vid]['total_cost_display'] = numfmt_format_currency($intl_currency_fmt, $total_cost, $intl_currency);
+            //
+            // Calculate how much the hourly wage would be for this batch
+            // 
+            //
+            $batch['productversions'][$vid]['wholesale_hourly_wage'] = '';
+            $batch['productversions'][$vid]['retail_hourly_wage'] = '';
+            $batch['productversions'][$vid]['total_time'] = $total_time_per_unit;
+            if( $total_time_per_unit > 0 ) {
+                $units_per_hour = bcdiv(3600, bcmul($version['recipe_quantity'], $total_time_per_unit, 3), 3);
+                $mcost = bcadd($version['materials_cost_per_container'], $version['container_cost'], 4);
+                if( $version['wholesale_price'] > 0 ) {
+                    $wholesale_net = bcsub($version['wholesale_price'], $mcost, 4);
+                    $wholesale_hourly_wage = bcmul($units_per_hour, $wholesale_net, 4);
+                    $batch['productversions'][$vid]['wholesale_hourly_wage'] = numfmt_format_currency($intl_currency_fmt, $wholesale_hourly_wage, $intl_currency);
+                }
+                if( $version['retail_price'] > 0 ) {
+                    $retail_net = bcsub($version['retail_price'], $mcost, 4);
+                    $retail_hourly_wage = bcmul($units_per_hour, $retail_net, 4);
+                    $batch['productversions'][$vid]['retail_hourly_wage'] = numfmt_format_currency($intl_currency_fmt, $retail_hourly_wage, $intl_currency);
+                }
+            }
         }
     } else {
         $batch['productversions'] = array();
@@ -302,6 +338,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
     $batch['materials_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $batch['materials_cost_per_unit'], $intl_currency);
     $batch['time_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $batch['time_cost_per_unit'], $intl_currency);
     $batch['total_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $batch['total_cost_per_unit'], $intl_currency);
+    $batch['total_time_per_unit'] = sprintf("%.03f", $total_time_per_unit);
 
     //
     // Setup the labels if requested

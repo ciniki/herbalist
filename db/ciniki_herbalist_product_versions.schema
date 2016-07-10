@@ -7,13 +7,13 @@
 #
 # Fields
 # ------
-# id:                    The ID assigned to the product.
-# uuid:                    The Universal Unique ID.
-# business_id:            The business the product is attached to.
+# id:                   The ID assigned to the product.
+# uuid:                 The Universal Unique ID.
+# business_id:          The business the product is attached to.
 #
 # product_id:           The ID of the product this version is for.
 #
-# name:                    The name for the version of the product. This name will be
+# name:                 The name for the version of the product. This name will be
 #                       appended to the product name in ciniki_herbalist_products table.
 #
 # permalink:            The permalink for the product, to be used on the website.
@@ -36,6 +36,8 @@
 # time_cost_per_container:          The cost of time for 1 container.
 #
 # total_cost_per_container:         The total cost per container of product.
+# 
+# total_time_per_container:         The total time in seconds per container of product.
 #
 # inventory:            The current number of this product in stock.
 #
@@ -43,8 +45,8 @@
 #
 # retail_price:         The retail price of the product.
 #
-# date_added:            The UTC date and time the record was added.
-# last_updated:            The UTC date and time the record was last updated.
+# date_added:           The UTC date and time the record was added.
+# last_updated:         The UTC date and time the record was last updated.
 #
 create table ciniki_herbalist_product_versions (
     id int not null auto_increment,
@@ -61,6 +63,7 @@ create table ciniki_herbalist_product_versions (
     materials_cost_per_container decimal(19,4) not null,
     time_cost_per_container decimal(19,4) not null,
     total_cost_per_container decimal(19,4) not null,
+    total_time_per_container decimal(19,3) not null,
     inventory int not null,
     wholesale_price decimal(19,4) not null,
     retail_price decimal(19,4) not null,

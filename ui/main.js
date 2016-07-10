@@ -314,7 +314,7 @@ function ciniki_herbalist_main() {
     this.product.fieldValue = function(s, i, d) { return this.data[i]; }
     this.product.liveSearchCb = function(s, i, value) {
         if( i == 'category' ) {
-            var rsp = M.api.getJSONBgCb('ciniki.herbalist.productSearchField', {'business_id':M.curBusinessID, 'field':i, 'start_needle':value, 'limit':15},
+            M.api.getJSONBgCb('ciniki.herbalist.productSearchField', {'business_id':M.curBusinessID, 'field':i, 'start_needle':value, 'limit':15},
                 function(rsp) {
                     M.ciniki_herbalist_main.product.liveSearchShow(s, i, M.gE(M.ciniki_herbalist_main.product.panelUID + '_' + i), rsp.results);
                 });
@@ -338,17 +338,16 @@ function ciniki_herbalist_main() {
     };
     this.product.refreshImages = function() {
         if( M.ciniki_herbalist_main.product.product_id > 0 ) {
-            var rsp = M.api.getJSONCb('ciniki.herbalist.productGet', {'business_id':M.curBusinessID, 
-                'product_id':this.product_id, 'images':'yes'}, function(rsp) {
-                    if( rsp.stat != 'ok' ) {
-                        M.api.err(rsp);
-                        return false;
-                    }
-                    var p = M.ciniki_herbalist_main.product;
-                    p.data.images = rsp.product.images;
-                    p.refreshSection('images');
-                    p.show();
-                });
+            M.api.getJSONCb('ciniki.herbalist.productGet', {'business_id':M.curBusinessID, 'product_id':this.product_id, 'images':'yes'}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                var p = M.ciniki_herbalist_main.product;
+                p.data.images = rsp.product.images;
+                p.refreshSection('images');
+                p.show();
+            });
         }
     }
     this.product.fieldHistoryArgs = function(s, i) {
@@ -531,6 +530,7 @@ function ciniki_herbalist_main() {
             'materials_cost_per_container':{'label':'Materials', 'type':'text', 'editable':'no', 'history':'no'},
             'time_cost_per_container':{'label':'Time', 'type':'text', 'editable':'no', 'history':'no'},
             'total_cost_per_container':{'label':'Total', 'type':'text', 'editable':'no', 'history':'no'},
+            'total_time_per_container':{'label':'Seconds', 'type':'text', 'editable':'no', 'history':'no'},
             }}, 
         '_prices':{'label':'Prices', 'fields':{
             'wholesale_price':{'label':'Wholesale', 'type':'text', 'size':'small'},
@@ -554,6 +554,7 @@ function ciniki_herbalist_main() {
     this.productversion.updateCosts = function() {
         var mc = 0;
         var tc = 0;
+        var t = 0;
         var q = M.gE(this.panelUID + '_recipe_quantity').value;
         if( q > 0 && this.formValue('recipe_id') > 0 ) {
             var rid = this.formValue('recipe_id');
@@ -561,6 +562,7 @@ function ciniki_herbalist_main() {
                 if( this.data.recipes[i].id == rid ) {
                     mc += (parseFloat(this.data.recipes[i].materials_cost_per_unit) * q);
                     tc += (parseFloat(this.data.recipes[i].time_cost_per_unit) * q);
+                    t += (parseFloat(this.data.recipes[i].total_time_per_unit) * q);
                 }
             }
         }
@@ -576,6 +578,7 @@ function ciniki_herbalist_main() {
         M.gE(this.panelUID + '_materials_cost_per_container').value = '$' + mc.toFixed((mc>0&&mc<0.001)?4:(mc>0&&mc<0.01?3:2));
         M.gE(this.panelUID + '_time_cost_per_container').value = '$' + tc.toFixed((tc>0&&tc<0.001)?4:(tc>0&&tc<0.01?3:2));
         M.gE(this.panelUID + '_total_cost_per_container').value = '$' + c.toFixed((c>0&&c<0.001)?4:(c>0&&c<0.01?3:2));
+        M.gE(this.panelUID + '_total_time_per_container').value = t.toFixed(3) + ' sec';
     };
     this.productversion.edit = function(cb, iid, pid) {
         if( iid != null ) { this.productversion_id = iid; }
@@ -766,6 +769,7 @@ function ciniki_herbalist_main() {
             'materials_cost_per_unit':{'label':'Materials', 'type':'text', 'editable':'no', 'history':'no'},
             'time_cost_per_unit':{'label':'Time', 'type':'text', 'editable':'no', 'history':'no'},
             'total_cost_per_unit':{'label':'Total', 'type':'text', 'editable':'no', 'history':'no'},
+            'total_time_per_unit':{'label':'Seconds', 'type':'text', 'editable':'no', 'history':'no'},
             }}, 
         '_tabs':{'label':'', 'type':'paneltabs', 'selected':'ingredients', 'tabs':{
             'ingredients':{'label':'Ingredients', 'fn':'M.ciniki_herbalist_main.recipe.selectTab("ingredients");'},
@@ -912,11 +916,13 @@ function ciniki_herbalist_main() {
         var mc = 0; // materials cost
         var tc = 0; // materials cost
         var c = 0;  // total cost
+        var ti = 0; // time in seconds
         if( y != '' && t != '' ) {
             for(var i in this.data.ingredient_types) {
                 for(var j in this.data.ingredient_types[i].ingredients) {
                     mc += (this.data.ingredient_types[i].ingredients[j].quantity * this.data.ingredient_types[i].ingredients[j].materials_cost_per_unit);
                     tc += (this.data.ingredient_types[i].ingredients[j].quantity * this.data.ingredient_types[i].ingredients[j].time_cost_per_unit);
+                    ti += (this.data.ingredient_types[i].ingredients[j].quantity * this.data.ingredient_types[i].ingredients[j].total_time_per_unit);
                 }
             }
             var mv = (mc/y);
@@ -931,10 +937,13 @@ function ciniki_herbalist_main() {
             M.gE(this.panelUID + '_time_cost_per_unit').value = '$' + tv.toFixed((tv>0&&tv<0.001)?4:(tv>0&&tv<0.01?3:2));
             c = mv + tv;
             M.gE(this.panelUID + '_total_cost_per_unit').value = '$' + c.toFixed((c>0&&c<0.001)?4:(c>0&&c<0.01?3:2));
+            ti = (((t*60)+ti)/y);
+            M.gE(this.panelUID + '_total_time_per_unit').value = ti.toFixed(3) + ' sec';
         } else {
             M.gE(this.panelUID + '_materials_cost_per_unit').value = '$0.00';
             M.gE(this.panelUID + '_time_cost_per_unit').value = '$0.00';
             M.gE(this.panelUID + '_total_cost_per_unit').value = '$0.00';
+            M.gE(this.panelUID + '_total_time_per_unit').value = '0 sec';
         }
     }
     this.recipe.edit = function(cb, id, list) {
@@ -1169,9 +1178,12 @@ function ciniki_herbalist_main() {
             'materials_cost_per_unit':{'label':'Materials', 'type':'text', 'editable':'no', 'history':'no'},
             'time_cost_per_unit':{'label':'Time', 'type':'text', 'editable':'no', 'history':'no'},
             'total_cost_per_unit':{'label':'Total', 'type':'text', 'editable':'no', 'history':'no'},
+            'total_time_per_unit':{'label':'Seconds', 'type':'text', 'editable':'no', 'history':'no'},
             }}, 
-        'productversions':{'label':'Options', 'aside':'yes', 'type':'simplegrid', 'num_cols':2,
-            'cellClasses':['label', ''],
+        'productversions':{'label':'Options', 'aside':'yes', 'type':'simplegrid', 'num_cols':3,
+            'headerValues':['Product', 'Cost', 'Wage'],
+            'headerClasses':['', 'alignright', 'alignright'],
+            'cellClasses':['label', 'alignright', 'alignright'],
             }, 
         'ingredients_30':{'label':'Herbs', 'type':'simplegrid', 'num_cols':3,
             'visible':function() { return M.ciniki_herbalist_main.recipe.data.ingredient_types[30] != null ? 'yes': 'hidden'; },
@@ -1225,6 +1237,7 @@ function ciniki_herbalist_main() {
             switch(j) {
                 case 0: return d.name;
                 case 1: return d.total_cost_display;
+                case 2: return d.wholesale_hourly_wage;
             }
         } else {
             switch(j) {
@@ -1241,6 +1254,7 @@ function ciniki_herbalist_main() {
         var mc = 0; // materials cost
         var tc = 0; // materials cost
         var c = 0;  // total cost
+        var ti = 0; // time in seconds
         for(var i in this.data.ingredient_types) {
             for(var j in this.data.ingredient_types[i].ingredients) {
                 var umc = (this.data.ingredient_types[i].ingredients[j].quantity * s * this.data.ingredient_types[i].ingredients[j].materials_cost_per_unit);
@@ -1250,6 +1264,7 @@ function ciniki_herbalist_main() {
                 tc += utc;
                 this.data.ingredient_types[i].ingredients[j].quantity_display = (this.data.ingredient_types[i].ingredients[j].quantity * s) + ' ' + this.data.ingredient_types[i].ingredients[j].units;
                 this.data.ingredient_types[i].ingredients[j].total_cost_per_unit_display = '$' + uc.toFixed((uc>0&&uc<0.001)?4:(uc>0&&uc<0.01?3:2));
+                ti += (this.data.ingredient_types[i].ingredients[j].quantity * s * this.data.ingredient_types[i].ingredients[j].total_time_per_unit);
             }
         }
         var mv = (mc/y);
@@ -1264,10 +1279,17 @@ function ciniki_herbalist_main() {
         M.gE(this.panelUID + '_time_cost_per_unit').value = '$' + tv.toFixed((tv>0&&tv<0.001)?4:(tv>0&&tv<0.01?3:2));
         c = mv + tv;
         M.gE(this.panelUID + '_total_cost_per_unit').value = '$' + c.toFixed((c>0&&c<0.001)?4:(c>0&&c<0.01?3:2));
+        ti = (((t*60)+ti)/y);
+        M.gE(this.panelUID + '_total_time_per_unit').value = ti.toFixed(3) + ' sec';
         if( this.data.productversions ) {
             for(i in this.data.productversions) {
                 this.data.productversions[i].total_cost = (parseFloat(this.data.productversions[i].recipe_quantity) * c) + parseFloat(this.data.productversions[i].container_cost);
                 this.data.productversions[i].total_cost_display = '$' + this.data.productversions[i].total_cost.toFixed(2);
+                var units_per_hour = (3600/(parseFloat(this.data.productversions[i].recipe_quantity) * ti));
+                var mcost = parseFloat(this.data.productversions[i].materials_cost_per_container) + parseFloat(this.data.productversions[i].container_cost);
+                if( this.data.productversions[i].wholesale_price > 0 ) {
+                    this.data.productversions[i].wholesale_hourly_wage = '$' + (units_per_hour * (parseFloat(this.data.productversions[i].wholesale_price) - mcost)).toFixed(2);
+                }
             }
         }
         this.refreshSection('ingredients_30');

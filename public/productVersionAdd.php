@@ -32,6 +32,7 @@ function ciniki_herbalist_productVersionAdd(&$ciniki) {
         'materials_cost_per_container'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Materials Cost'),
         'time_cost_per_container'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Time Cost'),
         'total_cost_per_container'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Total Cost'),
+        'total_time_per_container'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Total Time'),
         'inventory'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Inventory'),
         'wholesale_price'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Wholesale'),
         'retail_price'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'currency', 'name'=>'Retail'),

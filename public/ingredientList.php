@@ -75,6 +75,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
         . "ciniki_herbalist_ingredients.materials_cost_per_unit, "
         . "ciniki_herbalist_ingredients.time_cost_per_unit, "
         . "ciniki_herbalist_ingredients.total_cost_per_unit, "
+        . "ciniki_herbalist_ingredients.total_time_per_unit, "
         . "ciniki_herbalist_ingredients.warnings "
         . "FROM ciniki_herbalist_ingredients "
         . "WHERE ciniki_herbalist_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
@@ -88,7 +89,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'ingredients', 'fname'=>'id', 
             'fields'=>array('id', 'name', 'subname', 'sorttype', 'plant_id', 'recipe_id', 'units', 'units_display', 'costing_quantity', 'costing_price', 
-                'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'warnings'),
+                'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'total_time_per_unit', 'warnings'),
             'maps'=>array('units_display'=>$maps['ingredient']['units']),
             ),
         ));

@@ -27,6 +27,7 @@ function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id
     if( isset($recipe['ingredients']) ) {
         $materials_cost = 0;
         $time_cost = 0;
+        $total_time = 0;
         foreach($recipe['ingredients'] as $iid => $ingredient) {
             if( !isset($ingredients[$iid]) ) {
                 return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3468', 'msg'=>'Recipe ingredient does not exist'));
@@ -44,6 +45,7 @@ function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id
             
             $materials_cost = bcadd($materials_cost, bcmul($ingredients[$iid]['materials_cost_per_unit'], $recipe['ingredients'][$iid]['quantity'], 10), 10);
             $time_cost = bcadd($time_cost, bcmul($ingredients[$iid]['time_cost_per_unit'], $recipe['ingredients'][$iid]['quantity'], 10), 10);
+            $total_time = bcadd($total_time, bcmul($ingredients[$iid]['total_time_per_unit'], $recipe['ingredients'][$iid]['quantity'], 3), 3);
         }
 
         //
@@ -51,6 +53,8 @@ function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id
         //
         if( $recipe['production_time'] > 0 ) {
             $time_cost = bcadd($time_cost, bcmul($recipe['production_time'], $minute_wage, 10), 10);
+            // Add the recipe time to the total time in seconds of recipe for the production
+            $total_time = bcadd($total_time, bcmul($recipe['production_time'], 60, 3), 3);
         }
     
         if( $materials_cost > 0 && $recipe['yield'] > 0 ) {
@@ -60,10 +64,13 @@ function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id
         }
         if( $time_cost > 0 && $recipe['yield'] > 0 ) {
             $time_cost_per_unit = bcdiv($time_cost, $recipe['yield'], 10);
+            $total_time_per_unit = bcdiv($total_time, $recipe['yield'], 3);
         } else {
             $time_cost_per_unit = 0;
+            $total_time_per_unit = 0;
         }
         $total_cost_per_unit = bcadd($materials_cost_per_unit, $time_cost_per_unit, 10);
+
         $update_args = array();
         if( $materials_cost_per_unit != $recipe['materials_cost_per_unit'] ) {
             $update_args['materials_cost_per_unit'] = $materials_cost_per_unit;
@@ -73,6 +80,9 @@ function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id
         }
         if( $total_cost_per_unit != $recipe['total_cost_per_unit'] ) {
             $update_args['total_cost_per_unit'] = $total_cost_per_unit;
+        }
+        if( $total_time_per_unit != $recipe['total_time_per_unit'] ) {
+            $update_args['total_time_per_unit'] = $total_time_per_unit;
         }
         if( count($update_args) > 0 ) {
             $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.recipe', $recipe_id, $update_args);

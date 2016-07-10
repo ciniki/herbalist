@@ -71,12 +71,13 @@ function ciniki_herbalist_productVersionGet($ciniki) {
             'recipe_id'=>'0',
             'recipe_quantity'=>'0',
             'container_id'=>'0',
-            'materials_cost_per_container'=>'0',
-            'time_cost_per_container'=>'0',
-            'total_cost_per_container'=>'0',
-            'inventory'=>'0',
-            'wholesale_price'=>'0',
-            'retail_price'=>'0',
+            'materials_cost_per_container'=>'',
+            'time_cost_per_container'=>'',
+            'total_cost_per_container'=>'',
+            'total_time_per_container'=>'',
+            'inventory'=>'',
+            'wholesale_price'=>'',
+            'retail_price'=>'',
         );
     }
 
@@ -96,6 +97,7 @@ function ciniki_herbalist_productVersionGet($ciniki) {
             . "ciniki_herbalist_product_versions.materials_cost_per_container, "
             . "ciniki_herbalist_product_versions.time_cost_per_container, "
             . "ciniki_herbalist_product_versions.total_cost_per_container, "
+            . "ciniki_herbalist_product_versions.total_time_per_container, "
             . "ciniki_herbalist_product_versions.inventory, "
             . "ciniki_herbalist_product_versions.wholesale_price, "
             . "ciniki_herbalist_product_versions.retail_price "
@@ -127,7 +129,8 @@ function ciniki_herbalist_productVersionGet($ciniki) {
         . "ciniki_herbalist_recipes.name, "
         . "ciniki_herbalist_recipes.materials_cost_per_unit, "
         . "ciniki_herbalist_recipes.time_cost_per_unit, "
-        . "ciniki_herbalist_recipes.total_cost_per_unit "
+        . "ciniki_herbalist_recipes.total_cost_per_unit, "
+        . "ciniki_herbalist_recipes.total_time_per_unit "
         . "FROM ciniki_herbalist_recipes "
         . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
         . "ORDER BY name "
@@ -135,7 +138,7 @@ function ciniki_herbalist_productVersionGet($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'recipes', 'fname'=>'id', 
-            'fields'=>array('id', 'name', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit')),
+            'fields'=>array('id', 'name', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'total_time_per_unit')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -145,7 +148,7 @@ function ciniki_herbalist_productVersionGet($ciniki) {
     } else {
         $recipes = array();
     }
-    array_unshift($recipes, array('id'=>'0', 'name'=>'None', 'materials_cost_per_unit'=>'0', 'time_cost_per_unit'=>'0', 'total_cost_per_unit'=>'0'));
+    array_unshift($recipes, array('id'=>'0', 'name'=>'None', 'materials_cost_per_unit'=>'0', 'time_cost_per_unit'=>'0', 'total_cost_per_unit'=>'0', 'total_time_per_unit'=>'0'));
 
     //
     // Get the list of containers

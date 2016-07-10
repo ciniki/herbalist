@@ -89,6 +89,7 @@ function ciniki_herbalist_ingredientGet($ciniki) {
             . "ciniki_herbalist_ingredients.materials_cost_per_unit, "
             . "ciniki_herbalist_ingredients.time_cost_per_unit, "
             . "ciniki_herbalist_ingredients.total_cost_per_unit, "
+            . "ciniki_herbalist_ingredients.total_time_per_unit, "
             . "ciniki_herbalist_ingredients.warnings "
             . "FROM ciniki_herbalist_ingredients "
             . "WHERE ciniki_herbalist_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "

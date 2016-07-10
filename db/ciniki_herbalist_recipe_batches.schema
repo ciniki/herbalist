@@ -29,11 +29,12 @@
 # materials_cost_per_unit:  The cost of materials for 1 unit of the batch.
 # time_cost_per_unit:       The cost of time for 1 unit of the batch.
 # total_cost_per_unit:      The cost per 1 unit of the batch, including materials and time.
+# total_time_per_unit:      The seconds per 1 unit of the batch, including time taken to produce any ingredients.
 #
-# notes:            The notes for the batch.
+# notes:                    The notes for the batch.
 #
-# date_added:        The UTC date and time the record was added.
-# last_updated:        The UTC date and time the record was last updated.
+# date_added:               The UTC date and time the record was added.
+# last_updated:             The UTC date and time the record was last updated.
 #
 create table ciniki_herbalist_recipe_batches (
     id int not null auto_increment,
@@ -49,6 +50,7 @@ create table ciniki_herbalist_recipe_batches (
     materials_cost_per_unit decimal(19,4) not null,
     time_cost_per_unit decimal(19,4) not null,
     total_cost_per_unit decimal(19,4) not null,
+    total_time_per_unit decimal(19,3) not null,
     notes varchar(10000) not null,
     date_added datetime not null,
     last_updated datetime not null,

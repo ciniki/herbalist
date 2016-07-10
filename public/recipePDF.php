@@ -69,7 +69,8 @@ function ciniki_herbalist_recipePDF($ciniki) {
         . "ciniki_herbalist_recipes.production_time, "
         . "ciniki_herbalist_recipes.materials_cost_per_unit, "
         . "ciniki_herbalist_recipes.time_cost_per_unit, "
-        . "ciniki_herbalist_recipes.total_cost_per_unit "
+        . "ciniki_herbalist_recipes.total_cost_per_unit, "
+        . "ciniki_herbalist_recipes.total_time_per_unit "
         . "FROM ciniki_herbalist_recipes "
         . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
         . "AND ciniki_herbalist_recipes.id = '" . ciniki_core_dbQuote($ciniki, $args['recipe_id']) . "' "
@@ -96,6 +97,7 @@ function ciniki_herbalist_recipePDF($ciniki) {
         . "ciniki_herbalist_ingredients.materials_cost_per_unit, "
         . "ciniki_herbalist_ingredients.time_cost_per_unit, "
         . "ciniki_herbalist_ingredients.total_cost_per_unit, "
+        . "ciniki_herbalist_ingredients.total_time_per_unit, "
         . "ciniki_herbalist_recipe_ingredients.quantity "
         . "FROM ciniki_herbalist_recipe_ingredients "
         . "LEFT JOIN ciniki_herbalist_ingredients ON ("
@@ -110,7 +112,7 @@ function ciniki_herbalist_recipePDF($ciniki) {
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.herbalist', array(
         array('container'=>'types', 'fname'=>'sorttype', 'fields'=>array('sorttype')),
         array('container'=>'ingredients', 'fname'=>'id', 
-            'fields'=>array('id', 'ingredient_id', 'name', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'units', 'quantity')),
+            'fields'=>array('id', 'ingredient_id', 'name', 'materials_cost_per_unit', 'time_cost_per_unit', 'total_cost_per_unit', 'total_time_per_unit', 'units', 'quantity')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
