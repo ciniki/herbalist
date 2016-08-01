@@ -6,11 +6,11 @@
 #
 # Fields
 # ------
-# id:                The ID assigned to the recipe.
-# uuid:                The Universal Unique ID.
-# business_id:        The business the recipe is attached to.
+# id:               The ID assigned to the recipe.
+# uuid:             The Universal Unique ID.
+# business_id:      The business the recipe is attached to.
 #
-# name:                The name for the recipe.
+# name:             The name for the recipe.
 #
 # flags:            The different options for the recipe.
 #

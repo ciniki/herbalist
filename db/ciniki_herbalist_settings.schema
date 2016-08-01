@@ -1,7 +1,7 @@
 #
 # Description
 # -----------
-# This table stores the settings for events.
+# This table stores the settings for herbalist module.
 #
 # production-hourly-wage:                      The hourly wage used in calculating cost per unit.
 #

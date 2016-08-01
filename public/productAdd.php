@@ -127,6 +127,7 @@ function ciniki_herbalist_productAdd(&$ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
         $args['permalink'] = ciniki_core_makePermalink($ciniki, $args['uuid']);
         $args['name'] = '';
+        $args['product_id'] = $product_id;
 
         //
         // Add the product image to the database

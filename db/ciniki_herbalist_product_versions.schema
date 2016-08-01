@@ -20,7 +20,7 @@
 #
 # flags:                The options for the version.
 #
-#                       0x01 - Visible, available on the website.
+#                           0x01 - Visible, available on the website.
 #
 # sequence:             The order to sort the product versions.
 # 
