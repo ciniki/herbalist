@@ -1249,7 +1249,7 @@ function ciniki_herbalist_main() {
     }
     this.recipebatch.rowFn = function(s, i, d) {
         if( s == 'productversions' ) {
-            return 'M.ciniki_herbalist_main.recipebatch.save(
+            return 'M.ciniki_herbalist_main.recipebatch.save(\'M.ciniki_herbalist_main.productversion.open("M.ciniki_herbalist_main.recipebatch.open();","' + d.id + '");\')';
         }
         return '';
     }
