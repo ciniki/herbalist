@@ -3,7 +3,8 @@
 # -----------
 # This table stores the settings for herbalist module.
 #
-# production-hourly-wage:                      The hourly wage used in calculating cost per unit.
+# production-hourly-wage:               The hourly wage used in calculating cost per unit.
+# labels-[template]-name:               The name the business gives to a label.
 #
 # Fields
 # ------

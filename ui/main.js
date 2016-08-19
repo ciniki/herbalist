@@ -1412,7 +1412,7 @@ function ciniki_herbalist_main() {
             p.data = rsp;
             p.data.title = inputdata.title;
             p.data.content = inputdata.content;
-            p.sections.general.fields.label.options = {};
+            p.sections.general.fields.label.options = {'0':'Choose a label'};
             for(var i in rsp.labels) {
                 p.sections.general.fields.label.options[i] = rsp.labels[i].name;
             }
@@ -1444,6 +1444,10 @@ function ciniki_herbalist_main() {
     this.labels.print = function() {
         var args = {'business_id':M.curBusinessID};
         args['label'] = this.formValue('label');
+        if( args['label'] == 0 ) {
+            M.alert('You must choose a label');
+            return false;
+        }
         args['title'] = this.formValue('title');
         args['content'] = this.formValue('content');
         args['start_col'] = this.formValue('start_col');
@@ -1649,7 +1653,7 @@ function ciniki_herbalist_main() {
             }
             var p = M.ciniki_herbalist_main.inamelabels;
             p.data = rsp;
-            p.sections.general.fields.label.options = {};
+            p.sections.general.fields.label.options = {'0':'Choose a label'};
             for(var i in rsp.labels) {
                 p.sections.general.fields.label.options[i] = rsp.labels[i].name;
             }
@@ -1703,6 +1707,10 @@ function ciniki_herbalist_main() {
     this.inamelabels.print = function() {
         var args = {'business_id':M.curBusinessID};
         args['label'] = this.formValue('label');
+        if( args['label'] == 0 ) {
+            M.alert('You must choose a label');
+            return false;
+        }
         args['start_col'] = this.formValue('start_col');
         args['start_row'] = this.formValue('start_row');
         args['ingredients'] = '';
