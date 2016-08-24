@@ -1625,13 +1625,13 @@ function ciniki_herbalist_main() {
             'label':{'label':'Label', 'type':'select', 'options':{}, 'onchangeFn':'M.ciniki_herbalist_main.inamelabels.switchLabel'},
             }},
         'herbs':{'label':'Herbs', 'fields':{
-            'ingredients_30':{'label':'', 'hidelabel':'yes', 'type':'multiselect', 'none':'yes', 'options':{}},
+            'ingredients_30':{'label':'', 'hidelabel':'yes', 'type':'idlist', 'none':'yes', 'list':{}},
             }},
         'liquids':{'label':'Liquids', 'fields':{
-            'ingredients_60':{'label':'', 'hidelabel':'yes', 'type':'multiselect', 'none':'yes', 'options':{}},
+            'ingredients_60':{'label':'', 'hidelabel':'yes', 'type':'idlist', 'none':'yes', 'list':{}},
             }},
         'misc':{'label':'Misc', 'fields':{
-            'ingredients_90':{'label':'', 'hidelabel':'yes', 'type':'multiselect', 'none':'yes', 'options':{}},
+            'ingredients_90':{'label':'', 'hidelabel':'yes', 'type':'idlist', 'none':'yes', 'list':{}},
             }},
         'startend':{'label':'', 'fields':{
             'start_col':{'label':'Start Column', 'type':'toggle', 'default':'1', 'toggles':{}},
@@ -1657,16 +1657,17 @@ function ciniki_herbalist_main() {
             for(var i in rsp.labels) {
                 p.sections.general.fields.label.options[i] = rsp.labels[i].name;
             }
-            p.sections.herbs.fields.ingredients_30.options = {};
-            p.sections.liquids.fields.ingredients_60.options = {};
-            p.sections.misc.fields.ingredients_90.options = {};
+            p.sections.herbs.fields.ingredients_30.list = {};
+            p.sections.liquids.fields.ingredients_60.list = {};
+            p.sections.misc.fields.ingredients_90.list = {};
             for(i in rsp.ingredients) {
                 if( rsp.ingredients[i].sorttype == '30' ) {
-                    p.sections.herbs.fields.ingredients_30.options[rsp.ingredients[i].id] = rsp.ingredients[i].name;
+                    p.sections.herbs.fields.ingredients_30.list[i] = rsp.ingredients[i];
+                        
                 } else if( rsp.ingredients[i].sorttype == '60' ) {
-                    p.sections.liquids.fields.ingredients_60.options[rsp.ingredients[i].id] = rsp.ingredients[i].name;
+                    p.sections.liquids.fields.ingredients_60.list[i] = rsp.ingredients[i];
                 } else if( rsp.ingredients[i].sorttype == '90' ) {
-                    p.sections.misc.fields.ingredients_90.options[rsp.ingredients[i].id] = rsp.ingredients[i].name;
+                    p.sections.misc.fields.ingredients_90.list[i] = rsp.ingredients[i];
                 }
             }
             p.sections.startend.fields.start_col.toggles = {};
@@ -1714,11 +1715,10 @@ function ciniki_herbalist_main() {
         args['start_col'] = this.formValue('start_col');
         args['start_row'] = this.formValue('start_row');
         args['ingredients'] = '';
-        for(var i in this.data.ingredients) {
-            if( M.gE(this.panelUID + '_ingredients_' + this.data.ingredients[i].sorttype + '_' + this.data.ingredients[i].id).className == 'toggle_on' ) {
-                args['ingredients'] += (args['ingredients'] != '' ? ',' : '') + this.data.ingredients[i].id;
-            }
-        }
+        args['ingredients'] = this.formValue('ingredients_30');
+        args['ingredients'] += (args.ingredients != '' ? ',':'') + this.formValue('ingredients_60');
+        args['ingredients'] += (args.ingredients != '' ? ',':'') + this.formValue('ingredients_90');
+
         if( args['ingredients'] == '' ) {
             alert("You must specify at least one ingredient");
             return false;
