@@ -20,6 +20,7 @@ function ciniki_herbalist_recipeList($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'recipe_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Type'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -48,7 +49,11 @@ function ciniki_herbalist_recipeList($ciniki) {
         . "ciniki_herbalist_recipes.total_time_per_unit "
         . "FROM ciniki_herbalist_recipes "
         . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-        . "ORDER BY name "
+        . "";
+    if( isset($args['recipe_type']) && $args['recipe_type'] > 0 ) {
+        $strsql .= "AND recipe_type = '" . ciniki_core_dbQuote($ciniki, $args['recipe_type']) . "' ";
+    }
+    $strsql .= "ORDER BY name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(

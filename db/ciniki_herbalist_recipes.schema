@@ -12,6 +12,14 @@
 #
 # name:             The name for the recipe.
 #
+# recipe_type:      The type of recipe.
+#
+#                   0 - Generic
+#                   10 - Infusion
+#                   20 - Salve
+#                   30 - Cream
+#                   40 - Tincture
+#
 # flags:            The different options for the recipe.
 #
 #                   0x01 - Pressed recipe, means there is a pressing date for each batch.
@@ -41,6 +49,7 @@ create table ciniki_herbalist_recipes (
     uuid char(36) not null,
     business_id int not null,
     name varchar(150) not null,
+    recipe_type tinyint unsigned not null,
     flags tinyint unsigned not null,
     units tinyint unsigned not null,
     yield int not null,

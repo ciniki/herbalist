@@ -51,6 +51,12 @@ function ciniki_herbalist_main() {
             'addTxt':'Add Ingredient',
             'addFn':'M.ciniki_herbalist_main.ingredient.open(\'M.ciniki_herbalist_main.menu.open();\',0);',
             },
+        '_recipe_tabs':{'label':'', 'type':'paneltabs', 'selected':'0', 
+            'visible':function() { return (M.ciniki_herbalist_main.menu.sections._tabs.selected=='recipes'?'yes':'no'); },
+            'tabs':{
+                '0':{'label':'All', 'fn':'M.ciniki_herbalist_main.menu.open(null,null,0);'},
+                '90':{'label':'Tinctures', 'fn':'M.ciniki_herbalist_main.menu.open(null,null,90);'},
+            }},
         'recipes':{'label':'Recipes', 'type':'simplegrid', 'num_cols':1, 
             'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='recipes'?'yes':'no';},
             'headerValues':['Name'],
@@ -183,6 +189,7 @@ function ciniki_herbalist_main() {
         this.data = {};
         if( tab != null ) { this.sections._tabs.selected = tab; }
         if( itab != null && this.sections._tabs.selected == 'ingredients' ) { this.sections._ingredient_tabs.selected = itab; }
+        if( itab != null && this.sections._tabs.selected == 'recipes' ) { this.sections._recipe_tabs.selected = itab; }
         if( itab != null && this.sections._tabs.selected == 'products' ) { this.category = itab; }
         if( itab != null && this.sections._tabs.selected == 'inventory' ) { this.category = itab; }
         if( this.sections._tabs.selected == 'inventory' ) {
@@ -212,6 +219,9 @@ function ciniki_herbalist_main() {
             }
             if( this.sections._tabs.selected == 'ingredients' ) {
                 args['sorttype'] = this.sections._ingredient_tabs.selected;
+            }
+            if( this.sections._tabs.selected == 'recipes' && this.sections._recipe_tabs.selected > 0 ) {
+                args['recipe_type'] = this.sections._recipe_tabs.selected;
             }
             M.api.getJSONCb(method, args, function(rsp) {
                 if( rsp.stat != 'ok' ) {
@@ -757,6 +767,7 @@ function ciniki_herbalist_main() {
             'name':{'label':'', 'hidelabel':'yes', 'type':'text'},
             }},
         '_options':{'label':'Options', 'aside':'yes', 'fields':{
+            'recipe_type':{'label':'Type', 'type':'select', 'options':{'0':'Generic', '90':'Tincture'}},
             'flags_1':{'label':'Pressing', 'type':'flagtoggle', 'bit':0x01, 'field':'flags', 'default':'no'},
             }},
         '_yield':{'label':'Expected Yield', 'aside':'yes',
