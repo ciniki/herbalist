@@ -57,6 +57,12 @@ function ciniki_herbalist_main() {
                 '0':{'label':'All', 'fn':'M.ciniki_herbalist_main.menu.open(null,null,0);'},
                 '90':{'label':'Tinctures', 'fn':'M.ciniki_herbalist_main.menu.open(null,null,90);'},
             }},
+        'recipe_search':{'label':'', 'type':'livesearchgrid', 'livesearchcols':1, 
+            'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='recipes'?'yes':'no';},
+            'cellClasses':['multiline'],
+            'hint':'Search recipes', 
+            'noData':'No recipes found',
+            },
         'recipes':{'label':'Recipes', 'type':'simplegrid', 'num_cols':1, 
             'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='recipes'?'yes':'no';},
             'headerValues':['Name'],
@@ -121,16 +127,27 @@ function ciniki_herbalist_main() {
             M.api.getJSONBgCb('ciniki.herbalist.noteSearch', {'business_id':M.curBusinessID, 'search_str':v, 'limit':'50'}, function(rsp) {
                     M.ciniki_herbalist_main.menu.liveSearchShow('note_search',null,M.gE(M.ciniki_herbalist_main.menu.panelUID + '_' + s), rsp.notes);
                 });
+        } else if( s == 'recipe_search' && v != '' ) {
+            M.api.getJSONBgCb('ciniki.herbalist.recipeSearch', {'business_id':M.curBusinessID, 'search_str':v, 'limit':'50'}, function(rsp) {
+                    M.ciniki_herbalist_main.menu.liveSearchShow('recipe_search',null,M.gE(M.ciniki_herbalist_main.menu.panelUID + '_' + s), rsp.recipes);
+                });
         }
     }
     this.menu.liveSearchResultValue = function(s, f, i, j, d) {
         if( s == 'note_search' ) { 
             return '<span class="maintext">' + d.note_date + '</span><span class="subtext">' + d.content + '</span><span class="subsubtext">' + d.keywords + '</span>';
+        } else if( s == 'recipe_search' ) { 
+            if( d.ingredient_name != '' ) {
+                return d.name + ' <span class="subdue">(' + d.ingredient_name + ')</span>';
+            }
+            return d.name;
         }
     }
     this.menu.liveSearchResultRowFn = function(s, f, i, j, d) {
         if( s == 'note_search' ) {
             return 'M.ciniki_herbalist_main.note.open(\'M.ciniki_herbalist_main.menu.show();\',\'' + d.id + '\');';
+        } else if( s == 'recipe_search' ) {
+            return 'M.ciniki_herbalist_main.recipe.open(\'M.ciniki_herbalist_main.menu.open();\',\'' + d.id + '\');';
         }
     }
     this.menu.cellValue = function(s, i, j, d) {
