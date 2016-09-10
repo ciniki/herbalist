@@ -51,6 +51,18 @@ function ciniki_herbalist_main() {
             'addTxt':'Add Ingredient',
             'addFn':'M.ciniki_herbalist_main.ingredient.open(\'M.ciniki_herbalist_main.menu.open();\',0);',
             },
+        '_recipe_tabs':{'label':'', 'type':'paneltabs', 'selected':'0', 
+            'visible':function() { return (M.ciniki_herbalist_main.menu.sections._tabs.selected=='recipes'?'yes':'no'); },
+            'tabs':{
+                '0':{'label':'All', 'fn':'M.ciniki_herbalist_main.menu.open(null,null,0);'},
+                '90':{'label':'Tinctures', 'fn':'M.ciniki_herbalist_main.menu.open(null,null,90);'},
+            }},
+        'recipe_search':{'label':'', 'type':'livesearchgrid', 'livesearchcols':1, 
+            'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='recipes'?'yes':'no';},
+            'cellClasses':['multiline'],
+            'hint':'Search recipes', 
+            'noData':'No recipes found',
+            },
         'recipes':{'label':'Recipes', 'type':'simplegrid', 'num_cols':1, 
             'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='recipes'?'yes':'no';},
             'headerValues':['Name'],
@@ -115,16 +127,27 @@ function ciniki_herbalist_main() {
             M.api.getJSONBgCb('ciniki.herbalist.noteSearch', {'business_id':M.curBusinessID, 'search_str':v, 'limit':'50'}, function(rsp) {
                     M.ciniki_herbalist_main.menu.liveSearchShow('note_search',null,M.gE(M.ciniki_herbalist_main.menu.panelUID + '_' + s), rsp.notes);
                 });
+        } else if( s == 'recipe_search' && v != '' ) {
+            M.api.getJSONBgCb('ciniki.herbalist.recipeSearch', {'business_id':M.curBusinessID, 'search_str':v, 'limit':'50'}, function(rsp) {
+                    M.ciniki_herbalist_main.menu.liveSearchShow('recipe_search',null,M.gE(M.ciniki_herbalist_main.menu.panelUID + '_' + s), rsp.recipes);
+                });
         }
     }
     this.menu.liveSearchResultValue = function(s, f, i, j, d) {
         if( s == 'note_search' ) { 
             return '<span class="maintext">' + d.note_date + '</span><span class="subtext">' + d.content + '</span><span class="subsubtext">' + d.keywords + '</span>';
+        } else if( s == 'recipe_search' ) { 
+            if( d.ingredient_name != '' ) {
+                return d.name + ' <span class="subdue">(' + d.ingredient_name + ')</span>';
+            }
+            return d.name;
         }
     }
     this.menu.liveSearchResultRowFn = function(s, f, i, j, d) {
         if( s == 'note_search' ) {
             return 'M.ciniki_herbalist_main.note.open(\'M.ciniki_herbalist_main.menu.show();\',\'' + d.id + '\');';
+        } else if( s == 'recipe_search' ) {
+            return 'M.ciniki_herbalist_main.recipe.open(\'M.ciniki_herbalist_main.menu.open();\',\'' + d.id + '\');';
         }
     }
     this.menu.cellValue = function(s, i, j, d) {
@@ -183,6 +206,7 @@ function ciniki_herbalist_main() {
         this.data = {};
         if( tab != null ) { this.sections._tabs.selected = tab; }
         if( itab != null && this.sections._tabs.selected == 'ingredients' ) { this.sections._ingredient_tabs.selected = itab; }
+        if( itab != null && this.sections._tabs.selected == 'recipes' ) { this.sections._recipe_tabs.selected = itab; }
         if( itab != null && this.sections._tabs.selected == 'products' ) { this.category = itab; }
         if( itab != null && this.sections._tabs.selected == 'inventory' ) { this.category = itab; }
         if( this.sections._tabs.selected == 'inventory' ) {
@@ -212,6 +236,9 @@ function ciniki_herbalist_main() {
             }
             if( this.sections._tabs.selected == 'ingredients' ) {
                 args['sorttype'] = this.sections._ingredient_tabs.selected;
+            }
+            if( this.sections._tabs.selected == 'recipes' && this.sections._recipe_tabs.selected > 0 ) {
+                args['recipe_type'] = this.sections._recipe_tabs.selected;
             }
             M.api.getJSONCb(method, args, function(rsp) {
                 if( rsp.stat != 'ok' ) {
@@ -757,6 +784,7 @@ function ciniki_herbalist_main() {
             'name':{'label':'', 'hidelabel':'yes', 'type':'text'},
             }},
         '_options':{'label':'Options', 'aside':'yes', 'fields':{
+            'recipe_type':{'label':'Type', 'type':'select', 'options':{'0':'Generic', '90':'Tincture'}},
             'flags_1':{'label':'Pressing', 'type':'flagtoggle', 'bit':0x01, 'field':'flags', 'default':'no'},
             }},
         '_yield':{'label':'Expected Yield', 'aside':'yes',
@@ -1249,7 +1277,7 @@ function ciniki_herbalist_main() {
     }
     this.recipebatch.rowFn = function(s, i, d) {
         if( s == 'productversions' ) {
-            return 'M.ciniki_herbalist_main.recipebatch.save(
+            return 'M.ciniki_herbalist_main.recipebatch.save(\'M.ciniki_herbalist_main.productversion.open("M.ciniki_herbalist_main.recipebatch.open();","' + d.id + '");\')';
         }
         return '';
     }
@@ -1412,7 +1440,7 @@ function ciniki_herbalist_main() {
             p.data = rsp;
             p.data.title = inputdata.title;
             p.data.content = inputdata.content;
-            p.sections.general.fields.label.options = {};
+            p.sections.general.fields.label.options = {'0':'Choose a label'};
             for(var i in rsp.labels) {
                 p.sections.general.fields.label.options[i] = rsp.labels[i].name;
             }
@@ -1444,6 +1472,10 @@ function ciniki_herbalist_main() {
     this.labels.print = function() {
         var args = {'business_id':M.curBusinessID};
         args['label'] = this.formValue('label');
+        if( args['label'] == 0 ) {
+            M.alert('You must choose a label');
+            return false;
+        }
         args['title'] = this.formValue('title');
         args['content'] = this.formValue('content');
         args['start_col'] = this.formValue('start_col');
@@ -1621,13 +1653,13 @@ function ciniki_herbalist_main() {
             'label':{'label':'Label', 'type':'select', 'options':{}, 'onchangeFn':'M.ciniki_herbalist_main.inamelabels.switchLabel'},
             }},
         'herbs':{'label':'Herbs', 'fields':{
-            'ingredients_30':{'label':'', 'hidelabel':'yes', 'type':'multiselect', 'none':'yes', 'options':{}},
+            'ingredients_30':{'label':'', 'hidelabel':'yes', 'type':'idlist', 'none':'yes', 'list':{}},
             }},
         'liquids':{'label':'Liquids', 'fields':{
-            'ingredients_60':{'label':'', 'hidelabel':'yes', 'type':'multiselect', 'none':'yes', 'options':{}},
+            'ingredients_60':{'label':'', 'hidelabel':'yes', 'type':'idlist', 'none':'yes', 'list':{}},
             }},
         'misc':{'label':'Misc', 'fields':{
-            'ingredients_90':{'label':'', 'hidelabel':'yes', 'type':'multiselect', 'none':'yes', 'options':{}},
+            'ingredients_90':{'label':'', 'hidelabel':'yes', 'type':'idlist', 'none':'yes', 'list':{}},
             }},
         'startend':{'label':'', 'fields':{
             'start_col':{'label':'Start Column', 'type':'toggle', 'default':'1', 'toggles':{}},
@@ -1649,20 +1681,21 @@ function ciniki_herbalist_main() {
             }
             var p = M.ciniki_herbalist_main.inamelabels;
             p.data = rsp;
-            p.sections.general.fields.label.options = {};
+            p.sections.general.fields.label.options = {'0':'Choose a label'};
             for(var i in rsp.labels) {
                 p.sections.general.fields.label.options[i] = rsp.labels[i].name;
             }
-            p.sections.herbs.fields.ingredients_30.options = {};
-            p.sections.liquids.fields.ingredients_60.options = {};
-            p.sections.misc.fields.ingredients_90.options = {};
+            p.sections.herbs.fields.ingredients_30.list = {};
+            p.sections.liquids.fields.ingredients_60.list = {};
+            p.sections.misc.fields.ingredients_90.list = {};
             for(i in rsp.ingredients) {
                 if( rsp.ingredients[i].sorttype == '30' ) {
-                    p.sections.herbs.fields.ingredients_30.options[rsp.ingredients[i].id] = rsp.ingredients[i].name;
+                    p.sections.herbs.fields.ingredients_30.list[i] = rsp.ingredients[i];
+                        
                 } else if( rsp.ingredients[i].sorttype == '60' ) {
-                    p.sections.liquids.fields.ingredients_60.options[rsp.ingredients[i].id] = rsp.ingredients[i].name;
+                    p.sections.liquids.fields.ingredients_60.list[i] = rsp.ingredients[i];
                 } else if( rsp.ingredients[i].sorttype == '90' ) {
-                    p.sections.misc.fields.ingredients_90.options[rsp.ingredients[i].id] = rsp.ingredients[i].name;
+                    p.sections.misc.fields.ingredients_90.list[i] = rsp.ingredients[i];
                 }
             }
             p.sections.startend.fields.start_col.toggles = {};
@@ -1703,14 +1736,17 @@ function ciniki_herbalist_main() {
     this.inamelabels.print = function() {
         var args = {'business_id':M.curBusinessID};
         args['label'] = this.formValue('label');
+        if( args['label'] == 0 ) {
+            M.alert('You must choose a label');
+            return false;
+        }
         args['start_col'] = this.formValue('start_col');
         args['start_row'] = this.formValue('start_row');
         args['ingredients'] = '';
-        for(var i in this.data.ingredients) {
-            if( M.gE(this.panelUID + '_ingredients_' + this.data.ingredients[i].sorttype + '_' + this.data.ingredients[i].id).className == 'toggle_on' ) {
-                args['ingredients'] += (args['ingredients'] != '' ? ',' : '') + this.data.ingredients[i].id;
-            }
-        }
+        args['ingredients'] = this.formValue('ingredients_30');
+        args['ingredients'] += (args.ingredients != '' ? ',':'') + this.formValue('ingredients_60');
+        args['ingredients'] += (args.ingredients != '' ? ',':'') + this.formValue('ingredients_90');
+
         if( args['ingredients'] == '' ) {
             alert("You must specify at least one ingredient");
             return false;

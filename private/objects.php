@@ -67,6 +67,7 @@ function ciniki_herbalist_objects($ciniki) {
         'table'=>'ciniki_herbalist_recipes',
         'fields'=>array(
             'name'=>array('name'=>'Name'),
+            'recipe_type'=>array('name'=>'Type', 'default'=>'0'),
             'flags'=>array('name'=>'Options'),
             'units'=>array('name'=>'Units'),
             'yield'=>array('name'=>'Yield', 'default'=>'0'),

@@ -58,6 +58,8 @@ function ciniki_herbalist_settingsUpdate(&$ciniki) {
     //
     $changelog_fields = array(
         'production-hourly-wage',
+        'labels-avery5160-name',
+        'labels-avery5167-name',
         );
     //
     // Check each valid setting and see if a new value was passed in the arguments for it.

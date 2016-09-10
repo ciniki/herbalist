@@ -146,28 +146,29 @@ function ciniki_herbalist_notesUpdateKeywords($ciniki, $business_id) {
         //
         // Add the keywords from ingredients, actions and ailments
         //
-        foreach($note['objects'] as $object => $o) {
-            foreach($o['refs'] as $ref_id => $ref) {
-                if( $object == 'ciniki.herbalist.ingredient' ) {
-                    if( isset($ingredients[$ref_id]) ) {
-                        $keywords[] = $ingredients[$ref_id];
-                    }
-                } elseif( $object == 'ciniki.herbalist.action' ) {
-                    if( isset($actions[$ref_id]) ) {
-                        $keywords[] = $actions[$ref_id];
-                    }
-
-                } elseif( $object == 'ciniki.herbalist.ailment' ) {
-                    if( isset($ailments[$ref_id]) ) {
-                        $keywords[] = $ailments[$ref_id];
-                    }
-                } elseif( $object == 'ciniki.herbalist.recipe' ) {
-                    if( isset($recipes[$ref_id]) ) {
-                        $keywords[] = $recipes[$ref_id];
-                    }
-                } elseif( $object == 'ciniki.herbalist.product' ) {
-                    if( isset($products[$ref_id]) ) {
-                        $keywords[] = $products[$ref_id];
+        if( isset($note['objects']) ) {
+            foreach($note['objects'] as $object => $o) {
+                foreach($o['refs'] as $ref_id => $ref) {
+                    if( $object == 'ciniki.herbalist.ingredient' ) {
+                        if( isset($ingredients[$ref_id]) ) {
+                            $keywords[] = $ingredients[$ref_id];
+                        }
+                    } elseif( $object == 'ciniki.herbalist.action' ) {
+                        if( isset($actions[$ref_id]) ) {
+                            $keywords[] = $actions[$ref_id];
+                        }
+                    } elseif( $object == 'ciniki.herbalist.ailment' ) {
+                        if( isset($ailments[$ref_id]) ) {
+                            $keywords[] = $ailments[$ref_id];
+                        }
+                    } elseif( $object == 'ciniki.herbalist.recipe' ) {
+                        if( isset($recipes[$ref_id]) ) {
+                            $keywords[] = $recipes[$ref_id];
+                        }
+                    } elseif( $object == 'ciniki.herbalist.product' ) {
+                        if( isset($products[$ref_id]) ) {
+                            $keywords[] = $products[$ref_id];
+                        }
                     }
                 }
             }

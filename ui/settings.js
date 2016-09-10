@@ -10,6 +10,10 @@ function ciniki_herbalist_settings() {
         'herbalist':{'label':'Herbalist', 'fields':{
             'production-hourly-wage':{'label':'Hourly Wage', 'type':'text', 'size':'small'},
         }},
+        'labelnames':{'label':'Label Names', 'fields':{
+            'labels-avery5167-name':{'label':'1/2" x 1 3/4"', 'type':'text'},
+            'labels-avery5160-name':{'label':'1" x 2 5/8"', 'type':'text'},
+        }},
     };
     this.main.fieldValue = function(s, i, d) { 
         return this.data[i];
