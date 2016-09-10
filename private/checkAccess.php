@@ -52,6 +52,7 @@ function ciniki_herbalist_checkAccess(&$ciniki, $business_id, $method) {
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3321', 'msg'=>'Access denied.'));
     }
+
     //
     // If the user has permission, return ok
     //
