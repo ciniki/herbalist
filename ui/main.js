@@ -1128,7 +1128,6 @@ function ciniki_herbalist_main() {
         });
     }
     this.recipeingredient.refreshIngredients = function(newid) {
-        console.log(newid);
         if( newid > 0 ) {
         M.api.getJSONCb('ciniki.herbalist.recipeIngredientGet', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id, 'recipeingredient_id':0}, function(rsp) {
             if( rsp.stat != 'ok' ) {
@@ -1142,7 +1141,19 @@ function ciniki_herbalist_main() {
                 if( rsp.ingredients[i].id == newid ) {
                     var e = M.gE(p.panelUID + '_ingredient_id');
                     var op = new Option(rsp.ingredients[i].name, rsp.ingredients[i].id, 1, 1);
-                    e.appendChild(op);
+                    var added = 'no';
+                    if( e.children != null ) {
+                        for(var j in e.children) {
+                            if( e.children[j].innerHTML.toLowerCase() > rsp.ingredients[i].name.toLowerCase() ) {
+                                added = 'yes';
+                                e.insertBefore(op, e.children[j]);
+                                break;
+                            }
+                        }
+                    } 
+                    if( added == 'no' ) {
+                        e.appendChild(op);
+                    }
                 }
             }
             p.show();
