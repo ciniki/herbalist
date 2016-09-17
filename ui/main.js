@@ -811,6 +811,8 @@ function ciniki_herbalist_main() {
             'headerValues':['Ingredient', 'Quantity', 'Cost'],
             'headerClasses':['', 'alignright', 'alignright'],
             'cellClasses':['', 'alignright', 'alignright'],
+            'addTxt':'Add Ingredient',
+            'addFn':'M.ciniki_herbalist_main.recipe.save("M.ciniki_herbalist_main.recipeingredient.open(\'M.ciniki_herbalist_main.recipe.updateIngredients();\',0,M.ciniki_herbalist_main.recipe.recipe_id);");',
             },
         'ingredients_60':{'label':'Liquids', 'type':'simplegrid', 'num_cols':3,
             'visible':function() { 
@@ -819,6 +821,8 @@ function ciniki_herbalist_main() {
             'headerValues':['Ingredient', 'Quantity', 'Cost'],
             'headerClasses':['', 'alignright', 'alignright'],
             'cellClasses':['', 'alignright', 'alignright'],
+            'addTxt':'Add Ingredient',
+            'addFn':'M.ciniki_herbalist_main.recipe.save("M.ciniki_herbalist_main.recipeingredient.open(\'M.ciniki_herbalist_main.recipe.updateIngredients();\',0,M.ciniki_herbalist_main.recipe.recipe_id);");',
             },
         'ingredients_90':{'label':'Misc', 'type':'simplegrid', 'num_cols':3,
             'visible':function() { 
@@ -827,9 +831,21 @@ function ciniki_herbalist_main() {
             'headerValues':['Ingredient', 'Quantity', 'Cost'],
             'headerClasses':['', 'alignright', 'alignright'],
             'cellClasses':['', 'alignright', 'alignright'],
+            'addTxt':'Add Ingredient',
+            'addFn':'M.ciniki_herbalist_main.recipe.save("M.ciniki_herbalist_main.recipeingredient.open(\'M.ciniki_herbalist_main.recipe.updateIngredients();\',0,M.ciniki_herbalist_main.recipe.recipe_id);");',
             },
         'ingredients':{'label':'', 'type':'simplegrid', 'num_cols':1,
-            'visible':function() { return M.ciniki_herbalist_main.recipe.sections._tabs.selected == 'ingredients' ? 'yes': 'hidden'; },
+            'visible':function() { 
+                if( M.ciniki_herbalist_main.recipe.sections._tabs.selected == 'ingredients'
+                    && M.ciniki_herbalist_main.recipe.data.ingredient_types[30] == null
+                    && M.ciniki_herbalist_main.recipe.data.ingredient_types[60] == null
+                    && M.ciniki_herbalist_main.recipe.data.ingredient_types[90] == null
+                    ) {
+                    return 'yes';
+                }
+                return 'hidden';
+//                return M.ciniki_herbalist_main.recipe.sections._tabs.selected == 'ingredients' ? 'yes': 'hidden'; 
+                },
             'addTxt':'Add Ingredient',
             'addFn':'M.ciniki_herbalist_main.recipe.save("M.ciniki_herbalist_main.recipeingredient.open(\'M.ciniki_herbalist_main.recipe.updateIngredients();\',0,M.ciniki_herbalist_main.recipe.recipe_id);");',
             },
@@ -922,6 +938,7 @@ function ciniki_herbalist_main() {
             p.refreshSection('ingredients_30');
             p.refreshSection('ingredients_60');
             p.refreshSection('ingredients_90');
+            p.refreshSection('ingredients');
             p.updateCPU();
             p.show();
         });
@@ -1070,10 +1087,14 @@ function ciniki_herbalist_main() {
     this.recipeingredient.recipe_id = 0;
     this.recipeingredient.recipeingredient_id = 0;
     this.recipeingredient.sections = { 
-        'general':{'label':'Ingredient', 'aside':'yes', 'fields':{
-            'ingredient_id':{'label':'Ingredient', 'type':'select', 'options':{}, 'complex_options':{'value':'id', 'name':'name'}},
-            'quantity':{'label':'Quantity', 'type':'text', 'size':'small'},
-            }}, 
+        'general':{'label':'Ingredient', 'aside':'yes', 
+            'fields':{
+                'ingredient_id':{'label':'Ingredient', 'type':'select', 'options':{}, 'complex_options':{'value':'id', 'name':'name'}},
+                'quantity':{'label':'Quantity', 'type':'text', 'size':'small'},
+            },
+            'addTxt':'New Ingredient',
+            'addFn':'M.ciniki_herbalist_main.ingredient.open(\'M.ciniki_herbalist_main.recipeingredient.refreshIngredients(M.ciniki_herbalist_main.ingredient.ingredient_id);\',0);',
+            }, 
         'notes':{'label':'Notes', 'type':'simplegrid', 'num_cols':1, 
             'cellClasses':['multiline'],
             'addTxt':'Add Note',
@@ -1086,8 +1107,7 @@ function ciniki_herbalist_main() {
         };  
     this.recipeingredient.fieldValue = function(s, i, d) { return this.data[i]; }
     this.recipeingredient.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.recipeIngredientHistory', 'args':{'business_id':M.curBusinessID, 
-            'recipeingredient_id':this.recipeingredient_id, 'field':i}};
+        return {'method':'ciniki.herbalist.recipeIngredientHistory', 'args':{'business_id':M.curBusinessID, 'recipeingredient_id':this.recipeingredient_id, 'field':i}};
     }
     this.recipeingredient.cellValue = function(s, i, j, d) {
         return '<span class="maintext">' + d.note_date + '</span><span class="subtext">' + d.content + '</span><span class="subsubtext">' + d.keywords + '</span>';
@@ -1106,6 +1126,30 @@ function ciniki_herbalist_main() {
             p.refreshSection('notes');
             p.show();
         });
+    }
+    this.recipeingredient.refreshIngredients = function(newid) {
+        console.log(newid);
+        if( newid > 0 ) {
+        M.api.getJSONCb('ciniki.herbalist.recipeIngredientGet', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id, 'recipeingredient_id':0}, function(rsp) {
+            if( rsp.stat != 'ok' ) {
+                M.api.err(rsp);
+                return false;
+            }
+            var p = M.ciniki_herbalist_main.recipeingredient;
+            //p.sections.general.fields.ingredient_id.options = rsp.ingredients;
+            // Find the new ingredient and add to top of list
+            for(var i in rsp.ingredients) {
+                if( rsp.ingredients[i].id == newid ) {
+                    var e = M.gE(p.panelUID + '_ingredient_id');
+                    var op = new Option(rsp.ingredients[i].name, rsp.ingredients[i].id, 1, 1);
+                    e.appendChild(op);
+                }
+            }
+            p.show();
+            });
+        } else {
+            this.show();
+        }
     }
     this.recipeingredient.open = function(cb, riid, rid, list) {
         this.reset();
