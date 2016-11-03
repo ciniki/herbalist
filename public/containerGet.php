@@ -87,10 +87,10 @@ function ciniki_herbalist_containerGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'container');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3381', 'msg'=>'Container not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.16', 'msg'=>'Container not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['container']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3382', 'msg'=>'Unable to find Container'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.17', 'msg'=>'Unable to find Container'));
         }
         $container = $rc['container'];
         $container['top_price'] = numfmt_format_currency($intl_currency_fmt, $container['top_price'], $intl_currency);

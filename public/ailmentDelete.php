@@ -51,7 +51,7 @@ function ciniki_herbalist_ailmentDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['ailment']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3522', 'msg'=>'Ailment does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.11', 'msg'=>'Ailment does not exist.'));
     }
     $ailment = $rc['ailment'];
 

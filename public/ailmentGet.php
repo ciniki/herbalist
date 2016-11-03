@@ -78,10 +78,10 @@ function ciniki_herbalist_ailmentGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'ailment');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3523', 'msg'=>'Ailment not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.12', 'msg'=>'Ailment not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['ailment']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3524', 'msg'=>'Unable to find Ailment'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.13', 'msg'=>'Unable to find Ailment'));
         }
         $ailment = $rc['ailment'];
 

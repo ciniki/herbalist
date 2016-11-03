@@ -80,10 +80,10 @@ function ciniki_herbalist_noteGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'note');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3516', 'msg'=>'Note not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.23', 'msg'=>'Note not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['note']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3517', 'msg'=>'Unable to find Note'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.24', 'msg'=>'Unable to find Note'));
         }
         $note = $rc['note'];
 
@@ -268,7 +268,7 @@ function ciniki_herbalist_noteGet($ciniki) {
         $strsql = "SELECT DISTINCT tag_name FROM ciniki_herbalist_tags WHERE tag_type = 60 AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' ";
         $rc = ciniki_core_dbQueryList($ciniki, $strsql, 'ciniki.herbalist', 'tags', 'tag_name');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3518', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.25', 'msg'=>'Unable to get list of categories', 'err'=>$rc['err']));
         }
         if( isset($rc['tags']) ) {
             $rsp['tags'] = $rc['tags'];

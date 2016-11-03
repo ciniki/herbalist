@@ -51,7 +51,7 @@ function ciniki_herbalist_ingredientDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['ingredient']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3390', 'msg'=>'Ingredient does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.18', 'msg'=>'Ingredient does not exist.'));
     }
     $ingredient = $rc['ingredient'];
 
@@ -69,7 +69,7 @@ function ciniki_herbalist_ingredientDelete(&$ciniki) {
         return $rc;
     }
     if( $rc['num'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3444', 'msg'=>'You still have ' . $rc['num'] . ' recipe' . ($rc['num']>1?'s':'') .' using this ingredient.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.19', 'msg'=>'You still have ' . $rc['num'] . ' recipe' . ($rc['num']>1?'s':'') .' using this ingredient.'));
     }
 
     //

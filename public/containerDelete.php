@@ -51,7 +51,7 @@ function ciniki_herbalist_containerDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['container']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3380', 'msg'=>'Container does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.14', 'msg'=>'Container does not exist.'));
     }
     $container = $rc['container'];
 
@@ -69,7 +69,7 @@ function ciniki_herbalist_containerDelete(&$ciniki) {
         return $rc;
     }
     if( $rc['num'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3443', 'msg'=>'You still have ' . $rc['num'] . ' product' . ($rc['num']>1?'s':'') .' using this container.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.15', 'msg'=>'You still have ' . $rc['num'] . ' product' . ($rc['num']>1?'s':'') .' using this container.'));
     }
 
     //

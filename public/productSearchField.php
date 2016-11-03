@@ -55,7 +55,7 @@ function ciniki_herbalist_productSearchField($ciniki) {
     // Reject if an unknown field
     //
     if( $args['field'] != 'category') {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3491', 'msg'=>'Unvalid search field'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.40', 'msg'=>'Unvalid search field'));
     }
     //
     // Get the number of faqs in each status for the business, 

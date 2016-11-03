@@ -51,7 +51,7 @@ function ciniki_herbalist_actionDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['action']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3519', 'msg'=>'Action does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.8', 'msg'=>'Action does not exist.'));
     }
     $action = $rc['action'];
 

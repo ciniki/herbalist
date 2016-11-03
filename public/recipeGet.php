@@ -97,10 +97,10 @@ function ciniki_herbalist_recipeGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'recipe');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3384', 'msg'=>'Recipe not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.54', 'msg'=>'Recipe not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['recipe']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3385', 'msg'=>'Unable to find Recipe'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.55', 'msg'=>'Unable to find Recipe'));
         }
         $recipe = $rc['recipe'];
         $recipe['materials_cost_per_unit'] = numfmt_format_currency($intl_currency_fmt, $recipe['materials_cost_per_unit'], $intl_currency);

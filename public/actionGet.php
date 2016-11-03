@@ -78,10 +78,10 @@ function ciniki_herbalist_actionGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'action');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3520', 'msg'=>'Action not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.9', 'msg'=>'Action not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['action']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3521', 'msg'=>'Unable to find Action'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.10', 'msg'=>'Unable to find Action'));
         }
         $action = $rc['action'];
 

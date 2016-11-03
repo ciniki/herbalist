@@ -51,7 +51,7 @@ function ciniki_herbalist_productVersionDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['productversion']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3476', 'msg'=>'Product Version does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.43', 'msg'=>'Product Version does not exist.'));
     }
     $productversion = $rc['productversion'];
 

@@ -51,7 +51,7 @@ function ciniki_herbalist_noteDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['note']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3515', 'msg'=>'Note does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.22', 'msg'=>'Note does not exist.'));
     }
     $note = $rc['note'];
 

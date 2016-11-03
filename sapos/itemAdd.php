@@ -31,7 +31,7 @@ if( $rc['stat'] != 'ok' ) {
 return $rc;
 }
         if( !isset($rc['product']) ) {
-return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3485', 'msg'=>'No product found.'));
+return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.61', 'msg'=>'No product found.'));
         }
 $product = $rc['product'];
 
@@ -44,7 +44,7 @@ $rsp = array('stat'=>'ok');
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
         $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.productversion', $item['object_id'], array('inventory'=>$new_quantity));
         if( $rc['stat'] != 'ok' ) {
-return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3486', 'msg'=>'Unable to add product.', 'err'=>$rc['err']));
+return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.62', 'msg'=>'Unable to add product.', 'err'=>$rc['err']));
         }
 
 return $rsp;

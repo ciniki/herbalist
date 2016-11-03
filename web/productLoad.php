@@ -34,15 +34,15 @@ function ciniki_herbalist_web_productLoad($ciniki, $business_id, $args) {
     } elseif( isset($args['id']) && $args['id'] > 0 ) {
         $strsql .= "AND ciniki_herbalist_products.id = '" . ciniki_core_dbQuote($ciniki, $args['id']) . "' ";
     } else {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3432', 'msg'=>'No product specified'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.74', 'msg'=>'No product specified'));
     }
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'product');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3433', 'msg'=>'Product not found', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.75', 'msg'=>'Product not found', 'err'=>$rc['err']));
     }
     if( !isset($rc['product']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3459', 'msg'=>'Unable to find Product'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.76', 'msg'=>'Unable to find Product'));
     }
     $product = $rc['product'];
 

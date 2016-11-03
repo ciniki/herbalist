@@ -31,7 +31,7 @@ function ciniki_herbalist_sapos_itemDelete($ciniki, $business_id, $invoice_id, $
             return $rc;
         }
         if( !isset($rc['product']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3487', 'msg'=>'No product found.'));        
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.63', 'msg'=>'No product found.'));        
         }
         $product = $rc['product'];
 
@@ -44,7 +44,7 @@ function ciniki_herbalist_sapos_itemDelete($ciniki, $business_id, $invoice_id, $
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
         $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.productversion', $item['object_id'], array('inventory'=>$new_quantity));
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3488', 'msg'=>'Unable to add product.', 'err'=>$rc['err']));        
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.64', 'msg'=>'Unable to add product.', 'err'=>$rc['err']));        
         }
 
         return array('stat'=>'ok');

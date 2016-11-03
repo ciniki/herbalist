@@ -108,10 +108,10 @@ function ciniki_herbalist_productVersionGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'productversion');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3477', 'msg'=>'Product Version not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.44', 'msg'=>'Product Version not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['productversion']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3478', 'msg'=>'Unable to find Product Version'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.45', 'msg'=>'Unable to find Product Version'));
         }
         $productversion = $rc['productversion'];
         $productversion['recipe_quantity'] = (float)$productversion['recipe_quantity'];

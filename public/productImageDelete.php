@@ -51,7 +51,7 @@ function ciniki_herbalist_productImageDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['productimage']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3461', 'msg'=>'Product Image does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.35', 'msg'=>'Product Image does not exist.'));
     }
     $productimage = $rc['productimage'];
 

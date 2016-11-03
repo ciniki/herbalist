@@ -51,7 +51,7 @@ function ciniki_herbalist_recipeDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['recipe']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3383', 'msg'=>'Recipe does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.51', 'msg'=>'Recipe does not exist.'));
     }
     $recipe = $rc['recipe'];
 
@@ -69,7 +69,7 @@ function ciniki_herbalist_recipeDelete(&$ciniki) {
         return $rc;
     }
     if( $rc['num'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3445', 'msg'=>'You still have ' . $rc['num'] . ' ingredient' . ($rc['num']>1?'s':'') .' using this recipe.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.52', 'msg'=>'You still have ' . $rc['num'] . ' ingredient' . ($rc['num']>1?'s':'') .' using this recipe.'));
     }
 
     //
@@ -86,7 +86,7 @@ function ciniki_herbalist_recipeDelete(&$ciniki) {
         return $rc;
     }
     if( $rc['num'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3446', 'msg'=>'You still have ' . $rc['num'] . ' product' . ($rc['num']>1?'s':'') .' using this recipe.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.53', 'msg'=>'You still have ' . $rc['num'] . ' product' . ($rc['num']>1?'s':'') .' using this recipe.'));
     }
 
     //

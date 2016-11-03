@@ -79,10 +79,10 @@ function ciniki_herbalist_recipeIngredientGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'recipeingredient');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3421', 'msg'=>'Recipe Ingredient not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.57', 'msg'=>'Recipe Ingredient not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['recipeingredient']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3422', 'msg'=>'Unable to find Recipe Ingredient'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.58', 'msg'=>'Unable to find Recipe Ingredient'));
         }
         $recipeingredient = $rc['recipeingredient'];
 

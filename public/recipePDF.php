@@ -78,10 +78,10 @@ function ciniki_herbalist_recipePDF($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'recipe');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3493', 'msg'=>'Recipe not found', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.59', 'msg'=>'Recipe not found', 'err'=>$rc['err']));
     }
     if( !isset($rc['recipe']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3494', 'msg'=>'Unable to find Recipe'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.60', 'msg'=>'Unable to find Recipe'));
     }
     $recipe = $rc['recipe'];
 

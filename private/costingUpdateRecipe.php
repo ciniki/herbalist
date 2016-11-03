@@ -17,7 +17,7 @@
 function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id, &$recipes, &$ingredients, $minute_wage) {
 
     if( !isset($recipes[$recipe_id]) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3449', 'msg'=>'Recipe does not exist'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.6', 'msg'=>'Recipe does not exist'));
     }
     $recipe = $recipes[$recipe_id];
 
@@ -30,7 +30,7 @@ function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id
         $total_time = 0;
         foreach($recipe['ingredients'] as $iid => $ingredient) {
             if( !isset($ingredients[$iid]) ) {
-                return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3468', 'msg'=>'Recipe ingredient does not exist'));
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.7', 'msg'=>'Recipe ingredient does not exist'));
             }
             $ingredient = $ingredients[$iid];
             //

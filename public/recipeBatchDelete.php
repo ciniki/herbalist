@@ -51,7 +51,7 @@ function ciniki_herbalist_recipeBatchDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['recipebatch']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3495', 'msg'=>'Recipe Batch does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.48', 'msg'=>'Recipe Batch does not exist.'));
     }
     $recipebatch = $rc['recipebatch'];
 

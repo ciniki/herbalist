@@ -85,10 +85,10 @@ function ciniki_herbalist_productImageGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'productimage');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3462', 'msg'=>'Product Image not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.36', 'msg'=>'Product Image not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['productimage']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3463', 'msg'=>'Unable to find Product Image'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.37', 'msg'=>'Unable to find Product Image'));
         }
         $productimage = $rc['productimage'];
     }

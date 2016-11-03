@@ -140,10 +140,10 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'batch');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3496', 'msg'=>'Recipe Batch not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.49', 'msg'=>'Recipe Batch not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['batch']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3497', 'msg'=>'Unable to find Recipe Batch'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.50', 'msg'=>'Unable to find Recipe Batch'));
         }
         $batch = $rc['batch'];
 

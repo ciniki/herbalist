@@ -51,7 +51,7 @@ function ciniki_herbalist_recipeIngredientDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['recipeingredient']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3420', 'msg'=>'Recipe Ingredient does not exist.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.56', 'msg'=>'Recipe Ingredient does not exist.'));
     }
     $recipeingredient = $rc['recipeingredient'];
 

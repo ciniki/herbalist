@@ -19,7 +19,7 @@
 function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, $args) {
 
     if( !isset($ciniki['business']['modules']['ciniki.herbalist']) ) {
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3455', 'msg'=>"I'm sorry, the page you requested does not exist."));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.herbalist.70', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
     $page = array(
         'title'=>$args['page_title'],
@@ -198,10 +198,10 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
         ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'web', 'productLoad');
         $rc = ciniki_herbalist_web_productLoad($ciniki, $business_id, array('permalink'=>$product_permalink, 'images'=>'yes'));
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3457', 'msg'=>"We're sorry, the page you requested is not available."));
+            return array('stat'=>'404', 'err'=>array('code'=>'ciniki.herbalist.71', 'msg'=>"We're sorry, the page you requested is not available."));
         }
         if( !isset($rc['product']) ) {
-            return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3480', 'msg'=>"We're sorry, the page you requested is not available."));
+            return array('stat'=>'404', 'err'=>array('code'=>'ciniki.herbalist.72', 'msg'=>"We're sorry, the page you requested is not available."));
         } else {
             $product = $rc['product'];
             $page['title'] = $product['name'];
@@ -277,7 +277,7 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
     // Return error if nothing found to display
     //
     if( $display == '' ) {
-        return array('stat'=>'404', 'err'=>array('pkg'=>'ciniki', 'code'=>'3456', 'msg'=>"We're sorry, the page you requested is not available."));
+        return array('stat'=>'404', 'err'=>array('code'=>'ciniki.herbalist.73', 'msg'=>"We're sorry, the page you requested is not available."));
     }
 
     return array('stat'=>'ok', 'page'=>$page);

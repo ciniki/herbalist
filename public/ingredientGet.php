@@ -98,10 +98,10 @@ function ciniki_herbalist_ingredientGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'ingredient');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3391', 'msg'=>'Ingredient not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.20', 'msg'=>'Ingredient not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['ingredient']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3392', 'msg'=>'Unable to find Ingredient'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.21', 'msg'=>'Unable to find Ingredient'));
         }
         $ingredient = $rc['ingredient'];
         $ingredient['costing_quantity'] = (float)$ingredient['costing_quantity'];

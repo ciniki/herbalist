@@ -48,7 +48,7 @@ function ciniki_herbalist_productImageAdd(&$ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
     $rc = ciniki_core_dbUUID($ciniki, 'ciniki.events');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3466', 'msg'=>'Unable to get a new UUID', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.33', 'msg'=>'Unable to get a new UUID', 'err'=>$rc['err']));
     }
     $args['uuid'] = $rc['uuid'];
 
@@ -76,7 +76,7 @@ function ciniki_herbalist_productImageAdd(&$ciniki) {
         return $rc;
     }
     if( $rc['num_rows'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3460', 'msg'=>'You already have a product image with that name, please choose another.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.34', 'msg'=>'You already have a product image with that name, please choose another.'));
     }
 
     //

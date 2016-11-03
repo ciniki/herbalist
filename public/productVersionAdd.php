@@ -73,7 +73,7 @@ function ciniki_herbalist_productVersionAdd(&$ciniki) {
         return $rc;
     }
     if( $rc['num_rows'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3475', 'msg'=>'You already have a product version with that name, please choose another.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.42', 'msg'=>'You already have a product version with that name, please choose another.'));
     }
 
     //

@@ -26,7 +26,7 @@ function ciniki_herbalist_checkAccess(&$ciniki, $business_id, $method) {
     $modules = $rc['modules'];
 
     if( !isset($rc['ruleset']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3320', 'msg'=>'No permissions granted'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.1', 'msg'=>'No permissions granted'));
     }
 
     //
@@ -50,7 +50,7 @@ function ciniki_herbalist_checkAccess(&$ciniki, $business_id, $method) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.businesses', 'user');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3321', 'msg'=>'Access denied.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.2', 'msg'=>'Access denied.'));
     }
 
     //
@@ -64,6 +64,6 @@ function ciniki_herbalist_checkAccess(&$ciniki, $business_id, $method) {
     //
     // By default fail
     //
-    return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3322', 'msg'=>'Access denied'));
+    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.3', 'msg'=>'Access denied'));
 }
 ?>

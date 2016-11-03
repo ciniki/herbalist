@@ -13,7 +13,7 @@
 function ciniki_herbalist_sapos_itemLookup($ciniki, $business_id, $args) {
 
     if( !isset($args['object']) || $args['object'] == '' || !isset($args['object_id']) || $args['object_id'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3482', 'msg'=>'No product specified.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.65', 'msg'=>'No product specified.'));
     }
 
     //
@@ -39,7 +39,7 @@ function ciniki_herbalist_sapos_itemLookup($ciniki, $business_id, $args) {
             return $rc;
         }
         if( !isset($rc['product']) ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3483', 'msg'=>'No product found.'));        
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.66', 'msg'=>'No product found.'));        
         }
         $product = $rc['product'];
         $product['price_id'] = 0;
@@ -49,6 +49,6 @@ function ciniki_herbalist_sapos_itemLookup($ciniki, $business_id, $args) {
         return array('stat'=>'ok', 'item'=>$product);
     }
 
-    return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3484', 'msg'=>'No product specified.'));        
+    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.67', 'msg'=>'No product specified.'));        
 }
 ?>

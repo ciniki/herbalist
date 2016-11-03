@@ -53,7 +53,7 @@ function ciniki_herbalist_productImageUpdate(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['item']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3470', 'msg'=>'Product image not found'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.38', 'msg'=>'Product image not found'));
     }
     $item = $rc['item'];
 
@@ -79,7 +79,7 @@ function ciniki_herbalist_productImageUpdate(&$ciniki) {
             return $rc;
         }
         if( $rc['num_rows'] > 0 ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'3464', 'msg'=>'You already have an product image with this name, please choose another.'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.39', 'msg'=>'You already have an product image with this name, please choose another.'));
         }
     }
 
