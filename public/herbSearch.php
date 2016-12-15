@@ -91,7 +91,8 @@ function ciniki_herbalist_herbSearch($ciniki) {
             foreach($words as $word) {
                 if( $word == '' ) { continue; }
                 foreach($herb as $field => $value) {
-                    $herbs[$iid][$field] = preg_replace("/([^a-zA-Z0-9])($word)/", "$1<span class='highlight'>$2</span>", $herbs[$iid][$field]);
+                    $herbs[$iid][$field] = preg_replace("/([^a-zA-Z0-9])($word)/i", "$1<span class='highlight'>$2</span>", $herbs[$iid][$field]);
+                    $herbs[$iid][$field] = preg_replace("/^($word)/i", "<span class='highlight'>$1</span>", $herbs[$iid][$field]);
                 }
             }
             $herb_ids[] = $herb['id'];
