@@ -231,6 +231,26 @@ function ciniki_herbalist_objects($ciniki) {
             ),
         'history_table'=>'ciniki_herbalist_history',
         );
+    $objects['herb'] = array(
+        'name'=>'herb',
+        'o_name'=>'herb',
+        'o_container'=>'herbs',
+        'sync'=>'yes',
+        'table'=>'ciniki_herbalist_herbs',
+        'fields'=>array(
+            'dry'=>array('name'=>'Dry', 'default'=>''),
+            'tincture'=>array('name'=>'Tincture', 'default'=>''),
+            'latin_name'=>array('name'=>'Latin Name', 'default'=>''),
+            'common_name'=>array('name'=>'Common Name', 'default'=>''),
+            'dose'=>array('name'=>'Dose', 'default'=>''),
+            'safety'=>array('name'=>'Safety', 'default'=>''),
+            'actions'=>array('name'=>'Actions', 'default'=>''),
+            'ailments'=>array('name'=>'Ailments', 'default'=>''),
+            'energetics'=>array('name'=>'Energetics', 'default'=>''),
+            'keywords_index'=>array('name'=>'Keywords', 'default'=>''),
+            ),
+        'history_table'=>'ciniki_herbalist_history',
+        );
     $objects['setting'] = array(
         'type'=>'settings',
         'name'=>'Herbalist Settings',

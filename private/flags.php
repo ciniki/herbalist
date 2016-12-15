@@ -22,6 +22,16 @@ function ciniki_herbalist_flags($ciniki, $modules) {
         array('flag'=>array('bit'=>'6', 'name'=>'Product Categories')),
         array('flag'=>array('bit'=>'7', 'name'=>'Inventory')),
 //        array('flag'=>array('bit'=>'8', 'name'=>'')),
+        // 0x0100
+//        array('flag'=>array('bit'=>'9', 'name'=>'')),
+//        array('flag'=>array('bit'=>'10', 'name'=>'')),
+//        array('flag'=>array('bit'=>'11', 'name'=>'')),
+//        array('flag'=>array('bit'=>'12', 'name'=>'')),
+        // 0x1000
+        array('flag'=>array('bit'=>'13', 'name'=>'Herbs')),
+//        array('flag'=>array('bit'=>'14', 'name'=>'')),
+//        array('flag'=>array('bit'=>'15', 'name'=>'')),
+//        array('flag'=>array('bit'=>'16', 'name'=>'')),
         );
 
     return array('stat'=>'ok', 'flags'=>$flags);

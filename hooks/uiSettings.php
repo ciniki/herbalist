@@ -40,10 +40,19 @@ function ciniki_herbalist_hooks_uiSettings($ciniki, $business_id, $args) {
         ) {
         $menu_item = array(
             'priority'=>6500,
-            'label'=>'Herbalist', 
+            'label'=>'Products', 
             'edit'=>array('app'=>'ciniki.herbalist.main'),
             );
         $rsp['menu_items'][] = $menu_item;
+       
+        if( ($ciniki['business']['modules']['ciniki.herbalist']['flags']&0x1000) == 0x1000 ) {
+            $menu_item = array(
+                'priority'=>6501,
+                'label'=>'Herbs', 
+                'edit'=>array('app'=>'ciniki.herbalist.main', 'args'=>array('menu'=>'\'"herbs"\'')),
+                );
+            $rsp['menu_items'][] = $menu_item;
+        }
     } 
 
     if( isset($ciniki['business']['modules']['ciniki.herbalist'])

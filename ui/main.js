@@ -2297,6 +2297,182 @@ function ciniki_herbalist_main() {
     this.ailment.addLeftButton('prev', 'Prev');
 
     //
+    // The panel to list the herb
+    //
+    this.herbs = new M.panel('herb', 'ciniki_herbalist_main', 'herbs', 'mc', 'full', 'sectioned', 'ciniki.herbalist.main.herbs');
+    this.herbs.data = {};
+    this.herbs.nplist = [];
+    this.herbs.sections = {
+        'search':{'label':'', 'type':'livesearchgrid', 'livesearchcols':9,
+            'headerValues':['D', 'T', 'Latin Name', 'Common Name', 'Dose', 'Safety', 'Actions', 'Ailments', 'Energetics'],
+            'cellClasses':['aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop'],
+            'hint':'Search herb',
+            'noData':'No herb found',
+            },
+        'herbs':{'label':'herb', 'type':'simplegrid', 'num_cols':9,
+            'headerValues':['D', 'T', 'Latin Name', 'Common Name', 'Dose', 'Safety', 'Actions', 'Ailments', 'Energetics'],
+            'cellClasses':['aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop'],
+            'noData':'No herb',
+            'addTxt':'Add herb',
+            'addFn':'M.ciniki_herbalist_main.herb.open(\'M.ciniki_herbalist_main.herbs.open();\',0,null);'
+            },
+    }
+    this.herbs.liveSearchCb = function(s, i, v) {
+        if( s == 'search' && v != '' ) {
+            M.api.getJSONBgCb('ciniki.herbalist.herbSearch', {'business_id':M.curBusinessID, 'start_needle':v, 'limit':'25'}, function(rsp) {
+                M.ciniki_herbalist_main.herbs.liveSearchShow('search',null,M.gE(M.ciniki_herbalist_main.herbs.panelUID + '_' + s), rsp.herbs);
+                });
+        }
+    }
+    this.herbs.liveSearchResultValue = function(s, f, i, j, d) {    
+        return this.cellValue(s, i, j, d);
+    }
+    this.herbs.liveSearchResultRowFn = function(s, f, i, j, d) {
+        return this.rowFn(s, i, d);
+    }
+    this.herbs.cellValue = function(s, i, j, d) {
+        switch(j) {
+            case 0: return d.dry.replace(/\n/g, '<br/>');
+            case 1: return d.tincture.replace(/\n/g, '<br/>');
+            case 2: return d.latin_name.replace(/\n/g, '<br/>');
+            case 3: return d.common_name.replace(/\n/g, '<br/>');
+            case 4: return d.dose.replace(/\n/g, '<br/>');
+            case 5: return d.safety.replace(/\n/g, '<br/>');
+            case 6: return d.actions.replace(/\n/g, '<br/>');
+            case 7: return d.ailments.replace(/\n/g, '<br/>');
+            case 8: return d.energetics.replace(/\n/g, '<br/>');
+        }
+    }
+    this.herbs.rowFn = function(s, i, d) {
+        return 'M.ciniki_herbalist_main.herb.open(\'M.ciniki_herbalist_main.herbs.open();\',\'' + d.id + '\',M.ciniki_herbalist_main.herb.nplist);';
+    }
+    this.herbs.open = function(cb) {
+        M.api.getJSONCb('ciniki.herbalist.herbList', {'business_id':M.curBusinessID}, function(rsp) {
+            if( rsp.stat != 'ok' ) {
+                M.api.err(rsp);
+                return false;
+            }
+            var p = M.ciniki_herbalist_main.herbs;
+            p.data = rsp;
+            p.nplist = (rsp.nplist != null ? rsp.nplist : null);
+            p.refresh();
+            p.show(cb);
+        });
+    }
+    this.herbs.addClose('Back');
+
+    //
+    // The panel to edit herb
+    //
+    this.herb = new M.panel('herb', 'ciniki_herbalist_main', 'herb', 'mc', 'medium mediumaside', 'sectioned', 'ciniki.herbalist.main.herb');
+    this.herb.data = null;
+    this.herb.herb_id = 0;
+    this.herb.nplist = [];
+    this.herb.sections = {
+        'general':{'label':'', 'aside':'yes', 'fields':{
+            'dry':{'label':'Dry', 'type':'text'},
+            'tincture':{'label':'Tincture', 'type':'text'},
+            'latin_name':{'label':'Latin Name', 'type':'text'},
+            'common_name':{'label':'Common Name', 'type':'text'},
+            }},
+        '_dose':{'label':'Dose', 'aside':'yes', 'fields':{
+            'dose':{'label':'', 'hidelabel':'yes', 'type':'textarea', 'size':'medium'},
+            }},
+        '_safety':{'label':'Safety', 'aside':'yes', 'fields':{
+            'safety':{'label':'', 'hidelabel':'yes', 'type':'textarea', 'size':'medium'},
+            }},
+        '_actions':{'label':'Actions', 'fields':{
+            'actions':{'label':'', 'hidelabel':'yes', 'type':'textarea', 'size':'large'},
+            }},
+        '_ailments':{'label':'Ailments', 'fields':{
+            'ailments':{'label':'', 'hidelabel':'yes', 'type':'textarea', 'size':'large'},
+            }},
+        '_energetics':{'label':'Energetics', 'aside':'right', 'fields':{
+            'energetics':{'label':'', 'hidelabel':'yes', 'type':'textarea', 'size':'large'},
+            }},
+        '_buttons':{'label':'', 'buttons':{
+            'save':{'label':'Save', 'fn':'M.ciniki_herbalist_main.herb.save();'},
+            'delete':{'label':'Delete', 
+                'visible':function() {return M.ciniki_herbalist_main.herb.herb_id > 0 ? 'yes' : 'no'; },
+                'fn':'M.ciniki_herbalist_main.herb.remove();'},
+            }},
+        };
+    this.herb.fieldValue = function(s, i, d) { return this.data[i]; }
+    this.herb.fieldHistoryArgs = function(s, i) {
+        return {'method':'ciniki.herbalist.herbHistory', 'args':{'business_id':M.curBusinessID, 'herb_id':this.herb_id, 'field':i}};
+    }
+    this.herb.open = function(cb, hid, list) {
+        if( hid != null ) { this.herb_id = hid; }
+        if( list != null ) { this.nplist = list; }
+        M.api.getJSONCb('ciniki.herbalist.herbGet', {'business_id':M.curBusinessID, 'herb_id':this.herb_id}, function(rsp) {
+            if( rsp.stat != 'ok' ) {
+                M.api.err(rsp);
+                return false;
+            }
+            var p = M.ciniki_herbalist_main.herb;
+            p.data = rsp.herb;
+            p.refresh();
+            p.show(cb);
+        });
+    }
+    this.herb.save = function(cb) {
+        if( cb == null ) { cb = 'M.ciniki_herbalist_main.herb.close();'; }
+        if( !this.checkForm() ) { return false; }
+        if( this.herb_id > 0 ) {
+            var c = this.serializeForm('no');
+            if( c != '' ) {
+                M.api.postJSONCb('ciniki.herbalist.herbUpdate', {'business_id':M.curBusinessID, 'herb_id':this.herb_id}, c, function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    }
+                    eval(cb);
+                });
+            } else {
+                eval(cb);
+            }
+        } else {
+            var c = this.serializeForm('yes');
+            M.api.postJSONCb('ciniki.herbalist.herbAdd', {'business_id':M.curBusinessID}, c, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                M.ciniki_herbalist_main.herb.herb_id = rsp.id;
+                eval(cb);
+            });
+        }
+    }
+    this.herb.remove = function() {
+        if( confirm('Are you sure you want to remove herb?') ) {
+            M.api.getJSONCb('ciniki.herbalist.herbDelete', {'business_id':M.curBusinessID, 'herb_id':this.herb_id}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                M.ciniki_herbalist_main.herb.close();
+            });
+        }
+    }
+    this.herb.nextButtonFn = function() {
+        if( this.nplist != null && this.nplist.indexOf('' + this.herb_id) < (this.nplist.length - 1) ) {
+            return 'M.ciniki_herbalist_main.herb.save(\'M.ciniki_herbalist_main.herb.open(null,' + this.nplist[this.nplist.indexOf('' + this.herb_id) + 1] + ');\');';
+        }
+        return null;
+    }
+    this.herb.prevButtonFn = function() {
+        if( this.nplist != null && this.nplist.indexOf('' + this.herb_id) > 0 ) {
+            return 'M.ciniki_herbalist_main.herb.save(\'M.ciniki_herbalist_main.herb_id.open(null,' + this.nplist[this.nplist.indexOf('' + this.herb_id) - 1] + ');\');';
+        }
+        return null;
+    }
+    this.herb.addButton('save', 'Save', 'M.ciniki_herbalist_main.herb.save();');
+    this.herb.addClose('Cancel');
+    this.herb.addButton('next', 'Next');
+    this.herb.addLeftButton('prev', 'Prev');
+
+
+    //
     // Arguments:
     // aG - The arguments to be parsed into args
     //
@@ -2313,7 +2489,11 @@ function ciniki_herbalist_main() {
             alert('App Error');
             return false;
         } 
-
-        this.menu.open(cb);
+        
+        if( args.menu != null && args.menu == 'herbs' ) {
+            this.herbs.open(cb);
+        } else {
+            this.menu.open(cb);
+        }
     }
 };
