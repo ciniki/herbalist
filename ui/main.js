@@ -2303,13 +2303,16 @@ function ciniki_herbalist_main() {
     this.herbs.data = {};
     this.herbs.nplist = [];
     this.herbs.sections = {
-        'search':{'label':'', 'type':'livesearchgrid', 'livesearchcols':9,
+        'search':{'label':'', 'type':'livesearchgrid', 'livesearchcols':9, 'livesearchempty':'yes',
             'headerValues':['D', 'T', 'Latin Name', 'Common Name', 'Dose', 'Safety', 'Actions', 'Ailments', 'Energetics'],
             'cellClasses':['aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop'],
             'hint':'Search herb',
             'noData':'No herb found',
             },
         'herbs':{'label':'herb', 'type':'simplegrid', 'num_cols':9,
+            'visible':'yes',
+            'sortable':'yes',
+            'sortTypes':['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text'],
             'headerValues':['D', 'T', 'Latin Name', 'Common Name', 'Dose', 'Safety', 'Actions', 'Ailments', 'Energetics'],
             'cellClasses':['aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop', 'aligntop'],
             'noData':'No herb',
@@ -2318,11 +2321,16 @@ function ciniki_herbalist_main() {
             },
     }
     this.herbs.liveSearchCb = function(s, i, v) {
-        if( s == 'search' && v != '' ) {
+        if( v != '' ) {
             M.api.getJSONBgCb('ciniki.herbalist.herbSearch', {'business_id':M.curBusinessID, 'start_needle':v, 'limit':'25'}, function(rsp) {
                 M.ciniki_herbalist_main.herbs.liveSearchShow('search',null,M.gE(M.ciniki_herbalist_main.herbs.panelUID + '_' + s), rsp.herbs);
                 });
+            this.sections.herbs.visible = 'hidden';
+        } else {
+            this.sections.herbs.visible = 'yes';
+            M.gE(this.panelUID + '_search_livesearch_grid').style.display = 'none';
         }
+        this.showHideSection('herbs');
     }
     this.herbs.liveSearchResultValue = function(s, f, i, j, d) {    
         return this.cellValue(s, i, j, d);
