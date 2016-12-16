@@ -2340,15 +2340,15 @@ function ciniki_herbalist_main() {
     }
     this.herbs.cellValue = function(s, i, j, d) {
         switch(j) {
-            case 0: return d.dry.replace(/\n/g, '<br/>');
-            case 1: return d.tincture.replace(/\n/g, '<br/>');
-            case 2: return d.latin_name.replace(/\n/g, '<br/>');
-            case 3: return d.common_name.replace(/\n/g, '<br/>');
-            case 4: return d.dose.replace(/\n/g, '<br/>');
-            case 5: return d.safety.replace(/\n/g, '<br/>');
-            case 6: return d.actions.replace(/\n/g, '<br/>');
-            case 7: return d.ailments.replace(/\n/g, '<br/>');
-            case 8: return d.energetics.replace(/\n/g, '<br/>');
+            case 0: return d.dry; //.replace(/\n/g, '<br/>');
+            case 1: return d.tincture; //.replace(/\n/g, '<br/>');
+            case 2: return d.latin_name; //.replace(/\n/g, '<br/>');
+            case 3: return d.common_name; //.replace(/\n/g, '<br/>');
+            case 4: return d.dose; //.replace(/\n/g, '<br/>');
+            case 5: return d.safety; //.replace(/\n/g, '<br/>');
+            case 6: return d.actions; //.replace(/\n/g, '<br/>');
+            case 7: return d.ailments; //.replace(/\n/g, '<br/>');
+            case 8: return d.energetics; //.replace(/\n/g, '<br/>');
         }
     }
     this.herbs.rowFn = function(s, i, d) {

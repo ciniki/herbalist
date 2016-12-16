@@ -59,10 +59,17 @@ function ciniki_herbalist_herbList($ciniki) {
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
+
+    require_once($ciniki['config']['ciniki.core']['lib_dir'] . "/parsedown/Parsedown.php");
+    $parsedown = new Parsedown();
+    
     if( isset($rc['herbs']) ) {
         $herbs = $rc['herbs'];
         $herb_ids = array();
         foreach($herbs as $iid => $herb) {
+            foreach(['dose', 'safety', 'actions', 'ailments', 'energetics'] as $field) {
+                $herbs[$iid][$field] = $parsedown->text($herbs[$iid][$field]);
+            }
             $herb_ids[] = $herb['id'];
         }
     } else {

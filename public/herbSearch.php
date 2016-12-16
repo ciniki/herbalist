@@ -84,16 +84,23 @@ function ciniki_herbalist_herbSearch($ciniki) {
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
+
+    require_once($ciniki['config']['ciniki.core']['lib_dir'] . "/parsedown/Parsedown.php");
+    $parsedown = new Parsedown();
+
     if( isset($rc['herbs']) ) {
         $herbs = $rc['herbs'];
         $herb_ids = array();
         foreach($herbs as $iid => $herb) {
-            foreach($words as $word) {
-                if( $word == '' ) { continue; }
-                foreach($herb as $field => $value) {
+            foreach($herb as $field => $value) {
+                foreach($words as $word) {
+                    if( $word == '' ) { continue; }
                     $herbs[$iid][$field] = preg_replace("/([^a-zA-Z0-9])($word)/i", "$1<span class='highlight'>$2</span>", $herbs[$iid][$field]);
                     $herbs[$iid][$field] = preg_replace("/^($word)/i", "<span class='highlight'>$1</span>", $herbs[$iid][$field]);
                 }
+            }
+            foreach(['dose', 'safety', 'actions', 'ailments', 'energetics'] as $field) {
+                $herbs[$iid][$field] = $parsedown->text($herbs[$iid][$field]);
             }
             $herb_ids[] = $herb['id'];
         }
