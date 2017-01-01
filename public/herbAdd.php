@@ -60,6 +60,8 @@ function ciniki_herbalist_herbAdd(&$ciniki) {
     // Setup the keywords_index field
     //
     $str = '';
+    $str .= (isset($args['dry']) ? ' ' . $args['dry'] : '');
+    $str .= (isset($args['tincture']) ? ' ' . $args['tincture'] : '');
     $str .= (isset($args['latin_name']) ? ' ' . $args['latin_name'] : '');
     $str .= (isset($args['common_name']) ? ' ' . $args['common_name'] : '');
     $str .= (isset($args['dose']) ? ' ' . $args['dose'] : '');

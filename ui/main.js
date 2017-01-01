@@ -2367,6 +2367,27 @@ function ciniki_herbalist_main() {
             p.show(cb);
         });
     }
+    this.herbs.print = function() {
+        var search = M.gE(this.panelUID + '_search').value;
+        if( search != '' ) {
+            M.api.openPDF('ciniki.herbalist.herbSearch', {'business_id':M.curBusinessID, 'start_needle':search, 'output':'pdf'});
+        } else {
+            M.api.openPDF('ciniki.herbalist.herbList', {'business_id':M.curBusinessID, 'output':'pdf'});
+        }
+    }
+    this.herbs.reindex = function(cb) {
+        M.api.getJSONCb('ciniki.herbalist.herbReindex', {'business_id':M.curBusinessID}, function(rsp) {
+            if( rsp.stat != 'ok' ) {
+                M.api.err(rsp);
+                return false;
+            }
+            var p = M.ciniki_herbalist_main.herbs;
+            p.refresh();
+            p.show(cb);
+        });
+    }
+    this.herbs.addButton('index', 'Index', 'M.ciniki_herbalist_main.herbs.reindex();');
+    this.herbs.addButton('print', 'Print', 'M.ciniki_herbalist_main.herbs.print();');
     this.herbs.addClose('Back');
 
     //

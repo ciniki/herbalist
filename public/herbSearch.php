@@ -24,6 +24,7 @@ function ciniki_herbalist_herbSearch($ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
         'start_needle'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Search String'),
         'limit'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Limit'),
+        'output'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Format'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -107,6 +108,19 @@ function ciniki_herbalist_herbSearch($ciniki) {
     } else {
         $herbs = array();
         $herb_ids = array();
+    }
+
+    if( isset($args['output']) && $args['output'] == 'pdf' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'templates', 'herblistPDF');
+        $rc = ciniki_herbalist_templates_herblistPDF($ciniki, $args['business_id'], array('herbs'=>$herbs));
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['pdf']) ) {
+            $filename = 'herblist';
+            $rc['pdf']->Output($filename . '.pdf', 'D');
+            return array('stat'=>'exit');
+        }
     }
 
     return array('stat'=>'ok', 'herbs'=>$herbs, 'nplist'=>$herb_ids);
