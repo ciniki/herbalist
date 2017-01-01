@@ -78,7 +78,8 @@ function ciniki_herbalist_templates_herblistPDF(&$ciniki, $business_id, $args) {
 
     // set margins
     $pdf->SetMargins(10, 10, 10);
-    $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+    $pdf->SetFooterMargin(10);
+    $pdf->SetAutoPageBreak(TRUE, 18);
 
     // set font
     $pdf->SetFont('helvetica', '', 8);
