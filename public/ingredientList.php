@@ -22,6 +22,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
         'sorttype'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Type'),
         'labels'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Labels'),
+        'worksheet'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Worksheet'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -123,7 +124,20 @@ function ciniki_herbalist_ingredientList($ciniki) {
         }
         if( isset($rc['labels']) ) {
             $rsp['labels'] = $rc['labels'];
+        } 
+    } elseif( isset($args['worksheet']) && $args['worksheet'] == 'yes' ) {
+        error_log('test');
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'templates', 'ingredientWorksheet');
+        $rc = ciniki_herbalist_templates_ingredientWorksheet($ciniki, $args['business_id'], array(
+            'ingredients'=>$ingredients,
+            ));
+        if( $rc['stat'] != 'ok' ) { 
+            return $rc;
         }
+        if( isset($rc['pdf']) ) {
+            $rc['pdf']->Output($rc['filename'], 'D');
+            return array('stat'=>'exit');
+        } 
     }
 
     return $rsp;

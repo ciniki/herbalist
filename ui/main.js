@@ -43,6 +43,12 @@ function ciniki_herbalist_main() {
                 '60':{'label':'Liquids', 'fn':'M.ciniki_herbalist_main.menu.open(null,null,60);'},
                 '90':{'label':'Misc', 'fn':'M.ciniki_herbalist_main.menu.open(null,null,90);'},
             }},
+        '_ingredients_menu':{'label':'', 'aside':'yes',
+            'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='ingredients'?'yes':'no';},
+            'list':{
+                'labels':{'label':'Print Labels', 'fn':'M.ciniki_herbalist_main.inamelabels.open(\'M.ciniki_herbalist_main.menu.open();\');'},
+                'worksheet':{'label':'Print Worksheet', 'fn':'M.ciniki_herbalist_main.menu.ingredientWorksheet();'},
+            }},
         'ingredients':{'label':'Ingredients', 'type':'simplegrid', 'num_cols':3, 
             'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='ingredients'?'yes':'no';},
             'sortable':'yes',
@@ -118,9 +124,14 @@ function ciniki_herbalist_main() {
                 'visible':function() { return (M.ciniki_herbalist_main.menu.sections._tabs.selected=='ingredients'?'yes':'no');},
                 'fn':'M.ciniki_herbalist_main.inamelabels.open(\'M.ciniki_herbalist_main.menu.open();\');',
                 },
+            'worksheet':{'label':'Print Worksheet', 
+                'visible':function() { return (M.ciniki_herbalist_main.menu.sections._tabs.selected=='ingredients'?'yes':'no');},
+                'fn':'M.ciniki_herbalist_main.menu.ingredientWorksheet();\');',
+                },
             }},
     };
     this.menu.sectionData = function(s) {
+        if( s == '_ingredients_menu' ) { return this.sections[s].list; }
         return this.data[s];
     };
     this.menu.noData = function(s) { return this.sections[s].noData; }
@@ -173,6 +184,8 @@ function ciniki_herbalist_main() {
             switch (j) {
                 case 0: return d.name;
             }
+        } else if( s == '_ingredients_menu' ) {
+            return d.name;
         } else if( s == 'ingredients' ) {
             switch (j) {
                 case 0: return d.name;
@@ -221,7 +234,7 @@ function ciniki_herbalist_main() {
         if( itab != null && this.sections._tabs.selected == 'recipes' ) { this.sections._recipe_tabs.selected = itab; }
         if( itab != null && this.sections._tabs.selected == 'products' ) { this.category = itab; }
         if( itab != null && this.sections._tabs.selected == 'inventory' ) { this.category = itab; }
-        if( this.sections._tabs.selected == 'inventory' ) {
+        if( this.sections._tabs.selected == 'inventory' || this.sections._tabs.selected == 'ingredients' ) {
             this.size = 'large narrowaside';
         } else if( this.sections._tabs.selected == 'products' ) {
             this.size = 'medium narrowaside';
@@ -267,6 +280,10 @@ function ciniki_herbalist_main() {
             });
         }
     };
+    this.menu.ingredientWorksheet = function() {
+        M.api.openPDF('ciniki.herbalist.ingredientList', 
+            {'business_id':M.curBusinessID, 'sorttype':this.sections._ingredient_tabs.selected, 'worksheet':'yes'});
+    }
     this.menu.addClose('Back');
 
     //

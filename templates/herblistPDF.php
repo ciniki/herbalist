@@ -70,7 +70,7 @@ function ciniki_herbalist_templates_herblistPDF(&$ciniki, $business_id, $args) {
     //
     // Setup the PDF basics
     //
-    $pdf->SetCreator('Ciniki');
+    $pdf->SetCreator('Achilleam');
     $pdf->SetAuthor($business_details['name']);
     $pdf->SetTitle((isset($args['title']) ? $args['title'] : 'Herbs'));
     $pdf->SetSubject('');
