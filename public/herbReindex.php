@@ -48,7 +48,7 @@ function ciniki_herbalist_herbReindex(&$ciniki) {
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'herb');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.83', 'msg'=>'herb not found', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.88', 'msg'=>'herb not found', 'err'=>$rc['err']));
     }
     
     $herbs = $rc['rows'];

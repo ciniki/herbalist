@@ -52,7 +52,7 @@ function ciniki_herbalist_herbSearch($ciniki) {
             . ") ";
     }
     if( $search_sql == '' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.78', 'msg'=>'Invalid search string'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.87', 'msg'=>'Invalid search string'));
     }
     
     //
