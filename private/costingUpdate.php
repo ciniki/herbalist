@@ -177,7 +177,7 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
         $cost_per_unit = bcadd($top, $bottom, 4);
         if( $cost_per_unit != $container['cost_per_unit'] ) {
             $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.container', $container['id'], array('cost_per_unit'=>$cost_per_unit));
-            if( $rc['stat'] != 'ok' && $rc['err']['code'] != '1344' ) {
+            if( $rc['stat'] != 'ok' && $rc['err']['code'] != 'ciniki.core.120' ) {
                 return $rc;
             }
             $containers[$cid]['updated'] = 'yes';
@@ -231,7 +231,7 @@ function ciniki_herbalist_costingUpdate(&$ciniki, $business_id, $args) {
         }
         if( count($update_args) > 0 ) {
             $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.productversion', $product['id'], $update_args);
-            if( $rc['stat'] != 'ok' && $rc['err']['code'] != '1344' ) {
+            if( $rc['stat'] != 'ok' && $rc['err']['code'] != 'ciniki.core.120' ) {
                 return $rc;
             }
             $products[$pid]['updated'] = 'yes';

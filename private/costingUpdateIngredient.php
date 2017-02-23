@@ -84,7 +84,7 @@ function ciniki_herbalist_costingUpdateIngredient(&$ciniki, $business_id, $ingre
     }
     if( count($update_args) > 0 ) {
         $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.ingredient', $ingredient['id'], $update_args);
-        if( $rc['stat'] != 'ok' && $rc['err']['code'] != '1344' ) {
+        if( $rc['stat'] != 'ok' && $rc['err']['code'] != 'ciniki.core.120' ) {
             return $rc;
         }
         $ingredients[$ingredient_id]['updated'] = 'yes';
