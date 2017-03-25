@@ -92,7 +92,7 @@ function ciniki_herbalist_templates_ingredientWorksheet(&$ciniki, $business_id, 
     //
     // Load the list of ingredients
     //
-    $w = array(6, 6, 6, 46, 1);
+    $w = array(9, 9, 9, 37, 1);
 
     $col = 0;
     foreach($args['ingredients'] as $ingredient) {
