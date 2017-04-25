@@ -281,7 +281,7 @@ function ciniki_herbalist_main() {
         }
     };
     this.menu.ingredientWorksheet = function() {
-        M.api.showPDF('ciniki.herbalist.ingredientList', 
+        M.showPDF('ciniki.herbalist.ingredientList', 
             {'business_id':M.curBusinessID, 'sorttype':this.sections._ingredient_tabs.selected, 'worksheet':'yes'});
     }
     this.menu.addClose('Back');
@@ -1036,7 +1036,7 @@ function ciniki_herbalist_main() {
         });
     }
     this.recipe.downloadPDF = function() {
-        M.api.showPDF('ciniki.herbalist.recipePDF', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id});
+        M.showPDF('ciniki.herbalist.recipePDF', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id});
     }
     this.recipe.save = function(cb) {
         if( cb == null ) { cb = 'M.ciniki_herbalist_main.recipe.close();'; }
@@ -1434,7 +1434,7 @@ function ciniki_herbalist_main() {
     }
     this.recipebatch.downloadPDF = function() {
         var size = M.gE(this.panelUID + '_size').value;
-        M.api.showPDF('ciniki.herbalist.recipePDF', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id, 'size':size});
+        M.showPDF('ciniki.herbalist.recipePDF', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id, 'size':size});
     }
     this.recipebatch.printLabels = function() {
         M.ciniki_herbalist_main.labels.open('M.ciniki_herbalist_main.recipebatch.show();', {
@@ -1565,7 +1565,7 @@ function ciniki_herbalist_main() {
         args['start_col'] = this.formValue('start_col');
         args['start_row'] = this.formValue('start_row');
         args['number'] = this.formValue('number');
-        M.api.showPDF('ciniki.herbalist.labelsPDF', args);
+        M.showPDF('ciniki.herbalist.labelsPDF', args);
     }
     this.labels.addClose('Back');
 
@@ -1835,7 +1835,7 @@ function ciniki_herbalist_main() {
             alert("You must specify at least one ingredient");
             return false;
         }
-        M.api.showPDF('ciniki.herbalist.ingredientNameLabelsPDF', args);
+        M.showPDF('ciniki.herbalist.ingredientNameLabelsPDF', args);
     }
     this.inamelabels.addClose('Back');
 
@@ -2399,9 +2399,9 @@ function ciniki_herbalist_main() {
     this.herbs.print = function() {
         var search = M.gE(this.panelUID + '_search').value;
         if( search != '' ) {
-            M.api.showPDF('ciniki.herbalist.herbSearch', {'business_id':M.curBusinessID, 'start_needle':search, 'output':'pdf'});
+            M.showPDF('ciniki.herbalist.herbSearch', {'business_id':M.curBusinessID, 'start_needle':search, 'output':'pdf'});
         } else {
-            M.api.showPDF('ciniki.herbalist.herbList', {'business_id':M.curBusinessID, 'output':'pdf'});
+            M.showPDF('ciniki.herbalist.herbList', {'business_id':M.curBusinessID, 'output':'pdf'});
         }
     }
     this.herbs.reindex = function(cb) {
