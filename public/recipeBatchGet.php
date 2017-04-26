@@ -300,8 +300,6 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
     if( isset($rc['productversions']) ) {
         $batch['productversions'] = $rc['productversions'];
         foreach($batch['productversions'] as $vid => $version) {
-            error_log('container_cost: ' . $version['container_cost']);
-            error_log('total_cost_per_unit: ' . $total_cost_per_unit);
             $total_cost = bcadd($version['container_cost'], bcmul($version['recipe_quantity'], $total_cost_per_unit, 10), 10);
             $batch['productversions'][$vid]['total_cost'] = $total_cost;
             $batch['productversions'][$vid]['total_cost_display'] = numfmt_format_currency($intl_currency_fmt, $total_cost, $intl_currency);

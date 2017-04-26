@@ -126,7 +126,6 @@ function ciniki_herbalist_ingredientList($ciniki) {
             $rsp['labels'] = $rc['labels'];
         } 
     } elseif( isset($args['worksheet']) && $args['worksheet'] == 'yes' ) {
-        error_log('test');
         ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'templates', 'ingredientWorksheet');
         $rc = ciniki_herbalist_templates_ingredientWorksheet($ciniki, $args['business_id'], array(
             'ingredients'=>$ingredients,

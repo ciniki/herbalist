@@ -44,8 +44,6 @@ function ciniki_herbalist_noteSearch($ciniki) {
     sort($keywords);
     $keywords = implode('% ', $keywords);
 
-    error_log($keywords);
-
     //
     // Get the list of notes
     //
