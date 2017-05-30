@@ -49,6 +49,13 @@ function ciniki_herbalist_main() {
                 'labels':{'label':'Print Labels', 'fn':'M.ciniki_herbalist_main.inamelabels.open(\'M.ciniki_herbalist_main.menu.open();\');'},
                 'worksheet':{'label':'Print Worksheet', 'fn':'M.ciniki_herbalist_main.menu.ingredientWorksheet();'},
             }},
+        'ingredient_search':{'label':'', 'type':'livesearchgrid', 'livesearchcols':3, 
+            'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='ingredients'?'yes':'no';},
+            'headerValues':['Name', 'Latin', 'Cost'],
+            'cellClasses':['', '', ''],
+            'hint':'Search ingredients', 
+            'noData':'No ingredients found',
+            },
         'ingredients':{'label':'Ingredients', 'type':'simplegrid', 'num_cols':3, 
             'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='ingredients'?'yes':'no';},
             'sortable':'yes',
@@ -140,6 +147,10 @@ function ciniki_herbalist_main() {
             M.api.getJSONBgCb('ciniki.herbalist.noteSearch', {'business_id':M.curBusinessID, 'search_str':v, 'limit':'50'}, function(rsp) {
                     M.ciniki_herbalist_main.menu.liveSearchShow('note_search',null,M.gE(M.ciniki_herbalist_main.menu.panelUID + '_' + s), rsp.notes);
                 });
+        } else if( s == 'ingredient_search' && v != '' ) {
+            M.api.getJSONBgCb('ciniki.herbalist.ingredientSearch', {'business_id':M.curBusinessID, 'search_str':v, 'limit':'50'}, function(rsp) {
+                    M.ciniki_herbalist_main.menu.liveSearchShow('ingredient_search',null,M.gE(M.ciniki_herbalist_main.menu.panelUID + '_' + s), rsp.ingredients);
+                });
         } else if( s == 'recipe_search' && v != '' ) {
             M.api.getJSONBgCb('ciniki.herbalist.recipeSearch', {'business_id':M.curBusinessID, 'search_str':v, 'limit':'50'}, function(rsp) {
                     M.ciniki_herbalist_main.menu.liveSearchShow('recipe_search',null,M.gE(M.ciniki_herbalist_main.menu.panelUID + '_' + s), rsp.recipes);
@@ -149,6 +160,12 @@ function ciniki_herbalist_main() {
     this.menu.liveSearchResultValue = function(s, f, i, j, d) {
         if( s == 'note_search' ) { 
             return '<span class="maintext">' + d.note_date + '</span><span class="subtext">' + d.content + '</span><span class="subsubtext">' + d.keywords + '</span>';
+        } else if( s == 'ingredient_search' ) { 
+            switch(j) {
+                case 0: return d.name;
+                case 1: return d.subname;
+                case 2: return d.total_cost_per_unit_display;
+            }
         } else if( s == 'recipe_search' ) { 
             if( d.ingredient_name != '' ) {
                 return d.name + ' <span class="subdue">(' + d.ingredient_name + ')</span>';
@@ -159,6 +176,8 @@ function ciniki_herbalist_main() {
     this.menu.liveSearchResultRowFn = function(s, f, i, j, d) {
         if( s == 'note_search' ) {
             return 'M.ciniki_herbalist_main.note.open(\'M.ciniki_herbalist_main.menu.show();\',\'' + d.id + '\');';
+        } else if( s == 'ingredient_search' ) {
+            return 'M.ciniki_herbalist_main.ingredient.open(\'M.ciniki_herbalist_main.menu.open();\',\'' + d.id + '\');';
         } else if( s == 'recipe_search' ) {
             return 'M.ciniki_herbalist_main.recipe.open(\'M.ciniki_herbalist_main.menu.open();\',\'' + d.id + '\');';
         }
