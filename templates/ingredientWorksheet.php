@@ -37,12 +37,35 @@ function ciniki_herbalist_templates_ingredientWorksheet(&$ciniki, $business_id, 
     require_once($ciniki['config']['ciniki.core']['lib_dir'] . '/tcpdf/tcpdf.php');
 
     class MYPDF extends TCPDF {
-        public $left_margin = 15;
-        public $right_margin = 15;
-        public $top_margin = 0;
+        public $left_margin = 10;
+        public $right_margin = 10;
+        public $top_margin = 22;
         public $printdate = '';
+        public $cols = array();
 
         public function Header() {
+            $this->SetFont('helvetica', '', 8);
+            $this->SetTextColor(0);
+            $this->SetDrawColor(125);
+            $this->SetLineWidth(0.05);
+            $this->SetY(10);
+            $this->Cell($this->cols[0], 12, ' ', 1, 0, 'C');
+            $this->Cell($this->cols[1], 12, ' ', 1, 0, 'C');
+            $this->Cell($this->cols[2], 12, ' ', 1, 0, 'C');
+            $this->Cell($this->cols[3], 12, ' ', 1, 0, 'C');
+            $this->Cell($this->cols[4], 12, ' ', 1, 0, 'L');
+            $this->Cell($this->cols[5], 12, ' ', 0, 0, 'C');
+            $this->Cell($this->cols[0], 12, ' ', 1, 0, 'C');
+            $this->Cell($this->cols[1], 12, ' ', 1, 0, 'C');
+            $this->Cell($this->cols[2], 12, ' ', 1, 0, 'C');
+            $this->Cell($this->cols[3], 12, ' ', 1, 0, 'C');
+            $this->Cell($this->cols[4], 12, ' ', 1, 0, 'L');
+            $this->Cell($this->cols[5], 12, ' ', 0, 0, 'C');
+            $this->Cell($this->cols[0], 12, ' ', 1, 0, 'C');
+            $this->Cell($this->cols[1], 12, ' ', 1, 0, 'C');
+            $this->Cell($this->cols[2], 12, ' ', 1, 0, 'C');
+            $this->Cell($this->cols[3], 12, ' ', 1, 0, 'C');
+            $this->Cell($this->cols[4], 12, ' ', 1, 0, 'L');
         }
 
         // Page footer
@@ -67,6 +90,17 @@ function ciniki_herbalist_templates_ingredientWorksheet(&$ciniki, $business_id, 
     $pdf->printdate = $dt->format('M j, Y');
 
     //
+    // Setup the columns
+    //
+    $cols = 3;
+    if( $cols == 4 ) {
+        $w = array(8, 8, 8, 8, 32, 1); // 4 column worksheet
+    } else {
+        $w = array(12, 12, 12, 12, 38, 1); // 3 column worksheet
+        $pdf->cols = array(12, 12, 12, 12, 38, 1); // 3 column worksheet
+    }
+
+    //
     // Setup the PDF basics
     //
     $pdf->SetCreator('Achilleam');
@@ -76,9 +110,10 @@ function ciniki_herbalist_templates_ingredientWorksheet(&$ciniki, $business_id, 
     $pdf->SetKeywords('');
 
     // set margins
-    $pdf->SetMargins(10, 5, 10);
+    $pdf->SetMargins($pdf->left_margin, $pdf->top_margin, $pdf->right_margin);
     $pdf->SetFooterMargin(10);
-    $pdf->SetAutoPageBreak(TRUE, 18);
+    //$pdf->SetAutoPageBreak(TRUE, 18);
+    $pdf->SetAutoPageBreak(FALSE, 18);
 
     // set font
     $pdf->SetFont('helvetica', '', 8);
@@ -88,27 +123,42 @@ function ciniki_herbalist_templates_ingredientWorksheet(&$ciniki, $business_id, 
     $pdf->setListIndentWidth(4);
     $pdf->setCellPaddings(2, 1, 2, 1);
 
-    $pdf->AddPage();
-    //
-    // Load the list of ingredients
-    //
-    $w = array(9, 9, 9, 37, 1);
+//    $pdf->AddPage();
 
-    $col = 0;
+//    $col = 0;
+    $start_x = $pdf->left_margin;
+    $start_y = $pdf->top_margin;
+    $cur_x = $start_x;
+    $cur_y = $start_y;
     foreach($args['ingredients'] as $ingredient) {
-        if( ($col%4) == 0 ) {
-            $pdf->Ln(6);
+        if( $cur_x == $start_x && $cur_y == $start_y ) {
+            $pdf->AddPage();
         }
-
+//        error_log($cur_x . ',' . $cur_y);
+        $pdf->SetXY($cur_x, $cur_y);
+//        $pdf->SetY($cur_y);
+//        if( $col > 0 && ($col%$cols) == 0 ) {
+//            $pdf->Ln(6);
+//        }
+        
         $pdf->Cell($w[0], 6, ' ', 1, 0, 'C');
         $pdf->Cell($w[1], 6, ' ', 1, 0, 'C');
         $pdf->Cell($w[2], 6, ' ', 1, 0, 'C');
-        $pdf->Cell($w[3], 6, $ingredient['name'], 1, 0, 'L');
-        if( ($col%4) < 3 ) {
-            $pdf->Cell($w[4], 6, '', 1, 0, 'C');
+        $pdf->Cell($w[3], 6, ' ', 1, 0, 'C');
+        $pdf->Cell($w[4], 6, $ingredient['name'], 1, 0, 'L');
+        $cur_y += 6;
+        if( $cur_y > 190 ) {
+            $cur_y = $start_y;
+            $cur_x += 87;
         }
+        if( $cur_x > 260 ) {
+            $cur_x = $start_x;
+        }
+//        if( ($col%$cols) < ($cols-1) ) {
+//            $pdf->Cell($w[5], 6, '', 1, 0, 'C');
+//        }
         
-        $col++;
+//        $col++;
     }
 
     

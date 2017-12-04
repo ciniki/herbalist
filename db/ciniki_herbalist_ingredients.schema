@@ -26,6 +26,7 @@
 #
 #                       10 - grams
 #                       60 - millilitres
+#                       120 - each
 #
 # costing_quantity: The quantity of the amount purchased in the units.
 # costing_time:     The time in minutes to acquire the ingredient or produce the recipe.
