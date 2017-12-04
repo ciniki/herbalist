@@ -12,19 +12,19 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_herbalist_templates_recipePDF(&$ciniki, $business_id, $recipe) {
+function ciniki_herbalist_templates_recipePDF(&$ciniki, $tnid, $recipe) {
     //
-    // Load the business details
+    // Load the tenant details
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'businessDetails');
-    $rc = ciniki_businesses_businessDetails($ciniki, $business_id);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'tenantDetails');
+    $rc = ciniki_tenants_tenantDetails($ciniki, $tnid);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
     if( isset($rc['details']) && is_array($rc['details']) ) {    
-        $business_details = $rc['details'];
+        $tenant_details = $rc['details'];
     } else {
-        $business_details = array();
+        $tenant_details = array();
     }
 
     //
@@ -43,7 +43,7 @@ function ciniki_herbalist_templates_recipePDF(&$ciniki, $business_id, $recipe) {
         public $header_addr = array();
         public $header_details = array();
         public $header_height = 15;        // The height of the image and address
-        public $business_details = array();
+        public $tenant_details = array();
         public $courses_settings = array();
         public $conference_name = '';
         public $printdate = '';
@@ -69,7 +69,7 @@ function ciniki_herbalist_templates_recipePDF(&$ciniki, $business_id, $recipe) {
     //
     $pdf = new MYPDF('P', PDF_UNIT, 'LETTER', true, 'UTF-8', false);
 
-    $pdf->business_details = $business_details;
+    $pdf->tenant_details = $tenant_details;
     $pdf->recipe_name = $recipe['name'];
     $pdf->printdate = $recipe['printdate'];
 
@@ -77,7 +77,7 @@ function ciniki_herbalist_templates_recipePDF(&$ciniki, $business_id, $recipe) {
     // Setup the PDF basics
     //
     $pdf->SetCreator('Ciniki');
-    $pdf->SetAuthor($business_details['name']);
+    $pdf->SetAuthor($tenant_details['name']);
     $pdf->SetTitle($recipe['name']);
     $pdf->SetSubject('');
     $pdf->SetKeywords('');

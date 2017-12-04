@@ -1,5 +1,5 @@
 //
-// This app will handle the listing, additions and deletions of herbalist.  These are associated business.
+// This app will handle the listing, additions and deletions of herbalist.  These are associated tenant.
 //
 function ciniki_herbalist_main() {
     //
@@ -144,15 +144,15 @@ function ciniki_herbalist_main() {
     this.menu.noData = function(s) { return this.sections[s].noData; }
     this.menu.liveSearchCb = function(s, i, v) {
         if( s == 'note_search' && v != '' ) {
-            M.api.getJSONBgCb('ciniki.herbalist.noteSearch', {'business_id':M.curBusinessID, 'search_str':v, 'limit':'50'}, function(rsp) {
+            M.api.getJSONBgCb('ciniki.herbalist.noteSearch', {'tnid':M.curTenantID, 'search_str':v, 'limit':'50'}, function(rsp) {
                     M.ciniki_herbalist_main.menu.liveSearchShow('note_search',null,M.gE(M.ciniki_herbalist_main.menu.panelUID + '_' + s), rsp.notes);
                 });
         } else if( s == 'ingredient_search' && v != '' ) {
-            M.api.getJSONBgCb('ciniki.herbalist.ingredientSearch', {'business_id':M.curBusinessID, 'search_str':v, 'limit':'50'}, function(rsp) {
+            M.api.getJSONBgCb('ciniki.herbalist.ingredientSearch', {'tnid':M.curTenantID, 'search_str':v, 'limit':'50'}, function(rsp) {
                     M.ciniki_herbalist_main.menu.liveSearchShow('ingredient_search',null,M.gE(M.ciniki_herbalist_main.menu.panelUID + '_' + s), rsp.ingredients);
                 });
         } else if( s == 'recipe_search' && v != '' ) {
-            M.api.getJSONBgCb('ciniki.herbalist.recipeSearch', {'business_id':M.curBusinessID, 'search_str':v, 'limit':'50'}, function(rsp) {
+            M.api.getJSONBgCb('ciniki.herbalist.recipeSearch', {'tnid':M.curTenantID, 'search_str':v, 'limit':'50'}, function(rsp) {
                     M.ciniki_herbalist_main.menu.liveSearchShow('recipe_search',null,M.gE(M.ciniki_herbalist_main.menu.panelUID + '_' + s), rsp.recipes);
                 });
         }
@@ -264,7 +264,7 @@ function ciniki_herbalist_main() {
             this.refresh();
             this.show(cb);
         } else {
-            args = {'business_id':M.curBusinessID};
+            args = {'tnid':M.curTenantID};
             method = '';
             switch( this.sections._tabs.selected ) {
                 case 'actions': method = 'ciniki.herbalist.actionList'; break;
@@ -301,7 +301,7 @@ function ciniki_herbalist_main() {
     };
     this.menu.ingredientWorksheet = function() {
         M.showPDF('ciniki.herbalist.ingredientList', 
-            {'business_id':M.curBusinessID, 'sorttype':this.sections._ingredient_tabs.selected, 'worksheet':'yes'});
+            {'tnid':M.curTenantID, 'sorttype':this.sections._ingredient_tabs.selected, 'worksheet':'yes'});
     }
     this.menu.addClose('Back');
 
@@ -389,7 +389,7 @@ function ciniki_herbalist_main() {
     this.product.fieldValue = function(s, i, d) { return this.data[i]; }
     this.product.liveSearchCb = function(s, i, value) {
         if( i == 'category' ) {
-            M.api.getJSONBgCb('ciniki.herbalist.productSearchField', {'business_id':M.curBusinessID, 'field':i, 'start_needle':value, 'limit':15},
+            M.api.getJSONBgCb('ciniki.herbalist.productSearchField', {'tnid':M.curTenantID, 'field':i, 'start_needle':value, 'limit':15},
                 function(rsp) {
                     M.ciniki_herbalist_main.product.liveSearchShow(s, i, M.gE(M.ciniki_herbalist_main.product.panelUID + '_' + i), rsp.results);
                 });
@@ -413,7 +413,7 @@ function ciniki_herbalist_main() {
     };
     this.product.refreshImages = function() {
         if( M.ciniki_herbalist_main.product.product_id > 0 ) {
-            M.api.getJSONCb('ciniki.herbalist.productGet', {'business_id':M.curBusinessID, 'product_id':this.product_id, 'images':'yes'}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.productGet', {'tnid':M.curTenantID, 'product_id':this.product_id, 'images':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -426,7 +426,7 @@ function ciniki_herbalist_main() {
         }
     }
     this.product.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.productHistory', 'args':{'business_id':M.curBusinessID, 
+        return {'method':'ciniki.herbalist.productHistory', 'args':{'tnid':M.curTenantID, 
             'product_id':this.product_id, 'field':i}};
     }
     this.product.cellValue = function(s, i, j, d) {
@@ -445,7 +445,7 @@ function ciniki_herbalist_main() {
     this.product.addDropImage = function(iid) {
         if( this.product_id == 0 ) {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.herbalist.productAdd', {'business_id':M.curBusinessID, 'product_id':this.product_id, 'image_id':iid}, c,
+            M.api.postJSONCb('ciniki.herbalist.productAdd', {'tnid':M.curTenantID, 'product_id':this.product_id, 'image_id':iid}, c,
                 function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -455,7 +455,7 @@ function ciniki_herbalist_main() {
                     M.ciniki_herbalist_main.product.refreshImages();
                 });
         } else {
-            M.api.getJSONCb('ciniki.herbalist.productImageAdd', {'business_id':M.curBusinessID, 'image_id':iid, 'name':'', 'product_id':this.product_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.productImageAdd', {'tnid':M.curTenantID, 'image_id':iid, 'name':'', 'product_id':this.product_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -473,7 +473,7 @@ function ciniki_herbalist_main() {
         }
     }
     this.product.refreshVersions = function() {
-        M.api.getJSONCb('ciniki.herbalist.productGet', {'business_id':M.curBusinessID, 'product_id':this.product_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.productGet', {'tnid':M.curTenantID, 'product_id':this.product_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -501,7 +501,7 @@ function ciniki_herbalist_main() {
         if( id != null ) { this.product_id = id; }
         if( tab != null ) { this.product.sections._tabs.selected = tab; }
         if( list != null ) { this.nextPrevList = list; }
-        M.api.getJSONCb('ciniki.herbalist.productGet', {'business_id':M.curBusinessID, 'product_id':this.product_id, 'images':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.productGet', {'tnid':M.curTenantID, 'product_id':this.product_id, 'images':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -518,7 +518,7 @@ function ciniki_herbalist_main() {
         if( this.product_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.herbalist.productUpdate', {'business_id':M.curBusinessID, 'product_id':this.product_id}, c,
+                M.api.postJSONCb('ciniki.herbalist.productUpdate', {'tnid':M.curTenantID, 'product_id':this.product_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -531,7 +531,7 @@ function ciniki_herbalist_main() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.herbalist.productAdd', {'business_id':M.curBusinessID, 'product_id':this.product_id}, c,
+            M.api.postJSONCb('ciniki.herbalist.productAdd', {'tnid':M.curTenantID, 'product_id':this.product_id}, c,
                 function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -544,7 +544,7 @@ function ciniki_herbalist_main() {
     };
     this.product.remove = function() {
         if( confirm('Are you sure you want to remove this product?') ) {
-            M.api.getJSONCb('ciniki.herbalist.productDelete', {'business_id':M.curBusinessID, 'product_id':this.product_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.productDelete', {'tnid':M.curTenantID, 'product_id':this.product_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -554,7 +554,7 @@ function ciniki_herbalist_main() {
         }
     };
     this.product.updateNotes = function() {
-        M.api.getJSONCb('ciniki.herbalist.productGet', {'business_id':M.curBusinessID, 'product_id':this.product_id, 'notes':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.productGet', {'tnid':M.curTenantID, 'product_id':this.product_id, 'notes':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -623,7 +623,7 @@ function ciniki_herbalist_main() {
         return ''; 
     };
     this.productversion.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.productVersionHistory', 'args':{'business_id':M.curBusinessID, 
+        return {'method':'ciniki.herbalist.productVersionHistory', 'args':{'tnid':M.curTenantID, 
             'productversion_id':this.productversion_id, 'field':i}};
     };
     this.productversion.updateCosts = function() {
@@ -660,7 +660,7 @@ function ciniki_herbalist_main() {
         if( pid != null ) { this.product_id = pid; }
         this.reset();
         this.sections._buttons.buttons.delete.visible = 'yes';
-        M.api.getJSONCb('ciniki.herbalist.productVersionGet', {'business_id':M.curBusinessID, 'productversion_id':this.productversion_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.productVersionGet', {'tnid':M.curTenantID, 'productversion_id':this.productversion_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -679,7 +679,7 @@ function ciniki_herbalist_main() {
         if( this.productversion_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONFormData('ciniki.herbalist.productVersionUpdate', {'business_id':M.curBusinessID, 
+                M.api.postJSONFormData('ciniki.herbalist.productVersionUpdate', {'tnid':M.curTenantID, 
                     'productversion_id':this.productversion_id}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -693,7 +693,7 @@ function ciniki_herbalist_main() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONFormData('ciniki.herbalist.productVersionAdd', {'business_id':M.curBusinessID, 'product_id':this.product_id}, c, function(rsp) {
+            M.api.postJSONFormData('ciniki.herbalist.productVersionAdd', {'tnid':M.curTenantID, 'product_id':this.product_id}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -705,7 +705,7 @@ function ciniki_herbalist_main() {
     };
     this.productversion.remove = function() {
         if( confirm('Are you sure you want to delete this purchase option?') ) {
-            M.api.getJSONCb('ciniki.herbalist.productVersionDelete', {'business_id':M.curBusinessID, 'productversion_id':this.productversion_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.productVersionDelete', {'tnid':M.curTenantID, 'productversion_id':this.productversion_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -747,7 +747,7 @@ function ciniki_herbalist_main() {
         return ''; 
     };
     this.productimage.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.productImageHistory', 'args':{'business_id':M.curBusinessID, 
+        return {'method':'ciniki.herbalist.productImageHistory', 'args':{'tnid':M.curTenantID, 
             'productimage_id':this.productimage_id, 'field':i}};
     };
     this.productimage.addDropImage = function(iid) {
@@ -760,7 +760,7 @@ function ciniki_herbalist_main() {
         if( this.productimage_id > 0 ) {
             this.reset();
             this.sections._buttons.buttons.delete.visible = 'yes';
-            M.api.getJSONCb('ciniki.herbalist.productImageGet', {'business_id':M.curBusinessID, 'productimage_id':this.productimage_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.productImageGet', {'tnid':M.curTenantID, 'productimage_id':this.productimage_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -782,7 +782,7 @@ function ciniki_herbalist_main() {
         if( this.productimage_id > 0 ) {
             var c = this.serializeFormData('no');
             if( c != '' ) {
-                M.api.postJSONFormData('ciniki.herbalist.productImageUpdate', {'business_id':M.curBusinessID, 
+                M.api.postJSONFormData('ciniki.herbalist.productImageUpdate', {'tnid':M.curTenantID, 
                     'productimage_id':this.productimage_id}, c, function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -796,7 +796,7 @@ function ciniki_herbalist_main() {
             }
         } else {
             var c = this.serializeFormData('yes');
-            M.api.postJSONFormData('ciniki.herbalist.productImageAdd', {'business_id':M.curBusinessID, 'product_id':this.product_id}, c, function(rsp) {
+            M.api.postJSONFormData('ciniki.herbalist.productImageAdd', {'tnid':M.curTenantID, 'product_id':this.product_id}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -808,7 +808,7 @@ function ciniki_herbalist_main() {
     };
     this.productimage.remove = function() {
         if( confirm('Are you sure you want to delete this image?') ) {
-            M.api.getJSONCb('ciniki.herbalist.productImageDelete', {'business_id':M.curBusinessID, 
+            M.api.getJSONCb('ciniki.herbalist.productImageDelete', {'tnid':M.curTenantID, 
                 'productimage_id':this.productimage_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -930,7 +930,7 @@ function ciniki_herbalist_main() {
     }
     this.recipe.fieldValue = function(s, i, d) { return this.data[i]; }
     this.recipe.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.recipeHistory', 'args':{'business_id':M.curBusinessID, 
+        return {'method':'ciniki.herbalist.recipeHistory', 'args':{'tnid':M.curTenantID, 
             'recipe_id':this.recipe_id, 'field':i}};
     }
     this.recipe.cellValue = function(s, i, j, d) {
@@ -976,7 +976,7 @@ function ciniki_herbalist_main() {
         p.showHideSection('notes');
     };
     this.recipe.updateIngredients = function() {
-        M.api.getJSONCb('ciniki.herbalist.recipeGet', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.recipeGet', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -992,7 +992,7 @@ function ciniki_herbalist_main() {
         });
     };
     this.recipe.updateBatches = function() {
-        M.api.getJSONCb('ciniki.herbalist.recipeGet', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.recipeGet', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1020,11 +1020,11 @@ function ciniki_herbalist_main() {
             }
             var mv = (mc/y);
             var tv = (tc/y);
-            if( M.curBusiness.modules['ciniki.herbalist'].settings != null 
-                && M.curBusiness.modules['ciniki.herbalist'].settings['production-hourly-wage'] != null 
-                && M.curBusiness.modules['ciniki.herbalist'].settings['production-hourly-wage'] > 0 ) {
+            if( M.curTenant.modules['ciniki.herbalist'].settings != null 
+                && M.curTenant.modules['ciniki.herbalist'].settings['production-hourly-wage'] != null 
+                && M.curTenant.modules['ciniki.herbalist'].settings['production-hourly-wage'] > 0 ) {
                 // hourly wage per unit of recipe
-                tv += (((t/60)*M.curBusiness.modules['ciniki.herbalist'].settings['production-hourly-wage'])/y);
+                tv += (((t/60)*M.curTenant.modules['ciniki.herbalist'].settings['production-hourly-wage'])/y);
             }
             M.gE(this.panelUID + '_materials_cost_per_unit').value = '$' + mv.toFixed((mv>0&&mv<0.001)?4:(mv>0&&mv<0.01?3:2));
             M.gE(this.panelUID + '_time_cost_per_unit').value = '$' + tv.toFixed((tv>0&&tv<0.001)?4:(tv>0&&tv<0.01?3:2));
@@ -1043,7 +1043,7 @@ function ciniki_herbalist_main() {
         this.reset();
         if( id != null ) { this.recipe_id = id; }
         if( list != null ) { this.nextPrevList = list; }
-        M.api.getJSONCb('ciniki.herbalist.recipeGet', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.recipeGet', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1055,14 +1055,14 @@ function ciniki_herbalist_main() {
         });
     }
     this.recipe.downloadPDF = function() {
-        M.showPDF('ciniki.herbalist.recipePDF', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id});
+        M.showPDF('ciniki.herbalist.recipePDF', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id});
     }
     this.recipe.save = function(cb) {
         if( cb == null ) { cb = 'M.ciniki_herbalist_main.recipe.close();'; }
         if( this.recipe_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.herbalist.recipeUpdate', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, c,
+                M.api.postJSONCb('ciniki.herbalist.recipeUpdate', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -1075,7 +1075,7 @@ function ciniki_herbalist_main() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.herbalist.recipeAdd', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, c,
+            M.api.postJSONCb('ciniki.herbalist.recipeAdd', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id}, c,
                 function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -1088,7 +1088,7 @@ function ciniki_herbalist_main() {
     };
     this.recipe.remove = function() {
         if( confirm('Are you sure you want to remove this recipe?') ) {
-            M.api.getJSONCb('ciniki.herbalist.recipeDelete', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.recipeDelete', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -1098,7 +1098,7 @@ function ciniki_herbalist_main() {
         }
     };
     this.recipe.updateNotes = function() {
-        M.api.getJSONCb('ciniki.herbalist.recipeGet', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id, 'notes':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.recipeGet', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id, 'notes':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1155,7 +1155,7 @@ function ciniki_herbalist_main() {
         };  
     this.recipeingredient.fieldValue = function(s, i, d) { return this.data[i]; }
     this.recipeingredient.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.recipeIngredientHistory', 'args':{'business_id':M.curBusinessID, 'recipeingredient_id':this.recipeingredient_id, 'field':i}};
+        return {'method':'ciniki.herbalist.recipeIngredientHistory', 'args':{'tnid':M.curTenantID, 'recipeingredient_id':this.recipeingredient_id, 'field':i}};
     }
     this.recipeingredient.cellValue = function(s, i, j, d) {
         return '<span class="maintext">' + d.note_date + '</span><span class="subtext">' + d.content + '</span><span class="subsubtext">' + d.keywords + '</span>';
@@ -1164,7 +1164,7 @@ function ciniki_herbalist_main() {
         return 'M.ciniki_herbalist_main.note.open(\'M.ciniki_herbalist_main.recipeingredient.updateNotes();\',\'' + d.id + '\');';
     }
     this.recipeingredient.updateNotes = function() {
-        M.api.getJSONCb('ciniki.herbalist.recipeIngredientGet', {'business_id':M.curBusinessID, 'recipeingredient_id':this.recipeingredient_id, 'notes':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.recipeIngredientGet', {'tnid':M.curTenantID, 'recipeingredient_id':this.recipeingredient_id, 'notes':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1177,7 +1177,7 @@ function ciniki_herbalist_main() {
     }
     this.recipeingredient.refreshIngredients = function(newid) {
         if( newid > 0 ) {
-        M.api.getJSONCb('ciniki.herbalist.recipeIngredientGet', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id, 'recipeingredient_id':0}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.recipeIngredientGet', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id, 'recipeingredient_id':0}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1215,7 +1215,7 @@ function ciniki_herbalist_main() {
         if( riid != null ) { this.recipeingredient_id = riid; }
         if( rid != null ) { this.recipe_id = rid; }
         if( list != null ) { this.nextPrevList = list; }
-        M.api.getJSONCb('ciniki.herbalist.recipeIngredientGet', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id, 'recipeingredient_id':this.recipeingredient_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.recipeIngredientGet', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id, 'recipeingredient_id':this.recipeingredient_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1232,7 +1232,7 @@ function ciniki_herbalist_main() {
         if( this.recipeingredient_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.herbalist.recipeIngredientUpdate', {'business_id':M.curBusinessID, 'recipeingredient_id':this.recipeingredient_id}, c,
+                M.api.postJSONCb('ciniki.herbalist.recipeIngredientUpdate', {'tnid':M.curTenantID, 'recipeingredient_id':this.recipeingredient_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -1245,7 +1245,7 @@ function ciniki_herbalist_main() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.herbalist.recipeIngredientAdd', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, c,
+            M.api.postJSONCb('ciniki.herbalist.recipeIngredientAdd', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id}, c,
                 function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -1258,7 +1258,7 @@ function ciniki_herbalist_main() {
     };
     this.recipeingredient.remove = function() {
         if( confirm('Are you sure you want to remove this ingredient?') ) {
-            M.api.getJSONCb('ciniki.herbalist.recipeIngredientDelete', {'business_id':M.curBusinessID, 'recipeingredient_id':this.recipeingredient_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.recipeIngredientDelete', {'tnid':M.curTenantID, 'recipeingredient_id':this.recipeingredient_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -1352,7 +1352,7 @@ function ciniki_herbalist_main() {
         };  
     this.recipebatch.fieldValue = function(s, i, d) { return this.data[i]; }
     this.recipebatch.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.recipeBatchHistory', 'args':{'business_id':M.curBusinessID, 
+        return {'method':'ciniki.herbalist.recipeBatchHistory', 'args':{'tnid':M.curTenantID, 
             'batch_id':this.batch_id, 'field':i}};
     }
     this.recipebatch.sectionData = function(s) { 
@@ -1407,11 +1407,11 @@ function ciniki_herbalist_main() {
         var mv = (mc/y);
         M.gE(this.panelUID + '_materials_cost_per_unit').value = '$' + mv.toFixed((mv>0&&mv<0.001)?4:(mv>0&&mv<0.01?3:2));
         var tv = (tc/y);
-        if( M.curBusiness.modules['ciniki.herbalist'].settings != null 
-            && M.curBusiness.modules['ciniki.herbalist'].settings['production-hourly-wage'] != null 
-            && M.curBusiness.modules['ciniki.herbalist'].settings['production-hourly-wage'] > 0 ) {
+        if( M.curTenant.modules['ciniki.herbalist'].settings != null 
+            && M.curTenant.modules['ciniki.herbalist'].settings['production-hourly-wage'] != null 
+            && M.curTenant.modules['ciniki.herbalist'].settings['production-hourly-wage'] > 0 ) {
             // hourly wage per unit of recipe
-            tv += (((t/60)*M.curBusiness.modules['ciniki.herbalist'].settings['production-hourly-wage'])/y);
+            tv += (((t/60)*M.curTenant.modules['ciniki.herbalist'].settings['production-hourly-wage'])/y);
         }
         M.gE(this.panelUID + '_time_cost_per_unit').value = '$' + tv.toFixed((tv>0&&tv<0.001)?4:(tv>0&&tv<0.01?3:2));
         c = mv + tv;
@@ -1438,7 +1438,7 @@ function ciniki_herbalist_main() {
         this.reset();
         if( riid != null ) { this.batch_id = riid; }
         if( rid != null ) { this.recipe_id = rid; }
-        M.api.getJSONCb('ciniki.herbalist.recipeBatchGet', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id, 'batch_id':this.batch_id, 'labels':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.recipeBatchGet', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id, 'batch_id':this.batch_id, 'labels':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1453,7 +1453,7 @@ function ciniki_herbalist_main() {
     }
     this.recipebatch.downloadPDF = function() {
         var size = M.gE(this.panelUID + '_size').value;
-        M.showPDF('ciniki.herbalist.recipePDF', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id, 'size':size});
+        M.showPDF('ciniki.herbalist.recipePDF', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id, 'size':size});
     }
     this.recipebatch.printLabels = function() {
         M.ciniki_herbalist_main.labels.open('M.ciniki_herbalist_main.recipebatch.show();', {
@@ -1466,7 +1466,7 @@ function ciniki_herbalist_main() {
         if( this.batch_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.herbalist.recipeBatchUpdate', {'business_id':M.curBusinessID, 'batch_id':this.batch_id}, c,
+                M.api.postJSONCb('ciniki.herbalist.recipeBatchUpdate', {'tnid':M.curTenantID, 'batch_id':this.batch_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -1479,7 +1479,7 @@ function ciniki_herbalist_main() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.herbalist.recipeBatchAdd', {'business_id':M.curBusinessID, 'recipe_id':this.recipe_id}, c,
+            M.api.postJSONCb('ciniki.herbalist.recipeBatchAdd', {'tnid':M.curTenantID, 'recipe_id':this.recipe_id}, c,
                 function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -1492,7 +1492,7 @@ function ciniki_herbalist_main() {
     };
     this.recipebatch.remove = function() {
         if( confirm('Are you sure you want to remove this recipe?') ) {
-            M.api.getJSONCb('ciniki.herbalist.recipeBatchDelete', {'business_id':M.curBusinessID, 'batch_id':this.batch_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.recipeBatchDelete', {'tnid':M.curTenantID, 'batch_id':this.batch_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -1534,7 +1534,7 @@ function ciniki_herbalist_main() {
     this.labels.fieldValue = function(s, i, d) { return this.data[i]; }
     this.labels.open = function(cb, inputdata) {
         this.reset();
-        M.api.getJSONCb('ciniki.herbalist.labelsList', {'business_id':M.curBusinessID, 'batch_id':this.batch_id, 'labelformat':'ingredients'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.labelsList', {'tnid':M.curTenantID, 'batch_id':this.batch_id, 'labelformat':'ingredients'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1573,7 +1573,7 @@ function ciniki_herbalist_main() {
         this.refreshSection('startend');
     }
     this.labels.print = function() {
-        var args = {'business_id':M.curBusinessID};
+        var args = {'tnid':M.curTenantID};
         args['label'] = this.formValue('label');
         if( args['label'] == 0 ) {
             M.alert('You must choose a label');
@@ -1626,7 +1626,7 @@ function ciniki_herbalist_main() {
     this.ingredient.sectionData = function(s) { return this.data[s]; }
     this.ingredient.fieldValue = function(s, i, d) { return this.data[i]; }
     this.ingredient.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.ingredientHistory', 'args':{'business_id':M.curBusinessID, 
+        return {'method':'ciniki.herbalist.ingredientHistory', 'args':{'tnid':M.curTenantID, 
             'ingredient_id':this.ingredient_id, 'field':i}};
     }
     this.ingredient.cellValue = function(s, i, j, d) {
@@ -1658,7 +1658,7 @@ function ciniki_herbalist_main() {
         this.reset();
         if( id != null ) { this.ingredient_id = id; }
         if( list != null ) { this.nextPrevList = list; }
-        M.api.getJSONCb('ciniki.herbalist.ingredientGet', {'business_id':M.curBusinessID, 'ingredient_id':this.ingredient_id, 'notes':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.ingredientGet', {'tnid':M.curTenantID, 'ingredient_id':this.ingredient_id, 'notes':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1677,7 +1677,7 @@ function ciniki_herbalist_main() {
         });
     }
     this.ingredient.updateNotes = function() {
-        M.api.getJSONCb('ciniki.herbalist.ingredientGet', {'business_id':M.curBusinessID, 'ingredient_id':this.ingredient_id, 'notes':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.ingredientGet', {'tnid':M.curTenantID, 'ingredient_id':this.ingredient_id, 'notes':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1694,7 +1694,7 @@ function ciniki_herbalist_main() {
         if( this.ingredient_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.herbalist.ingredientUpdate', {'business_id':M.curBusinessID, 'ingredient_id':this.ingredient_id}, c,
+                M.api.postJSONCb('ciniki.herbalist.ingredientUpdate', {'tnid':M.curTenantID, 'ingredient_id':this.ingredient_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -1707,7 +1707,7 @@ function ciniki_herbalist_main() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.herbalist.ingredientAdd', {'business_id':M.curBusinessID, 'ingredient_id':this.ingredient_id}, c,
+            M.api.postJSONCb('ciniki.herbalist.ingredientAdd', {'tnid':M.curTenantID, 'ingredient_id':this.ingredient_id}, c,
                 function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -1720,7 +1720,7 @@ function ciniki_herbalist_main() {
     };
     this.ingredient.remove = function() {
         if( confirm('Are you sure you want to remove this ingredient?') ) {
-            M.api.getJSONCb('ciniki.herbalist.ingredientDelete', {'business_id':M.curBusinessID, 'ingredient_id':this.ingredient_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.ingredientDelete', {'tnid':M.curTenantID, 'ingredient_id':this.ingredient_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -1777,7 +1777,7 @@ function ciniki_herbalist_main() {
     this.inamelabels.fieldValue = function(s, i, d) { return this.data[i]; }
     this.inamelabels.open = function(cb) {
         this.reset();
-        M.api.getJSONCb('ciniki.herbalist.ingredientList', {'business_id':M.curBusinessID, 'labels':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.ingredientList', {'tnid':M.curTenantID, 'labels':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1837,7 +1837,7 @@ function ciniki_herbalist_main() {
         }
     }
     this.inamelabels.print = function() {
-        var args = {'business_id':M.curBusinessID};
+        var args = {'tnid':M.curTenantID};
         args['label'] = this.formValue('label');
         if( args['label'] == 0 ) {
             M.alert('You must choose a label');
@@ -1883,7 +1883,7 @@ function ciniki_herbalist_main() {
         };  
     this.container.fieldValue = function(s, i, d) { return this.data[i]; }
     this.container.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.containerHistory', 'args':{'business_id':M.curBusinessID, 
+        return {'method':'ciniki.herbalist.containerHistory', 'args':{'tnid':M.curTenantID, 
             'container_id':this.container_id, 'field':i}};
     }
     this.container.updateCPU = function() {
@@ -1906,7 +1906,7 @@ function ciniki_herbalist_main() {
         this.reset();
         if( id != null ) { this.container_id = id; }
         if( list != null ) { this.nextPrevList = list; }
-        M.api.getJSONCb('ciniki.herbalist.containerGet', {'business_id':M.curBusinessID, 'container_id':this.container_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.containerGet', {'tnid':M.curTenantID, 'container_id':this.container_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1921,7 +1921,7 @@ function ciniki_herbalist_main() {
         if( this.container_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.herbalist.containerUpdate', {'business_id':M.curBusinessID, 'container_id':this.container_id}, c,
+                M.api.postJSONCb('ciniki.herbalist.containerUpdate', {'tnid':M.curTenantID, 'container_id':this.container_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -1934,7 +1934,7 @@ function ciniki_herbalist_main() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.herbalist.containerAdd', {'business_id':M.curBusinessID, 'container_id':this.container_id}, c,
+            M.api.postJSONCb('ciniki.herbalist.containerAdd', {'tnid':M.curTenantID, 'container_id':this.container_id}, c,
                 function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -1947,7 +1947,7 @@ function ciniki_herbalist_main() {
     };
     this.container.remove = function() {
         if( confirm('Are you sure you want to remove this container?') ) {
-            M.api.getJSONCb('ciniki.herbalist.containerDelete', {'business_id':M.curBusinessID, 'container_id':this.container_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.containerDelete', {'tnid':M.curTenantID, 'container_id':this.container_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -2031,7 +2031,7 @@ function ciniki_herbalist_main() {
         };  
     this.note.fieldValue = function(s, i, d) { return this.data[i]; }
     this.note.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.noteHistory', 'args':{'business_id':M.curBusinessID, 'note_id':this.note_id, 'field':i}};
+        return {'method':'ciniki.herbalist.noteHistory', 'args':{'tnid':M.curTenantID, 'note_id':this.note_id, 'field':i}};
     }
     this.note.switchTab = function(tab) {
         this.sections._tabs.selected = tab;
@@ -2046,7 +2046,7 @@ function ciniki_herbalist_main() {
     this.note.open = function(cb, id) {
         this.reset();
         if( id != null ) { this.note_id = id; }
-        M.api.getJSONCb('ciniki.herbalist.noteGet', {'business_id':M.curBusinessID, 'note_id':this.note_id, 'reflists':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.noteGet', {'tnid':M.curTenantID, 'note_id':this.note_id, 'reflists':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -2067,7 +2067,7 @@ function ciniki_herbalist_main() {
         if( this.note_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.herbalist.noteUpdate', {'business_id':M.curBusinessID, 'note_id':this.note_id}, c,
+                M.api.postJSONCb('ciniki.herbalist.noteUpdate', {'tnid':M.curTenantID, 'note_id':this.note_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -2080,7 +2080,7 @@ function ciniki_herbalist_main() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.herbalist.noteAdd', {'business_id':M.curBusinessID, 'note_id':this.note_id}, c,
+            M.api.postJSONCb('ciniki.herbalist.noteAdd', {'tnid':M.curTenantID, 'note_id':this.note_id}, c,
                 function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -2093,7 +2093,7 @@ function ciniki_herbalist_main() {
     };
     this.note.remove = function() {
         if( confirm('Are you sure you want to remove this note?') ) {
-            M.api.getJSONCb('ciniki.herbalist.noteDelete', {'business_id':M.curBusinessID, 'note_id':this.note_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.noteDelete', {'tnid':M.curTenantID, 'note_id':this.note_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -2131,7 +2131,7 @@ function ciniki_herbalist_main() {
     this.action.sectionData = function(s) { return this.data[s]; }
     this.action.fieldValue = function(s, i, d) { return this.data[i]; }
     this.action.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.actionHistory', 'args':{'business_id':M.curBusinessID, 
+        return {'method':'ciniki.herbalist.actionHistory', 'args':{'tnid':M.curTenantID, 
             'action_id':this.action_id, 'field':i}};
     }
     this.action.cellValue = function(s, i, j, d) {
@@ -2144,7 +2144,7 @@ function ciniki_herbalist_main() {
         this.reset();
         if( id != null ) { this.action_id = id; }
         if( list != null ) { this.nextPrevList = list; }
-        M.api.getJSONCb('ciniki.herbalist.actionGet', {'business_id':M.curBusinessID, 'action_id':this.action_id, 'notes':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.actionGet', {'tnid':M.curTenantID, 'action_id':this.action_id, 'notes':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -2156,7 +2156,7 @@ function ciniki_herbalist_main() {
         });
     }
     this.action.updateNotes = function() {
-        M.api.getJSONCb('ciniki.herbalist.actionGet', {'business_id':M.curBusinessID, 'action_id':this.action_id, 'notes':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.actionGet', {'tnid':M.curTenantID, 'action_id':this.action_id, 'notes':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -2173,7 +2173,7 @@ function ciniki_herbalist_main() {
         if( this.action_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.herbalist.actionUpdate', {'business_id':M.curBusinessID, 'action_id':this.action_id}, c,
+                M.api.postJSONCb('ciniki.herbalist.actionUpdate', {'tnid':M.curTenantID, 'action_id':this.action_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -2186,7 +2186,7 @@ function ciniki_herbalist_main() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.herbalist.actionAdd', {'business_id':M.curBusinessID, 'action_id':this.action_id}, c,
+            M.api.postJSONCb('ciniki.herbalist.actionAdd', {'tnid':M.curTenantID, 'action_id':this.action_id}, c,
                 function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -2199,7 +2199,7 @@ function ciniki_herbalist_main() {
     };
     this.action.remove = function() {
         if( confirm('Are you sure you want to remove this action?') ) {
-            M.api.getJSONCb('ciniki.herbalist.actionDelete', {'business_id':M.curBusinessID, 'action_id':this.action_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.actionDelete', {'tnid':M.curTenantID, 'action_id':this.action_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -2250,7 +2250,7 @@ function ciniki_herbalist_main() {
         };
     this.ailment.fieldValue = function(s, i, d) { return this.data[i]; }
     this.ailment.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.ailmentHistory', 'args':{'business_id':M.curBusinessID, 
+        return {'method':'ciniki.herbalist.ailmentHistory', 'args':{'tnid':M.curTenantID, 
             'ailment_id':this.ailment_id, 'field':i}};
     }
     this.ailment.cellValue = function(s, i, j, d) {
@@ -2263,7 +2263,7 @@ function ciniki_herbalist_main() {
         this.reset();
         if( id != null ) { this.ailment_id = id; }
         if( list != null ) { this.nextPrevList = list; }
-        M.api.getJSONCb('ciniki.herbalist.ailmentGet', {'business_id':M.curBusinessID, 'ailment_id':this.ailment_id, 'notes':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.ailmentGet', {'tnid':M.curTenantID, 'ailment_id':this.ailment_id, 'notes':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -2275,7 +2275,7 @@ function ciniki_herbalist_main() {
         });
     }
     this.ailment.updateNotes = function() {
-        M.api.getJSONCb('ciniki.herbalist.ailmentGet', {'business_id':M.curBusinessID, 'ailment_id':this.ailment_id, 'notes':'yes'}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.ailmentGet', {'tnid':M.curTenantID, 'ailment_id':this.ailment_id, 'notes':'yes'}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -2292,7 +2292,7 @@ function ciniki_herbalist_main() {
         if( this.ailment_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.herbalist.ailmentUpdate', {'business_id':M.curBusinessID, 'ailment_id':this.ailment_id}, c,
+                M.api.postJSONCb('ciniki.herbalist.ailmentUpdate', {'tnid':M.curTenantID, 'ailment_id':this.ailment_id}, c,
                     function(rsp) {
                         if( rsp.stat != 'ok' ) {
                             M.api.err(rsp);
@@ -2305,7 +2305,7 @@ function ciniki_herbalist_main() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.herbalist.ailmentAdd', {'business_id':M.curBusinessID, 'ailment_id':this.ailment_id}, c,
+            M.api.postJSONCb('ciniki.herbalist.ailmentAdd', {'tnid':M.curTenantID, 'ailment_id':this.ailment_id}, c,
                 function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -2318,7 +2318,7 @@ function ciniki_herbalist_main() {
     };
     this.ailment.remove = function() {
         if( confirm('Are you sure you want to remove this ailment?') ) {
-            M.api.getJSONCb('ciniki.herbalist.ailmentDelete', {'business_id':M.curBusinessID, 'ailment_id':this.ailment_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.ailmentDelete', {'tnid':M.curTenantID, 'ailment_id':this.ailment_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -2370,7 +2370,7 @@ function ciniki_herbalist_main() {
     }
     this.herbs.liveSearchCb = function(s, i, v) {
         if( v != '' ) {
-            M.api.getJSONBgCb('ciniki.herbalist.herbSearch', {'business_id':M.curBusinessID, 'start_needle':v, 'limit':'25'}, function(rsp) {
+            M.api.getJSONBgCb('ciniki.herbalist.herbSearch', {'tnid':M.curTenantID, 'start_needle':v, 'limit':'25'}, function(rsp) {
                 M.ciniki_herbalist_main.herbs.liveSearchShow('search',null,M.gE(M.ciniki_herbalist_main.herbs.panelUID + '_' + s), rsp.herbs);
                 });
             this.sections.herbs.visible = 'hidden';
@@ -2403,7 +2403,7 @@ function ciniki_herbalist_main() {
         return 'M.ciniki_herbalist_main.herb.open(\'M.ciniki_herbalist_main.herbs.open();\',\'' + d.id + '\',M.ciniki_herbalist_main.herb.nplist);';
     }
     this.herbs.open = function(cb) {
-        M.api.getJSONCb('ciniki.herbalist.herbList', {'business_id':M.curBusinessID}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.herbList', {'tnid':M.curTenantID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -2418,13 +2418,13 @@ function ciniki_herbalist_main() {
     this.herbs.print = function() {
         var search = M.gE(this.panelUID + '_search').value;
         if( search != '' ) {
-            M.showPDF('ciniki.herbalist.herbSearch', {'business_id':M.curBusinessID, 'start_needle':search, 'output':'pdf'});
+            M.showPDF('ciniki.herbalist.herbSearch', {'tnid':M.curTenantID, 'start_needle':search, 'output':'pdf'});
         } else {
-            M.showPDF('ciniki.herbalist.herbList', {'business_id':M.curBusinessID, 'output':'pdf'});
+            M.showPDF('ciniki.herbalist.herbList', {'tnid':M.curTenantID, 'output':'pdf'});
         }
     }
     this.herbs.reindex = function(cb) {
-        M.api.getJSONCb('ciniki.herbalist.herbReindex', {'business_id':M.curBusinessID}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.herbReindex', {'tnid':M.curTenantID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -2476,12 +2476,12 @@ function ciniki_herbalist_main() {
         };
     this.herb.fieldValue = function(s, i, d) { return this.data[i]; }
     this.herb.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.herbHistory', 'args':{'business_id':M.curBusinessID, 'herb_id':this.herb_id, 'field':i}};
+        return {'method':'ciniki.herbalist.herbHistory', 'args':{'tnid':M.curTenantID, 'herb_id':this.herb_id, 'field':i}};
     }
     this.herb.open = function(cb, hid, list) {
         if( hid != null ) { this.herb_id = hid; }
         if( list != null ) { this.nplist = list; }
-        M.api.getJSONCb('ciniki.herbalist.herbGet', {'business_id':M.curBusinessID, 'herb_id':this.herb_id}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.herbGet', {'tnid':M.curTenantID, 'herb_id':this.herb_id}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -2498,7 +2498,7 @@ function ciniki_herbalist_main() {
         if( this.herb_id > 0 ) {
             var c = this.serializeForm('no');
             if( c != '' ) {
-                M.api.postJSONCb('ciniki.herbalist.herbUpdate', {'business_id':M.curBusinessID, 'herb_id':this.herb_id}, c, function(rsp) {
+                M.api.postJSONCb('ciniki.herbalist.herbUpdate', {'tnid':M.curTenantID, 'herb_id':this.herb_id}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;
@@ -2510,7 +2510,7 @@ function ciniki_herbalist_main() {
             }
         } else {
             var c = this.serializeForm('yes');
-            M.api.postJSONCb('ciniki.herbalist.herbAdd', {'business_id':M.curBusinessID}, c, function(rsp) {
+            M.api.postJSONCb('ciniki.herbalist.herbAdd', {'tnid':M.curTenantID}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -2522,7 +2522,7 @@ function ciniki_herbalist_main() {
     }
     this.herb.remove = function() {
         if( confirm('Are you sure you want to remove herb?') ) {
-            M.api.getJSONCb('ciniki.herbalist.herbDelete', {'business_id':M.curBusinessID, 'herb_id':this.herb_id}, function(rsp) {
+            M.api.getJSONCb('ciniki.herbalist.herbDelete', {'tnid':M.curTenantID, 'herb_id':this.herb_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;

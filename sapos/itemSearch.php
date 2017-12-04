@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_herbalist_sapos_itemSearch($ciniki, $business_id, $args) {
+function ciniki_herbalist_sapos_itemSearch($ciniki, $tnid, $args) {
 
     if( !isset($args['start_needle']) || $args['start_needle'] == '' ) {
         return array('stat'=>'ok', 'items'=>array());
@@ -43,9 +43,9 @@ function ciniki_herbalist_sapos_itemSearch($ciniki, $business_id, $args) {
         . "1 AS quantity, "
         . "ciniki_herbalist_product_versions.inventory AS inventory_available "
         . "FROM ciniki_herbalist_products, ciniki_herbalist_product_versions "
-        . "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_herbalist_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_herbalist_products.id = ciniki_herbalist_product_versions.product_id "
-        . "AND ciniki_herbalist_product_versions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND ciniki_herbalist_product_versions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "HAVING "
             . "description LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . "OR description LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "

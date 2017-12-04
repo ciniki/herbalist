@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method will return the list of Ingredients for a business.
+// This method will return the list of Ingredients for a tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:        The ID of the business to get Ingredient for.
+// tnid:        The ID of the tenant to get Ingredient for.
 //
 // Returns
 // -------
@@ -19,7 +19,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'sorttype'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Type'),
         'labels'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Labels'),
         'worksheet'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Worksheet'),
@@ -30,19 +30,19 @@ function ciniki_herbalist_ingredientList($ciniki) {
     $args = $rc['args'];
 
     //
-    // Check access to business_id as owner, or sys admin.
+    // Check access to tnid as owner, or sys admin.
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.ingredientList');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['tnid'], 'ciniki.herbalist.ingredientList');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Load business settings
+    // Load tenant settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -79,7 +79,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
         . "ciniki_herbalist_ingredients.total_time_per_unit, "
         . "ciniki_herbalist_ingredients.warnings "
         . "FROM ciniki_herbalist_ingredients "
-        . "WHERE ciniki_herbalist_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_herbalist_ingredients.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     if( isset($args['sorttype']) && $args['sorttype'] > 0 ) {
         $strsql .= "AND ciniki_herbalist_ingredients.sorttype = '" . ciniki_core_dbQuote($ciniki, $args['sorttype']) . "' ";
@@ -118,7 +118,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
     //
     if( isset($args['labels']) && $args['labels'] == 'yes' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'labels');
-        $rc = ciniki_herbalist_labels($ciniki, $args['business_id'], 'names');
+        $rc = ciniki_herbalist_labels($ciniki, $args['tnid'], 'names');
         if( $rc['stat'] != 'ok' ) { 
             return $rc;
         }
@@ -127,7 +127,7 @@ function ciniki_herbalist_ingredientList($ciniki) {
         } 
     } elseif( isset($args['worksheet']) && $args['worksheet'] == 'yes' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'templates', 'ingredientWorksheet');
-        $rc = ciniki_herbalist_templates_ingredientWorksheet($ciniki, $args['business_id'], array(
+        $rc = ciniki_herbalist_templates_ingredientWorksheet($ciniki, $args['tnid'], array(
             'ingredients'=>$ingredients,
             ));
         if( $rc['stat'] != 'ok' ) { 

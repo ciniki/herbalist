@@ -10,14 +10,14 @@
 // Returns
 // -------
 //
-function ciniki_herbalist_labels($ciniki, $business_id, $format='all') {
+function ciniki_herbalist_labels($ciniki, $tnid, $format='all') {
 
     //
     // Get the list of names from the database for labels
     //
     $strsql = "SELECT detail_key, detail_value "
         . "FROM ciniki_herbalist_settings "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND detail_key LIKE 'labels-%' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList2');

@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the product version is attached to.
+// tnid:         The ID of the tenant the product version is attached to.
 // productversion_id:          The ID of the product version to get the details for.
 //
 // Returns
@@ -20,7 +20,7 @@ function ciniki_herbalist_productVersionGet($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'productversion_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product Version'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -30,19 +30,19 @@ function ciniki_herbalist_productVersionGet($ciniki) {
 
     //
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.productVersionGet');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['tnid'], 'ciniki.herbalist.productVersionGet');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Load business settings
+    // Load tenant settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -58,7 +58,7 @@ function ciniki_herbalist_productVersionGet($ciniki) {
     //
     if( $args['productversion_id'] == 0 ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'sequencesNext');
-        $rc = ciniki_core_sequencesNext($ciniki, $args['business_id'], 'ciniki.herbalist.productversion', 'product_id', $args['product_id']);
+        $rc = ciniki_core_sequencesNext($ciniki, $args['tnid'], 'ciniki.herbalist.productversion', 'product_id', $args['product_id']);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -102,7 +102,7 @@ function ciniki_herbalist_productVersionGet($ciniki) {
             . "ciniki_herbalist_product_versions.wholesale_price, "
             . "ciniki_herbalist_product_versions.retail_price "
             . "FROM ciniki_herbalist_product_versions "
-            . "WHERE ciniki_herbalist_product_versions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_herbalist_product_versions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_herbalist_product_versions.id = '" . ciniki_core_dbQuote($ciniki, $args['productversion_id']) . "' "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
@@ -132,7 +132,7 @@ function ciniki_herbalist_productVersionGet($ciniki) {
         . "ciniki_herbalist_recipes.total_cost_per_unit, "
         . "ciniki_herbalist_recipes.total_time_per_unit "
         . "FROM ciniki_herbalist_recipes "
-        . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_herbalist_recipes.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "ORDER BY name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
@@ -157,7 +157,7 @@ function ciniki_herbalist_productVersionGet($ciniki) {
         . "ciniki_herbalist_containers.name, "
         . "ciniki_herbalist_containers.cost_per_unit "
         . "FROM ciniki_herbalist_containers "
-        . "WHERE ciniki_herbalist_containers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_herbalist_containers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "ORDER BY CAST(name AS UNSIGNED), name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');

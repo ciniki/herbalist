@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the recipe batch is attached to.
+// tnid:         The ID of the tenant the recipe batch is attached to.
 // batch_id:          The ID of the recipe batch to get the details for.
 //
 // Returns
@@ -20,7 +20,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'batch_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Recipe Batch'),
         'recipe_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Recipe ID'),
         'labels'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Labels'),
@@ -32,10 +32,10 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
 
     //
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.recipeBatchGet');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['tnid'], 'ciniki.herbalist.recipeBatchGet');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -44,7 +44,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
     // Get the settings
     //
     $settings = array();
-    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_herbalist_settings', 'business_id', $args['business_id'], 'ciniki.herbalist', 'settings', '');
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_herbalist_settings', 'tnid', $args['tnid'], 'ciniki.herbalist', 'settings', '');
     if( $rc['stat'] == 'ok' && isset($rc['settings']) ) {
         $settings = $rc['settings'];
     }
@@ -62,10 +62,10 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
     }
 
     //
-    // Load business settings
+    // Load tenant settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -101,7 +101,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
 
         $strsql = "SELECT flags, yield, production_time "
             . "FROM ciniki_herbalist_recipes "
-            . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_herbalist_recipes.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_herbalist_recipes.id = '" . ciniki_core_dbQuote($ciniki, $args['recipe_id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'recipe');
@@ -134,7 +134,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
             . "ciniki_herbalist_recipe_batches.total_time_per_unit, "
             . "ciniki_herbalist_recipe_batches.notes "
             . "FROM ciniki_herbalist_recipe_batches "
-            . "WHERE ciniki_herbalist_recipe_batches.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_herbalist_recipe_batches.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_herbalist_recipe_batches.id = '" . ciniki_core_dbQuote($ciniki, $args['batch_id']) . "' "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
@@ -156,7 +156,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         if( $batch['recipe_id'] > 0 ) {
             $strsql = "SELECT flags, yield, production_time "
                 . "FROM ciniki_herbalist_recipes "
-                . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "WHERE ciniki_herbalist_recipes.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . "AND ciniki_herbalist_recipes.id = '" . ciniki_core_dbQuote($ciniki, $batch['recipe_id']) . "' "
                 . "";
             $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'recipe');
@@ -187,9 +187,9 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         . "FROM ciniki_herbalist_recipe_ingredients "
         . "LEFT JOIN ciniki_herbalist_ingredients ON ("
             . "ciniki_herbalist_recipe_ingredients.ingredient_id = ciniki_herbalist_ingredients.id "
-            . "AND ciniki_herbalist_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_herbalist_ingredients.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
-        . "WHERE ciniki_herbalist_recipe_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_herbalist_recipe_ingredients.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_herbalist_recipe_ingredients.recipe_id = '" . ciniki_core_dbQuote($ciniki, $batch['recipe_id']) . "' "
         . "ORDER BY sorttype, ciniki_herbalist_recipe_ingredients.quantity DESC, ciniki_herbalist_ingredients.name "
         . "";
@@ -283,9 +283,9 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         . "FROM ciniki_herbalist_product_versions "
         . "LEFT JOIN ciniki_herbalist_containers ON ("
             . "ciniki_herbalist_product_versions.container_id = ciniki_herbalist_containers.id "
-            . "AND ciniki_herbalist_containers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_herbalist_containers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
-        . "WHERE ciniki_herbalist_product_versions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_herbalist_product_versions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_herbalist_product_versions.recipe_id = '" . ciniki_core_dbQuote($ciniki, $batch['recipe_id']) . "' "
         . "ORDER BY ciniki_herbalist_product_versions.name "
         . "";
@@ -345,7 +345,7 @@ function ciniki_herbalist_recipeBatchGet($ciniki) {
         $strsql = "SELECT name "
             . "FROM ciniki_herbalist_recipes "
             . "WHERE id = '" . ciniki_core_dbQuote($ciniki, $batch['recipe_id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'recipe');
         if( $rc['stat'] != 'ok' ) {

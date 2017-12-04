@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_herbalist_sapos_itemDelete($ciniki, $business_id, $invoice_id, $item) {
+function ciniki_herbalist_sapos_itemDelete($ciniki, $tnid, $invoice_id, $item) {
 
     //
     // Check the product exists and update the inventory
@@ -21,9 +21,9 @@ function ciniki_herbalist_sapos_itemDelete($ciniki, $business_id, $invoice_id, $
             . "ciniki_herbalist_product_versions.retail_price AS unit_amount, "
             . "ciniki_herbalist_product_versions.inventory AS units_available "
             . "FROM ciniki_herbalist_products, ciniki_herbalist_product_versions "
-            . "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_herbalist_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_herbalist_products.id = ciniki_herbalist_product_versions.product_id "
-            . "AND ciniki_herbalist_product_versions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_herbalist_product_versions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_herbalist_product_versions.id = '" . ciniki_core_dbQuote($ciniki, $item['object_id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'product');
@@ -42,7 +42,7 @@ function ciniki_herbalist_sapos_itemDelete($ciniki, $business_id, $invoice_id, $
         //
         $new_quantity = $product['units_available'] + $item['quantity'];
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-        $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.productversion', $item['object_id'], array('inventory'=>$new_quantity));
+        $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.herbalist.productversion', $item['object_id'], array('inventory'=>$new_quantity));
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.64', 'msg'=>'Unable to add product.', 'err'=>$rc['err']));        
         }

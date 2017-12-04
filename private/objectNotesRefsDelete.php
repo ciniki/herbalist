@@ -8,13 +8,13 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the ingredient is attached to.
+// tnid:         The ID of the tenant the ingredient is attached to.
 // ingredient_id:          The ID of the ingredient to get the details for.
 //
 // Returns
 // -------
 //
-function ciniki_herbalist_objectNotesRefsDelete($ciniki, $business_id, $object, $object_id) {
+function ciniki_herbalist_objectNotesRefsDelete($ciniki, $tnid, $object, $object_id) {
     //
     // Get the list of references
     //
@@ -22,7 +22,7 @@ function ciniki_herbalist_objectNotesRefsDelete($ciniki, $business_id, $object, 
         . "FROM ciniki_herbalist_note_refs "
         . "WHERE ciniki_herbalist_note_refs.object = '" . ciniki_core_dbQuote($ciniki, $object) . "' "
         . "AND ciniki_herbalist_note_refs.object_id = '" . ciniki_core_dbQuote($ciniki, $object_id) . "' "
-        . "AND ciniki_herbalist_note_refs.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "AND ciniki_herbalist_note_refs.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'item');
     if( $rc['stat'] != 'ok' ) {
@@ -30,7 +30,7 @@ function ciniki_herbalist_objectNotesRefsDelete($ciniki, $business_id, $object, 
     }
     if( isset($rc['rows']) ) {
         foreach($rc['rows'] as $ref) {
-            $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.noteref', $ref['id'], $ref['uuid'], 0x04);
+            $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.herbalist.noteref', $ref['id'], $ref['uuid'], 0x04);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }

@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the recipe ingredient is attached to.
+// tnid:         The ID of the tenant the recipe ingredient is attached to.
 // recipeingredient_id:          The ID of the recipe ingredient to get the details for.
 //
 // Returns
@@ -20,7 +20,7 @@ function ciniki_herbalist_recipeIngredientGet($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'recipeingredient_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Recipe Ingredient'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -30,19 +30,19 @@ function ciniki_herbalist_recipeIngredientGet($ciniki) {
 
     //
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.recipeIngredientGet');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['tnid'], 'ciniki.herbalist.recipeIngredientGet');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Load business settings
+    // Load tenant settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -73,7 +73,7 @@ function ciniki_herbalist_recipeIngredientGet($ciniki) {
             . "ciniki_herbalist_recipe_ingredients.ingredient_id, "
             . "ciniki_herbalist_recipe_ingredients.quantity "
             . "FROM ciniki_herbalist_recipe_ingredients "
-            . "WHERE ciniki_herbalist_recipe_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_herbalist_recipe_ingredients.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_herbalist_recipe_ingredients.id = '" . ciniki_core_dbQuote($ciniki, $args['recipeingredient_id']) . "' "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
@@ -90,7 +90,7 @@ function ciniki_herbalist_recipeIngredientGet($ciniki) {
         // Get any notes for this ingredients
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'objectNotes');
-        $rc = ciniki_herbalist_objectNotes($ciniki, $args['business_id'], 'ciniki.herbalist.ingredient', $recipeingredient['ingredient_id']);
+        $rc = ciniki_herbalist_objectNotes($ciniki, $args['tnid'], 'ciniki.herbalist.ingredient', $recipeingredient['ingredient_id']);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
@@ -108,7 +108,7 @@ function ciniki_herbalist_recipeIngredientGet($ciniki) {
     $strsql = "SELECT ciniki_herbalist_ingredients.id, "
         . "ciniki_herbalist_ingredients.name, ciniki_herbalist_ingredients.units "
         . "FROM ciniki_herbalist_ingredients "
-        . "WHERE ciniki_herbalist_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_herbalist_ingredients.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "ORDER BY ciniki_herbalist_ingredients.name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');

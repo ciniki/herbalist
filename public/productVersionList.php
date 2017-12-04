@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method will return the list of Products for a business.
+// This method will return the list of Products for a tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:        The ID of the business to get Product for.
+// tnid:        The ID of the tenant to get Product for.
 //
 // Returns
 // -------
@@ -19,7 +19,7 @@ function ciniki_herbalist_productVersionList($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'category'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -28,10 +28,10 @@ function ciniki_herbalist_productVersionList($ciniki) {
     $args = $rc['args'];
 
     //
-    // Check access to business_id as owner, or sys admin.
+    // Check access to tnid as owner, or sys admin.
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.productVersionList');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['tnid'], 'ciniki.herbalist.productVersionList');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -41,7 +41,7 @@ function ciniki_herbalist_productVersionList($ciniki) {
     //
     $strsql = "SELECT DISTINCT category "
         . "FROM ciniki_herbalist_products "
-        . "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_herbalist_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND category <> '' "
         . "ORDER BY category "
         . "";
@@ -72,12 +72,12 @@ function ciniki_herbalist_productVersionList($ciniki) {
         . "ciniki_herbalist_product_versions.wholesale_price, "
         . "ciniki_herbalist_product_versions.retail_price "
         . "FROM ciniki_herbalist_products, ciniki_herbalist_product_versions "
-        . "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' ";
+        . "WHERE ciniki_herbalist_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' ";
     if( isset($args['category']) && $args['category'] != '' && $args['category'] != 'All' ) {
         $strsql .= "AND ciniki_herbalist_products.category = '" . ciniki_core_dbQuote($ciniki, $args['category']) . "' ";
     }
     $strsql .= "AND ciniki_herbalist_products.id = ciniki_herbalist_product_versions.product_id "
-        . "AND ciniki_herbalist_product_versions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND ciniki_herbalist_product_versions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "ORDER BY ciniki_herbalist_products.category, ciniki_herbalist_products.name, ciniki_herbalist_product_versions.name ";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(

@@ -15,7 +15,7 @@ function ciniki_herbalist_herbReindex(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -24,10 +24,10 @@ function ciniki_herbalist_herbReindex(&$ciniki) {
 
     //
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.herbUpdate');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['tnid'], 'ciniki.herbalist.herbUpdate');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -44,7 +44,7 @@ function ciniki_herbalist_herbReindex(&$ciniki) {
         . "ciniki_herbalist_herbs.energetics, "
         . "ciniki_herbalist_herbs.keywords_index "
         . "FROM ciniki_herbalist_herbs "
-        . "WHERE ciniki_herbalist_herbs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_herbalist_herbs.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'herb');
     if( $rc['stat'] != 'ok' ) {
@@ -74,7 +74,7 @@ function ciniki_herbalist_herbReindex(&$ciniki) {
         }
         if( $rc['keywords'] != $herb['keywords_index'] ) {
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-            $rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.herbalist.herb', $herb['id'], array('keywords_index'=>$rc['keywords']), 0x07);
+            $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.herbalist.herb', $herb['id'], array('keywords_index'=>$rc['keywords']), 0x07);
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
@@ -82,11 +82,11 @@ function ciniki_herbalist_herbReindex(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'herbalist');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'herbalist');
 
     return array('stat'=>'ok');
 }

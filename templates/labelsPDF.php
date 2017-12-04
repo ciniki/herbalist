@@ -11,27 +11,27 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_herbalist_templates_labelsPDF(&$ciniki, $business_id, $args) {
+function ciniki_herbalist_templates_labelsPDF(&$ciniki, $tnid, $args) {
 
     //
-    // Load the business details
+    // Load the tenant details
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'businessDetails');
-    $rc = ciniki_businesses_businessDetails($ciniki, $business_id);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'tenantDetails');
+    $rc = ciniki_tenants_tenantDetails($ciniki, $tnid);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
     if( isset($rc['details']) && is_array($rc['details']) ) {    
-        $business_details = $rc['details'];
+        $tenant_details = $rc['details'];
     } else {
-        $business_details = array();
+        $tenant_details = array();
     }
 
     //
     // Load the label definitions
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'labels');
-    $rc = ciniki_herbalist_labels($ciniki, $business_id, 'all');
+    $rc = ciniki_herbalist_labels($ciniki, $tnid, 'all');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -61,13 +61,13 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $business_id, $args) {
     //
     $pdf = new MYPDF('P', PDF_UNIT, 'LETTER', true, 'UTF-8', false);
 
-    $pdf->business_details = $business_details;
+    $pdf->tenant_details = $tenant_details;
 
     //
     // Setup the PDF basics
     //
     $pdf->SetCreator('Ciniki');
-    $pdf->SetAuthor($business_details['name']);
+    $pdf->SetAuthor($tenant_details['name']);
     $pdf->SetTitle($args['title']);
     $pdf->SetSubject('');
     $pdf->SetKeywords('');

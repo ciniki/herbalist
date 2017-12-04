@@ -7,14 +7,14 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:                 The business ID to check the session user against.
+// tnid:                 The tenant ID to check the session user against.
 // method:                      The requested method.
 //
 // Returns
 // -------
 // <rsp stat='ok' />
 //
-function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id, &$recipes, &$ingredients, $minute_wage) {
+function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $tnid, $recipe_id, &$recipes, &$ingredients, $minute_wage) {
 
     if( !isset($recipes[$recipe_id]) ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.6', 'msg'=>'Recipe does not exist'));
@@ -37,7 +37,7 @@ function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id
             // If the ingredient is not verified, then it needs to be updated
             //
             if( $ingredient['verified'] != 'yes' ) {
-                $rc = ciniki_herbalist_costingUpdateIngredient($ciniki, $business_id, $iid, $recipes, $ingredients, $minute_wage);
+                $rc = ciniki_herbalist_costingUpdateIngredient($ciniki, $tnid, $iid, $recipes, $ingredients, $minute_wage);
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
                 }
@@ -85,7 +85,7 @@ function ciniki_herbalist_costingUpdateRecipe(&$ciniki, $business_id, $recipe_id
             $update_args['total_time_per_unit'] = $total_time_per_unit;
         }
         if( count($update_args) > 0 ) {
-            $rc = ciniki_core_objectUpdate($ciniki, $business_id, 'ciniki.herbalist.recipe', $recipe_id, $update_args);
+            $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.herbalist.recipe', $recipe_id, $update_args);
             if( $rc['stat'] != 'ok' && $rc['err']['code'] != 'ciniki.core.120' ) {
                 return $rc;
             }

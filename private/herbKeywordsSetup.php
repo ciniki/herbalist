@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method will add a new herb for the business.
+// This method will add a new herb for the tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:        The ID of the business to add the herb to.
+// tnid:        The ID of the tenant to add the herb to.
 //
 // Returns
 // -------

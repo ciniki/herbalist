@@ -7,12 +7,12 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:        The ID of the business to get events for.
+// tnid:        The ID of the tenant to get events for.
 //
 // Returns
 // -------
 //
-function ciniki_herbalist_hooks_uiSettings($ciniki, $business_id, $args) {
+function ciniki_herbalist_hooks_uiSettings($ciniki, $tnid, $args) {
 
     //
     // Set the default response
@@ -22,8 +22,8 @@ function ciniki_herbalist_hooks_uiSettings($ciniki, $business_id, $args) {
     //
     // Get the settings
     //
-    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_herbalist_settings', 'business_id', 
-        $business_id, 'ciniki.herbalist', 'settings', '');
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_herbalist_settings', 'tnid', 
+        $tnid, 'ciniki.herbalist', 'settings', '');
     if( $rc['stat'] == 'ok' && isset($rc['settings']) ) {
         $rsp['settings'] = $rc['settings'];
     }
@@ -31,7 +31,7 @@ function ciniki_herbalist_hooks_uiSettings($ciniki, $business_id, $args) {
     //
     // Check permissions for what menu items should be available
     //
-    if( isset($ciniki['business']['modules']['ciniki.herbalist'])
+    if( isset($ciniki['tenant']['modules']['ciniki.herbalist'])
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['employees'])
             || isset($args['permissions']['resellers'])
@@ -45,7 +45,7 @@ function ciniki_herbalist_hooks_uiSettings($ciniki, $business_id, $args) {
             );
         $rsp['menu_items'][] = $menu_item;
        
-        if( ($ciniki['business']['modules']['ciniki.herbalist']['flags']&0x1000) == 0x1000 ) {
+        if( ($ciniki['tenant']['modules']['ciniki.herbalist']['flags']&0x1000) == 0x1000 ) {
             $menu_item = array(
                 'priority'=>6501,
                 'label'=>'Herbs', 
@@ -55,7 +55,7 @@ function ciniki_herbalist_hooks_uiSettings($ciniki, $business_id, $args) {
         }
     } 
 
-    if( isset($ciniki['business']['modules']['ciniki.herbalist'])
+    if( isset($ciniki['tenant']['modules']['ciniki.herbalist'])
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['resellers'])
             || ($ciniki['session']['user']['perms']&0x01) == 0x01

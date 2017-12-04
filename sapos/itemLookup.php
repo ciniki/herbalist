@@ -10,7 +10,7 @@
 // Returns
 // =======
 //
-function ciniki_herbalist_sapos_itemLookup($ciniki, $business_id, $args) {
+function ciniki_herbalist_sapos_itemLookup($ciniki, $tnid, $args) {
 
     if( !isset($args['object']) || $args['object'] == '' || !isset($args['object_id']) || $args['object_id'] == '' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.65', 'msg'=>'No product specified.'));
@@ -29,9 +29,9 @@ function ciniki_herbalist_sapos_itemLookup($ciniki, $business_id, $args) {
             . "1 AS quantity, "
             . "ciniki_herbalist_product_versions.inventory AS units_available "
             . "FROM ciniki_herbalist_products, ciniki_herbalist_product_versions "
-            . "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_herbalist_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_herbalist_products.id = ciniki_herbalist_product_versions.product_id "
-            . "AND ciniki_herbalist_product_versions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_herbalist_product_versions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_herbalist_product_versions.id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'product');

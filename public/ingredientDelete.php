@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:            The ID of the business the ingredient is attached to.
+// tnid:            The ID of the tenant the ingredient is attached to.
 // ingredient_id:            The ID of the ingredient to be removed.
 //
 // Returns
@@ -21,7 +21,7 @@ function ciniki_herbalist_ingredientDelete(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'ingredient_id'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Ingredient'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -30,10 +30,10 @@ function ciniki_herbalist_ingredientDelete(&$ciniki) {
     $args = $rc['args'];
 
     //
-    // Check access to business_id as owner
+    // Check access to tnid as owner
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.ingredientDelete');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['tnid'], 'ciniki.herbalist.ingredientDelete');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -43,7 +43,7 @@ function ciniki_herbalist_ingredientDelete(&$ciniki) {
     //
     $strsql = "SELECT id, uuid "
         . "FROM ciniki_herbalist_ingredients "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id = '" . ciniki_core_dbQuote($ciniki, $args['ingredient_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'ingredient');
@@ -61,7 +61,7 @@ function ciniki_herbalist_ingredientDelete(&$ciniki) {
     $strsql = "SELECT COUNT(*) AS num_recipes "
         . "FROM ciniki_herbalist_recipe_ingredients "
         . "WHERE ingredient_id = '" . ciniki_core_dbQuote($ciniki, $args['ingredient_id']) . "' "
-        . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
     $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.herbalist', 'num');
@@ -90,7 +90,7 @@ function ciniki_herbalist_ingredientDelete(&$ciniki) {
     // Remove any note references
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'objectNotesRefsDelete');
-    $rc = ciniki_herbalist_objectNotesRefsDelete($ciniki, $args['business_id'], 'ciniki.herbalist.ingredient', $args['ingredient_id']);
+    $rc = ciniki_herbalist_objectNotesRefsDelete($ciniki, $args['tnid'], 'ciniki.herbalist.ingredient', $args['ingredient_id']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -98,7 +98,7 @@ function ciniki_herbalist_ingredientDelete(&$ciniki) {
     //
     // Remove the ingredient
     //
-    $rc = ciniki_core_objectDelete($ciniki, $args['business_id'], 'ciniki.herbalist.ingredient',
+    $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.herbalist.ingredient',
         $args['ingredient_id'], $ingredient['uuid'], 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
@@ -114,11 +114,11 @@ function ciniki_herbalist_ingredientDelete(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'herbalist');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'herbalist');
 
     return array('stat'=>'ok');
 }
