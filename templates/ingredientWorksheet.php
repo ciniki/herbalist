@@ -11,23 +11,23 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_herbalist_templates_ingredientWorksheet(&$ciniki, $business_id, $args) {
+function ciniki_herbalist_templates_ingredientWorksheet(&$ciniki, $tnid, $args) {
     if( !isset($args['ingredients']) ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.herbalist.86', 'msg'=>'No herbs specified'));
     }
 
     //
-    // Load the business details
+    // Load the tenant details
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'businessDetails');
-    $rc = ciniki_businesses_businessDetails($ciniki, $business_id);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'tenantDetails');
+    $rc = ciniki_tenants_tenantDetails($ciniki, $tnid);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
     if( isset($rc['details']) && is_array($rc['details']) ) {    
-        $business_details = $rc['details'];
+        $tenant_details = $rc['details'];
     } else {
-        $business_details = array();
+        $tenant_details = array();
     }
 
     //
@@ -84,7 +84,7 @@ function ciniki_herbalist_templates_ingredientWorksheet(&$ciniki, $business_id, 
     //
     $pdf = new MYPDF('L', PDF_UNIT, 'LETTER', true, 'UTF-8', false);
 
-    $pdf->business_details = $business_details;
+    $pdf->tenant_details = $tenant_details;
 
     $dt = new DateTime('now', new DateTimezone('America/Toronto'));
     $pdf->printdate = $dt->format('M j, Y');
@@ -104,7 +104,7 @@ function ciniki_herbalist_templates_ingredientWorksheet(&$ciniki, $business_id, 
     // Setup the PDF basics
     //
     $pdf->SetCreator('Achilleam');
-    $pdf->SetAuthor($business_details['name']);
+    $pdf->SetAuthor($tenant_details['name']);
     $pdf->SetTitle((isset($args['title']) ? $args['title'] : 'Ingredient List'));
     $pdf->SetSubject('');
     $pdf->SetKeywords('');

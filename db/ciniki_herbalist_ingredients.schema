@@ -7,7 +7,7 @@
 # ------
 # id:               The ID assigned to the ingredient.
 # uuid:             The Universal Unique ID.
-# business_id:      The business the ingredient is attached to.
+# tnid:             The tenant the ingredient is attached to.
 #
 # name:             The name for the ingredient.
 # subname:          The sub name or latin name for the ingredient.
@@ -45,7 +45,7 @@
 create table ciniki_herbalist_ingredients (
     id int not null auto_increment,
     uuid char(36) not null,
-    business_id int not null,
+    tnid int not null,
     name varchar(150) not null,
     subname varchar(250) not null,
     sorttype tinyint unsigned not null,
@@ -64,5 +64,5 @@ create table ciniki_herbalist_ingredients (
     last_updated datetime not null,
     primary key (id),
     unique index (uuid),
-    index sync (business_id, uuid, last_updated)
+    index sync (tnid, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';

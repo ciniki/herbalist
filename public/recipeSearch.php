@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method will return the list of Recipes for a business.
+// This method will return the list of Recipes for a tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:        The ID of the business to get Recipe for.
+// tnid:        The ID of the tenant to get Recipe for.
 //
 // Returns
 // -------
@@ -19,7 +19,7 @@ function ciniki_herbalist_recipeSearch($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'recipe_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Type'),
         'search_str'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Search String'),
         'limit'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'15', 'name'=>'Limit'),
@@ -30,10 +30,10 @@ function ciniki_herbalist_recipeSearch($ciniki) {
     $args = $rc['args'];
 
     //
-    // Check access to business_id as owner, or sys admin.
+    // Check access to tnid as owner, or sys admin.
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.recipeSearch');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['tnid'], 'ciniki.herbalist.recipeSearch');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -53,7 +53,7 @@ function ciniki_herbalist_recipeSearch($ciniki) {
         . "ciniki_herbalist_recipes.total_cost_per_unit, "
         . "ciniki_herbalist_recipes.total_time_per_unit "
         . "FROM ciniki_herbalist_recipes "
-        . "WHERE ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_herbalist_recipes.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
     if( isset($args['recipe_type']) && $args['recipe_type'] > 0 ) {
         $strsql .= "AND recipe_type = '" . ciniki_core_dbQuote($ciniki, $args['recipe_type']) . "' ";
@@ -95,7 +95,7 @@ function ciniki_herbalist_recipeSearch($ciniki) {
             . "ciniki_herbalist_recipes.total_cost_per_unit, "
             . "ciniki_herbalist_recipes.total_time_per_unit "
             . "FROM ciniki_herbalist_ingredients, ciniki_herbalist_recipe_ingredients, ciniki_herbalist_recipes "
-            . "WHERE ciniki_herbalist_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_herbalist_ingredients.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ("
                 . "ciniki_herbalist_ingredients.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
                 . "OR ciniki_herbalist_ingredients.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
@@ -103,9 +103,9 @@ function ciniki_herbalist_recipeSearch($ciniki) {
                 . "OR ciniki_herbalist_ingredients.subname LIKE '% " . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
                 . ") "
             . "AND ciniki_herbalist_ingredients.id = ciniki_herbalist_recipe_ingredients.ingredient_id "
-            . "AND ciniki_herbalist_recipe_ingredients.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_herbalist_recipe_ingredients.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_herbalist_recipe_ingredients.recipe_id = ciniki_herbalist_recipes.id "
-            . "AND ciniki_herbalist_recipes.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_herbalist_recipes.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "";
         if( count($recipe_ids) > 0 ) {
             $strsql .= "AND ciniki_herbalist_recipes.id NOT IN (" . ciniki_core_dbQuoteIDs($ciniki, $recipe_ids) . ") ";

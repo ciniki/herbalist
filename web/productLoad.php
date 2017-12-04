@@ -8,13 +8,13 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the product is attached to.
+// tnid:         The ID of the tenant the product is attached to.
 // product_id:          The ID of the product to get the details for.
 //
 // Returns
 // -------
 //
-function ciniki_herbalist_web_productLoad($ciniki, $business_id, $args) {
+function ciniki_herbalist_web_productLoad($ciniki, $tnid, $args) {
     
     $strsql = "SELECT ciniki_herbalist_products.id, "
         . "ciniki_herbalist_products.uuid, "
@@ -27,7 +27,7 @@ function ciniki_herbalist_web_productLoad($ciniki, $business_id, $args) {
         . "ciniki_herbalist_products.description, "
         . "ciniki_herbalist_products.ingredients "
         . "FROM ciniki_herbalist_products "
-        . "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_herbalist_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "";
     if( isset($args['permalink']) && $args['permalink'] != '' ) {
         $strsql .= "AND ciniki_herbalist_products.permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' ";
@@ -57,7 +57,7 @@ function ciniki_herbalist_web_productLoad($ciniki, $business_id, $args) {
         . "ciniki_herbalist_product_versions.inventory, "
         . "ciniki_herbalist_product_versions.retail_price AS unit_amount "
         . "FROM ciniki_herbalist_product_versions "
-        . "WHERE ciniki_herbalist_product_versions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_herbalist_product_versions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_herbalist_product_versions.product_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
         . "AND (ciniki_herbalist_product_versions.flags&0x01) = 0x01 "
         . "ORDER BY sequence, name "
@@ -88,7 +88,7 @@ function ciniki_herbalist_web_productLoad($ciniki, $business_id, $args) {
             . "description "
             . "FROM ciniki_herbalist_product_images "
             . "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
-            . "AND business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "";
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.herbalist', array(
             array('container'=>'images', 'fname'=>'id', 'fields'=>array('id', 'title', 'permalink', 'flags', 'image_id', 'description')),

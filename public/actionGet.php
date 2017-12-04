@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the action is attached to.
+// tnid:         The ID of the tenant the action is attached to.
 // action_id:          The ID of the action to get the details for.
 //
 // Returns
@@ -20,7 +20,7 @@ function ciniki_herbalist_actionGet($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'action_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Action'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -30,19 +30,19 @@ function ciniki_herbalist_actionGet($ciniki) {
 
     //
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.actionGet');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['tnid'], 'ciniki.herbalist.actionGet');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Load business settings
+    // Load tenant settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -72,7 +72,7 @@ function ciniki_herbalist_actionGet($ciniki) {
             . "ciniki_herbalist_actions.name, "
             . "ciniki_herbalist_actions.description "
             . "FROM ciniki_herbalist_actions "
-            . "WHERE ciniki_herbalist_actions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE ciniki_herbalist_actions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_herbalist_actions.id = '" . ciniki_core_dbQuote($ciniki, $args['action_id']) . "' "
             . "";
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
@@ -89,7 +89,7 @@ function ciniki_herbalist_actionGet($ciniki) {
         // Get any notes for this action
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'objectNotes');
-        $rc = ciniki_herbalist_objectNotes($ciniki, $args['business_id'], 'ciniki.herbalist.action', $args['action_id']);
+        $rc = ciniki_herbalist_objectNotes($ciniki, $args['tnid'], 'ciniki.herbalist.action', $args['action_id']);
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }

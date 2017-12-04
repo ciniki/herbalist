@@ -19,10 +19,10 @@ function ciniki_herbalist_settings() {
         return this.data[i];
     };
     this.main.fieldHistoryArgs = function(s, i) {
-        return {'method':'ciniki.herbalist.settingsHistory', 'args':{'business_id':M.curBusinessID, 'setting':i}};
+        return {'method':'ciniki.herbalist.settingsHistory', 'args':{'tnid':M.curTenantID, 'setting':i}};
     };
     this.main.open = function(cb) {
-        M.api.getJSONCb('ciniki.herbalist.settingsGet', {'business_id':M.curBusinessID}, function(rsp) {
+        M.api.getJSONCb('ciniki.herbalist.settingsGet', {'tnid':M.curTenantID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -36,7 +36,7 @@ function ciniki_herbalist_settings() {
     this.main.save = function() {
         var c = this.serializeForm('no');
         if( c != '' ) {
-            M.api.postJSONCb('ciniki.herbalist.settingsUpdate', {'business_id':M.curBusinessID}, c, function(rsp) {
+            M.api.postJSONCb('ciniki.herbalist.settingsUpdate', {'tnid':M.curTenantID}, c, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;

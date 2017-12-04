@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method will add a new container for the business.
+// This method will add a new container for the tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:        The ID of the business to add the Container to.
+// tnid:        The ID of the tenant to add the Container to.
 //
 // Returns
 // -------
@@ -20,7 +20,7 @@ function ciniki_herbalist_containerAdd(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'),
         'top_quantity'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'name'=>'Top Quantity'),
         'top_price'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'0', 'type'=>'currency', 'name'=>'Top Price'),
@@ -35,10 +35,10 @@ function ciniki_herbalist_containerAdd(&$ciniki) {
     $args = $rc['args'];
 
     //
-    // Check access to business_id as owner
+    // Check access to tnid as owner
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.containerAdd');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['tnid'], 'ciniki.herbalist.containerAdd');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -72,7 +72,7 @@ function ciniki_herbalist_containerAdd(&$ciniki) {
     // Add the container to the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-    $rc = ciniki_core_objectAdd($ciniki, $args['business_id'], 'ciniki.herbalist.container', $args, 0x04);
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.herbalist.container', $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
         return $rc;
@@ -88,17 +88,17 @@ function ciniki_herbalist_containerAdd(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'herbalist');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'herbalist');
 
     //
     // Run the costing updates
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'costingUpdate');
-    $rc = ciniki_herbalist_costingUpdate($ciniki, $args['business_id'], array());
+    $rc = ciniki_herbalist_costingUpdate($ciniki, $args['tnid'], array());
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -107,7 +107,7 @@ function ciniki_herbalist_containerAdd(&$ciniki) {
     // Update the web index if enabled
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'hookExec');
-    ciniki_core_hookExec($ciniki, $args['business_id'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.herbalist.container', 'object_id'=>$container_id));
+    ciniki_core_hookExec($ciniki, $args['tnid'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.herbalist.container', 'object_id'=>$container_id));
 
     return array('stat'=>'ok', 'id'=>$container_id);
 }

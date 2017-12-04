@@ -8,7 +8,7 @@
 // ---------
 // ciniki:
 // settings:        The web settings structure.
-// business_id:        The ID of the business to get post for.
+// tnid:        The ID of the tenant to get post for.
 //
 // args:            The possible arguments for products
 //
@@ -16,9 +16,9 @@
 // Returns
 // -------
 //
-function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, $args) {
+function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $tnid, $args) {
 
-    if( !isset($ciniki['business']['modules']['ciniki.herbalist']) ) {
+    if( !isset($ciniki['tenant']['modules']['ciniki.herbalist']) ) {
         return array('stat'=>'404', 'err'=>array('code'=>'ciniki.herbalist.70', 'msg'=>"I'm sorry, the page you requested does not exist."));
     }
     $page = array(
@@ -46,10 +46,10 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
             . "ciniki_herbalist_tags.permalink, "
             . "ciniki_herbalist_tags.tag_name AS title "
             . "FROM ciniki_herbalist_products, ciniki_herbalist_tags "
-            . "WHERE ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_herbalist_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND (ciniki_herbalist_products.flags&0x01) = 0x01 "  // Visible on website
             . "AND ciniki_herbalist_products.id = ciniki_herbalist_tags.ref_id "
-            . "AND ciniki_herbalist_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_herbalist_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_herbalist_tags.tag_type = 10 "
             . "ORDER BY ciniki_herbalist_tags.permalink, ciniki_herbalist_tags.tag_name, ciniki_herbalist_products.primary_image_id DESC "
             . "";
@@ -139,7 +139,7 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
         //
         $strsql = "SELECT id, name, permalink, primary_image_id AS image_id, synopsis, 'yes' AS is_details "
             . "FROM ciniki_herbalist_products "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND (flags&0x01) = 0x01 "
             . "ORDER BY name ";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.herbalist', 'product');
@@ -164,11 +164,11 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
             . "ciniki_herbalist_products.synopsis, "
             . "'yes' AS is_details "
             . "FROM ciniki_herbalist_tags, ciniki_herbalist_products "
-            . "WHERE ciniki_herbalist_tags.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "WHERE ciniki_herbalist_tags.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND ciniki_herbalist_tags.tag_type = 10 "
             . "AND ciniki_herbalist_tags.permalink = '" . ciniki_core_dbQuote($ciniki, $category['permalink']) . "' "
             . "AND ciniki_herbalist_tags.ref_id = ciniki_herbalist_products.id "
-            . "AND ciniki_herbalist_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_herbalist_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND (ciniki_herbalist_products.flags&0x01) = 0x01 "
             . "ORDER BY ciniki_herbalist_products.name "
             . "";
@@ -196,7 +196,7 @@ function ciniki_herbalist_web_processRequest(&$ciniki, $settings, $business_id, 
             $ciniki['response']['head']['links'][] = array('rel'=>'canonical', 'href'=>$args['base_url'] . '/' . $product_permalink);
         }
         ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'web', 'productLoad');
-        $rc = ciniki_herbalist_web_productLoad($ciniki, $business_id, array('permalink'=>$product_permalink, 'images'=>'yes'));
+        $rc = ciniki_herbalist_web_productLoad($ciniki, $tnid, array('permalink'=>$product_permalink, 'images'=>'yes'));
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'404', 'err'=>array('code'=>'ciniki.herbalist.71', 'msg'=>"We're sorry, the page you requested is not available."));
         }

@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This method searchs for a herbs for a business.
+// This method searchs for a herbs for a tenant.
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:        The ID of the business to get herb for.
+// tnid:        The ID of the tenant to get herb for.
 // start_needle:       The search string to search for.
 // limit:              The maximum number of entries to return.
 //
@@ -21,7 +21,7 @@ function ciniki_herbalist_herbSearch($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'start_needle'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Search String'),
         'limit'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Limit'),
         'output'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Format'),
@@ -32,10 +32,10 @@ function ciniki_herbalist_herbSearch($ciniki) {
     $args = $rc['args'];
 
     //
-    // Check access to business_id as owner, or sys admin.
+    // Check access to tnid as owner, or sys admin.
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.herbSearch');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['tnid'], 'ciniki.herbalist.herbSearch');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -69,7 +69,7 @@ function ciniki_herbalist_herbSearch($ciniki) {
         . "ciniki_herbalist_herbs.ailments, "
         . "ciniki_herbalist_herbs.energetics "
         . "FROM ciniki_herbalist_herbs "
-        . "WHERE ciniki_herbalist_herbs.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_herbalist_herbs.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . $search_sql
         . "";
     if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {
@@ -112,7 +112,7 @@ function ciniki_herbalist_herbSearch($ciniki) {
 
     if( isset($args['output']) && $args['output'] == 'pdf' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'templates', 'herblistPDF');
-        $rc = ciniki_herbalist_templates_herblistPDF($ciniki, $args['business_id'], array('herbs'=>$herbs));
+        $rc = ciniki_herbalist_templates_herblistPDF($ciniki, $args['tnid'], array('herbs'=>$herbs));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }

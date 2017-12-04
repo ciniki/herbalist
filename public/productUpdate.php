@@ -16,7 +16,7 @@ function ciniki_herbalist_productUpdate(&$ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'),
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Product'),
         'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'),
         'permalink'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Permalink'),
@@ -36,10 +36,10 @@ function ciniki_herbalist_productUpdate(&$ciniki) {
 
     //
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'checkAccess');
-    $rc = ciniki_herbalist_checkAccess($ciniki, $args['business_id'], 'ciniki.herbalist.productUpdate');
+    $rc = ciniki_herbalist_checkAccess($ciniki, $args['tnid'], 'ciniki.herbalist.productUpdate');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -52,7 +52,7 @@ function ciniki_herbalist_productUpdate(&$ciniki) {
         //
         $strsql = "SELECT id, name, permalink "
             . "FROM ciniki_herbalist_products "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND permalink = '" . ciniki_core_dbQuote($ciniki, $args['permalink']) . "' "
             . "AND id <> '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
             . "";
@@ -81,7 +81,7 @@ function ciniki_herbalist_productUpdate(&$ciniki) {
     // Update the Product in the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-    $rc = ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.herbalist.product', $args['product_id'], $args, 0x04);
+    $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.herbalist.product', $args['product_id'], $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.herbalist');
         return $rc;
@@ -92,7 +92,7 @@ function ciniki_herbalist_productUpdate(&$ciniki) {
     //
     if( isset($args['categories']) ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'tagsUpdate');
-        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.herbalist', 'tag', $args['business_id'],
+        $rc = ciniki_core_tagsUpdate($ciniki, 'ciniki.herbalist', 'tag', $args['tnid'],
             'ciniki_herbalist_tags', 'ciniki_herbalist_history',
             'ref_id', $args['product_id'], 10, $args['categories']);
         if( $rc['stat'] != 'ok' ) {
@@ -113,23 +113,23 @@ function ciniki_herbalist_productUpdate(&$ciniki) {
     // Update the note keywords
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'notesUpdateKeywords');
-    $rc = ciniki_herbalist_notesUpdateKeywords($ciniki, $args['business_id']);
+    $rc = ciniki_herbalist_notesUpdateKeywords($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'herbalist');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'herbalist');
 
     //
     // Run the costing updates
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'herbalist', 'private', 'costingUpdate');
-    $rc = ciniki_herbalist_costingUpdate($ciniki, $args['business_id'], array());
+    $rc = ciniki_herbalist_costingUpdate($ciniki, $args['tnid'], array());
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -138,7 +138,7 @@ function ciniki_herbalist_productUpdate(&$ciniki) {
     // Update the web index if enabled
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'hookExec');
-    ciniki_core_hookExec($ciniki, $args['business_id'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.herbalist.product', 'object_id'=>$args['product_id']));
+    ciniki_core_hookExec($ciniki, $args['tnid'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.herbalist.product', 'object_id'=>$args['product_id']));
 
     return array('stat'=>'ok');
 }

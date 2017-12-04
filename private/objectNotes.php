@@ -8,19 +8,19 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business the ingredient is attached to.
+// tnid:         The ID of the tenant the ingredient is attached to.
 // ingredient_id:          The ID of the ingredient to get the details for.
 //
 // Returns
 // -------
 //
-function ciniki_herbalist_objectNotes($ciniki, $business_id, $object, $object_id) {
+function ciniki_herbalist_objectNotes($ciniki, $tnid, $object, $object_id) {
 
     //
-    // Load business settings
+    // Load tenant settings
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $business_id);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -41,9 +41,9 @@ function ciniki_herbalist_objectNotes($ciniki, $business_id, $object, $object_id
         . "FROM ciniki_herbalist_note_refs "
         . "LEFT JOIN ciniki_herbalist_notes ON ("
             . "ciniki_herbalist_note_refs.note_id = ciniki_herbalist_notes.id "
-            . "AND ciniki_herbalist_notes.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_herbalist_notes.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
-        . "WHERE ciniki_herbalist_note_refs.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        . "WHERE ciniki_herbalist_note_refs.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_herbalist_note_refs.object = '" . ciniki_core_dbQuote($ciniki, $object) . "' "
         . "AND ciniki_herbalist_note_refs.object_id = '" . ciniki_core_dbQuote($ciniki, $object_id) . "' "
         . "ORDER BY note_date, ciniki_herbalist_notes.date_added "
