@@ -18,6 +18,7 @@ function ciniki_herbalist_main() {
             'products':{'label':'Products', 'fn':'M.ciniki_herbalist_main.menu.open(null,"products");'},
             'inventory':{'label':'Inventory', 'fn':'M.ciniki_herbalist_main.menu.open(null,"inventory");'},
             'notes':{'label':'Notes', 'fn':'M.ciniki_herbalist_main.menu.open(null,"notes");'},
+            'tools':{'label':'Tools', 'fn':'M.ciniki_herbalist_main.menu.open(null,"tools");'},
             }},
         'actions':{'label':'Actions', 'type':'simplegrid', 'num_cols':1, 
             'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='actions'?'yes':'no';},
@@ -126,6 +127,11 @@ function ciniki_herbalist_main() {
             'buttons':{
                 'add':{'label':'Add', 'fn':'M.ciniki_herbalist_main.note.open(\'M.ciniki_herbalist_main.menu.open();\',0);'},
             }},
+        '_tools':{'label':'Tools', 
+            'visible':function() {return M.ciniki_herbalist_main.menu.sections._tabs.selected=='tools'?'yes':'no';},
+            'list':{
+                'blanklabel':{'label':'Custom Labels', 'fn':'M.ciniki_herbalist_main.labels.open(\'M.ciniki_herbalist_main.menu.open();\');'},
+            }},
         '_buttons':{'label':'', 'buttons':{
             'namelabels':{'label':'Print Name Labels', 
                 'visible':function() { return (M.ciniki_herbalist_main.menu.sections._tabs.selected=='ingredients'?'yes':'no');},
@@ -139,6 +145,7 @@ function ciniki_herbalist_main() {
     };
     this.menu.sectionData = function(s) {
         if( s == '_ingredients_menu' ) { return this.sections[s].list; }
+        if( s == '_tools' ) { return this.sections[s].list; }
         return this.data[s];
     };
     this.menu.noData = function(s) { return this.sections[s].noData; }
@@ -204,6 +211,8 @@ function ciniki_herbalist_main() {
                 case 0: return d.name;
             }
         } else if( s == '_ingredients_menu' ) {
+            return d.name;
+        } else if( s == '_tools' ) {
             return d.name;
         } else if( s == 'ingredients' ) {
             switch (j) {
@@ -284,19 +293,24 @@ function ciniki_herbalist_main() {
             if( this.sections._tabs.selected == 'recipes' && this.sections._recipe_tabs.selected > 0 ) {
                 args['recipe_type'] = this.sections._recipe_tabs.selected;
             }
-            M.api.getJSONCb(method, args, function(rsp) {
-                if( rsp.stat != 'ok' ) {
-                    M.api.err(rsp);
-                    return false;
-                }
-                var p = M.ciniki_herbalist_main.menu;
-                p.data = rsp;
-                if( rsp.nextprevlist != null ) {
-                    p.nextPrevList = rsp.nextprevlist;
-                }
-                p.refresh();
-                p.show(cb);
-            });
+            if( method != '' ) {
+                M.api.getJSONCb(method, args, function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    }
+                    var p = M.ciniki_herbalist_main.menu;
+                    p.data = rsp;
+                    if( rsp.nextprevlist != null ) {
+                        p.nextPrevList = rsp.nextprevlist;
+                    }
+                    p.refresh();
+                    p.show(cb);
+                });
+            } else {
+                this.refresh();
+                this.show(cb);
+            }
         }
     };
     this.menu.ingredientWorksheet = function() {
@@ -1541,8 +1555,10 @@ function ciniki_herbalist_main() {
             }
             var p = M.ciniki_herbalist_main.labels;
             p.data = rsp;
-            p.data.title = inputdata.title;
-            p.data.content = inputdata.content;
+            if( inputdata != null ) {
+                p.data.title = inputdata.title;
+                p.data.content = inputdata.content;
+            }
             p.sections.general.fields.label.options = {'0':'Choose a label'};
             for(var i in rsp.labels) {
                 p.sections.general.fields.label.options[i] = rsp.labels[i].name;
