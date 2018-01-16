@@ -151,6 +151,9 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $tnid, $args) {
                         $section['content'] = str_replace('{_title_}', $args['labels'][$count]['title'], $section['content']);
                         $section['content'] = str_replace('{_content_}', $args['labels'][$count]['content'], $section['content']);
                     }
+                    //
+                    // Process content
+                    //
                     $pdf->MultiCell($section['width'], $section['height'], $section['content'], 0, $section['align'], false, 0, '', '', true, 0, false, true, $section['height'], 'T', true);
                 }
                 $count++;
