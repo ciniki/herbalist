@@ -141,7 +141,7 @@ function ciniki_herbalist_main() {
                 },
             'worksheet':{'label':'Print Worksheet', 
                 'visible':function() { return (M.ciniki_herbalist_main.menu.sections._tabs.selected=='ingredients'?'yes':'no');},
-                'fn':'M.ciniki_herbalist_main.menu.ingredientWorksheet();\');',
+                'fn':'M.ciniki_herbalist_main.menu.ingredientWorksheet();',
                 },
             }},
     };
@@ -316,6 +316,7 @@ function ciniki_herbalist_main() {
         }
     };
     this.menu.ingredientWorksheet = function() {
+        console.log('testing');
         M.showPDF('ciniki.herbalist.ingredientList', 
             {'tnid':M.curTenantID, 'sorttype':this.sections._ingredient_tabs.selected, 'worksheet':'yes'});
     }
