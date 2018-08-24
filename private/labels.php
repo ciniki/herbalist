@@ -172,12 +172,12 @@ function ciniki_herbalist_labels($ciniki, $tnid, $format='all') {
             '0'=>array(
                 'font'=>array('size'=>14, 'style'=>'B',),
                 'content'=>'{_title_}',
-                'align'=>'C', 'x'=>0, 'y'=>0, 'width'=>50, 'height'=>20,
+                'align'=>'C', 'x'=>0, 'y'=>0, 'width'=>50, 'height'=>16,
                 ),
             '1'=>array(
                 'font'=>array('size'=>12, 'style'=>'',),
                 'content'=>'{_content_}',
-                'align'=>'C', 'x'=>0, 'y'=>7, 'width'=>50, 'height'=>30,
+                'align'=>'C', 'x'=>0, 'y'=>16, 'width'=>50, 'height'=>34,
                 ),
             );
     }
