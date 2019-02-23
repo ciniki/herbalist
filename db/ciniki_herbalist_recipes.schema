@@ -18,7 +18,8 @@
 #                   10 - Infusion
 #                   20 - Salve
 #                   30 - Cream
-#                   40 - Tincture
+#                   70 - Tea
+#                   90 - Tincture
 #
 # flags:            The different options for the recipe.
 #

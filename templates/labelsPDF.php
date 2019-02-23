@@ -80,7 +80,11 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $tnid, $args) {
     // set font
     $pdf->AddPage();
     $pdf->SetFont('helvetica', '', 8);
-    $pdf->SetCellPadding(2);
+    if( $args['label'] == 'ingredientsVista2x35' ) {
+        $pdf->SetCellPadding(0);
+    } else {
+        $pdf->SetCellPadding(2);
+    }
     $pdf->SetFillColor(255);
     $pdf->SetTextColor(0);
     $pdf->SetDrawColor(125);
@@ -114,7 +118,8 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $tnid, $args) {
         reset($label['cols']);
         $total_number = count($args['labels']);
     }
-
+    $yoffset = (isset($args['yoffset']) && $args['yoffset'] != '' ? $args['yoffset'] : 0);
+    
     $count = 0;
     while( $count < $total_number ) {
         foreach($label['rows'] as $rownum => $row) {
@@ -143,9 +148,15 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $tnid, $args) {
                     break;
                 }
 
+// Used for debuging circle
+                if( isset($args['test']) && $args['test'] == 'yes' && isset($label['circle']) ) {
+                    $pdf->SetY($row['y'] + $label['circle']['radius']);
+                    $pdf->SetX($col['x'] + $label['circle']['radius']);
+                    $pdf->Circle($col['x'] + $label['circle']['radius'], $row['y'] + $label['circle']['radius'], $label['circle']['radius'], 0, 360);
+                }
                 foreach($label['sections'] as $section) {
                     $pdf->SetFont('', $section['font']['style'], $section['font']['size']);
-                    $pdf->SetY($row['y'] + $section['y']);
+                    $pdf->SetY($row['y'] + $section['y'] + $yoffset);
                     $pdf->SetX($col['x'] + $section['x']);
                     if( isset($args['labels']) ) {
                         $section['content'] = str_replace('{_title_}', $args['labels'][$count]['title'], $section['content']);
@@ -154,7 +165,7 @@ function ciniki_herbalist_templates_labelsPDF(&$ciniki, $tnid, $args) {
                     //
                     // Process content
                     //
-                    $pdf->MultiCell($section['width'], $section['height'], $section['content'], 0, $section['align'], false, 0, '', '', true, 0, false, true, $section['height'], 'T', true);
+                    $pdf->MultiCell($section['width'], $section['height'], $section['content'], 0, $section['align'], false, 0, '', '', true, 0, false, true, $section['height'], $section['valign'], true);
                 }
                 $count++;
             }

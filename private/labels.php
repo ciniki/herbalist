@@ -112,6 +112,45 @@ function ciniki_herbalist_labels($ciniki, $tnid, $format='all') {
             'height'=>50,
             ),
         );
+    $rowscols['avery22807'] = array(
+        'name'=>((isset($names['labels-avery22807-name']) && $names['labels-avery22807-name'] != '') ? $names['labels-avery22807-name'] . ' - ' : '') . '2" x 2" Round - Avery Template 22807',
+        'circle'=>array(
+            'radius'=>25,
+            ),
+        'rows'=>array(
+            '1'=>array('y'=>16.5),
+            '2'=>array('y'=>82),
+            '3'=>array('y'=>147.8),
+            '4'=>array('y'=>213),
+            ),
+        'cols'=>array(
+            '1'=>array('x'=>17),
+            '2'=>array('x'=>83.5),
+            '3'=>array('x'=>150),
+            ),
+        'cell'=>array(
+            'width'=>50,
+            'height'=>50,
+            ),
+        );
+    $rowscols['vista2x35'] = array(
+        'name'=>((isset($names['labels-vista2x35-name']) && $names['labels-vista2x35-name'] != '') ? $names['labels-vista2x35-name'] . ' - ' : '') . '2" x 3.5" Vista Print Labels',
+        'rows'=>array(
+            '1'=>array('y'=>21),
+            '2'=>array('y'=>75.5),
+            '3'=>array('y'=>130),
+            '4'=>array('y'=>184.5),
+            '5'=>array('y'=>239),
+            ),
+        'cols'=>array(
+            '1'=>array('x'=>24),
+            '2'=>array('x'=>122),
+            ),
+        'cell'=>array(
+            'width'=>70,
+            'height'=>30,
+            ),
+        );
 /*    $rowscols['avery5164'] = array(
         'name'=>((isset($names['labels-avery5164-name']) && $names['labels-avery5164-name'] != '') ? $names['labels-avery5164-name'] . ' - ' : '') . '3 1/3" x 4" - Avery Template 5164',
         'rows'=>array(
@@ -139,12 +178,12 @@ function ciniki_herbalist_labels($ciniki, $tnid, $format='all') {
             '0'=>array(
                 'font'=>array('size'=>9, 'style'=>'B',),
                 'content'=>'{_title_}',
-                'align'=>'C', 'x'=>0, 'y'=>0, 'width'=>44, 'height'=>7.5,
+                'align'=>'C', 'valign'=>'T','x'=>0, 'y'=>0, 'width'=>44, 'height'=>7.5,
                 ),
             '1'=>array(
                 'font'=>array('size'=>8, 'style'=>'',),
                 'content'=>'{_content_}',
-                'align'=>'C', 'x'=>0, 'y'=>3.3, 'width'=>44, 'height'=>12,
+                'align'=>'C', 'valign'=>'T','x'=>0, 'y'=>3.3, 'width'=>44, 'height'=>12,
                 ),
             );
 
@@ -156,12 +195,12 @@ function ciniki_herbalist_labels($ciniki, $tnid, $format='all') {
             '0'=>array(
                 'font'=>array('size'=>12, 'style'=>'B',),
                 'content'=>'{_title_}',
-                'align'=>'C', 'x'=>0, 'y'=>0, 'width'=>66, 'height'=>10,
+                'align'=>'C', 'valign'=>'T','x'=>0, 'y'=>0, 'width'=>66, 'height'=>10,
                 ),
             '1'=>array(
                 'font'=>array('size'=>10, 'style'=>'',),
                 'content'=>'{_content_}',
-                'align'=>'C', 'x'=>0, 'y'=>7, 'width'=>66, 'height'=>20,
+                'align'=>'C', 'valign'=>'T','x'=>0, 'y'=>7, 'width'=>66, 'height'=>20,
                 ),
             );
         //
@@ -172,12 +211,44 @@ function ciniki_herbalist_labels($ciniki, $tnid, $format='all') {
             '0'=>array(
                 'font'=>array('size'=>14, 'style'=>'B',),
                 'content'=>'{_title_}',
-                'align'=>'C', 'x'=>0, 'y'=>0, 'width'=>50, 'height'=>16,
+                'align'=>'C', 'valign'=>'T','x'=>0, 'y'=>0, 'width'=>50, 'height'=>16,
                 ),
             '1'=>array(
                 'font'=>array('size'=>12, 'style'=>'',),
                 'content'=>'{_content_}',
-                'align'=>'C', 'x'=>0, 'y'=>16, 'width'=>50, 'height'=>34,
+                'align'=>'C', 'valign'=>'T', 'x'=>0, 'y'=>16, 'width'=>50, 'height'=>34,
+                ),
+            );
+        //
+        // 2" x 2" Round
+        //
+        $labels['ingredientsAvery22807'] = $rowscols['avery22807'];
+        $labels['ingredientsAvery22807']['sections'] = array(
+            '0'=>array(
+                'font'=>array('size'=>10, 'style'=>'B',),
+                'content'=>'{_title_}',
+                'align'=>'C', 'valign'=>'B', 'x'=>0, 'y'=>0, 'width'=>50, 'height'=>20,
+                ),
+            '1'=>array(
+                'font'=>array('size'=>10, 'style'=>'',),
+                'content'=>'{_content_}',
+                'align'=>'C', 'valign'=>'T', 'x'=>0, 'y'=>20, 'width'=>50, 'height'=>30,
+                ),
+            );
+        //
+        // 2" x 3.5" Vista Print
+        //
+        $labels['ingredientsVista2x35'] = $rowscols['vista2x35'];
+        $labels['ingredientsVista2x35']['sections'] = array(
+            '0'=>array(
+                'font'=>array('size'=>12, 'style'=>'B',),
+                'content'=>'{_title_}',
+                'align'=>'C', 'valign'=>'B', 'x'=>0, 'y'=>0, 'width'=>70, 'height'=>8,
+                ),
+            '1'=>array(
+                'font'=>array('size'=>10, 'style'=>'',),
+                'content'=>'{_content_}',
+                'align'=>'C', 'valign'=>'T', 'x'=>0, 'y'=>9, 'width'=>70, 'height'=>23,
                 ),
             );
     }

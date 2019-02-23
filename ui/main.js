@@ -71,6 +71,7 @@ function ciniki_herbalist_main() {
             'visible':function() { return (M.ciniki_herbalist_main.menu.sections._tabs.selected=='recipes'?'yes':'no'); },
             'tabs':{
                 '0':{'label':'All', 'fn':'M.ciniki_herbalist_main.menu.open(null,null,0);'},
+                '70':{'label':'Teas', 'fn':'M.ciniki_herbalist_main.menu.open(null,null,70);'},
                 '90':{'label':'Tinctures', 'fn':'M.ciniki_herbalist_main.menu.open(null,null,90);'},
             }},
         'recipe_search':{'label':'', 'type':'livesearchgrid', 'livesearchcols':1, 
@@ -849,7 +850,7 @@ function ciniki_herbalist_main() {
             'name':{'label':'', 'hidelabel':'yes', 'type':'text'},
             }},
         '_options':{'label':'Options', 'aside':'yes', 'fields':{
-            'recipe_type':{'label':'Type', 'type':'select', 'options':{'0':'Generic', '90':'Tincture'}},
+            'recipe_type':{'label':'Type', 'type':'select', 'options':{'0':'Generic', '70':'Tea', '90':'Tincture'}},
             'flags_1':{'label':'Pressing', 'type':'flagtoggle', 'bit':0x01, 'field':'flags', 'default':'no'},
             }},
         '_yield':{'label':'Expected Yield', 'aside':'yes',
@@ -1475,7 +1476,7 @@ function ciniki_herbalist_main() {
     this.recipebatch.printLabels = function() {
         M.ciniki_herbalist_main.labels.open('M.ciniki_herbalist_main.recipebatch.show();', {
             'title':this.data.label.title,
-            'content':this.data.label.ingredients + ' (' + this.formValue('production_date') + ')',
+            'content':this.data.label.ingredients, // + ' (' + this.formValue('production_date') + ')',
             });
     }
     this.recipebatch.save = function(cb) {
@@ -1530,9 +1531,11 @@ function ciniki_herbalist_main() {
     this.labels.recipe_id = 0;
     this.labels.batch_id = 0;
     this.labels.sections = { 
-        'general':{'label':'Title', 'aside':'yes', 'fields':{
-            'label':{'label':'Label', 'type':'select', 'options':{}, 'onchangeFn':'M.ciniki_herbalist_main.labels.switchLabel'},
-            'title':{'label':'Title', 'type':'text'},
+        'general':{'label':'Label', 'aside':'yes', 'fields':{
+            'label':{'label':'Label', 'hidelabel':'yes', 'type':'select', 'options':{}, 'onchangeFn':'M.ciniki_herbalist_main.labels.switchLabel'},
+            }},
+        '_title':{'label':'Title', 'aside':'yes', 'fields':{
+            'title':{'label':'Title', 'hidelabel':'yes', 'type':'textarea', 'size':'small'},
             }},
         '_content':{'label':'Content', 'fields':{
             'content':{'label':'', 'hidelabel':'yes', 'hint':'', 'size':'medium', 'type':'textarea'},
@@ -1543,6 +1546,8 @@ function ciniki_herbalist_main() {
             'start_col':{'label':'Start Column', 'type':'toggle', 'default':'1', 'toggles':{}},
             'start_row':{'label':'Start Row', 'type':'toggle', 'default':'1', 'toggles':{}},
             'number':{'label':'Number', 'type':'text', 'size':'small'},
+            'test':{'label':'Test', 'type':'toggle', 'default':'no', 'toggles':{'no':'No', 'yes':'Yes'}},
+            'yoffset':{'label':'Vertical Shift', 'type':'text', 'size':'small'},
             }},
         '_buttons':{'label':'', 'buttons':{
             'print':{'label':'Print', 'fn':'M.ciniki_herbalist_main.labels.print();'},
@@ -1603,6 +1608,8 @@ function ciniki_herbalist_main() {
         args['start_col'] = this.formValue('start_col');
         args['start_row'] = this.formValue('start_row');
         args['number'] = this.formValue('number');
+        args['test'] = this.formValue('test');
+        args['yoffset'] = this.formValue('yoffset');
         M.showPDF('ciniki.herbalist.labelsPDF', args);
     }
     this.labels.addClose('Back');

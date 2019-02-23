@@ -29,6 +29,8 @@ function ciniki_herbalist_labelsPDF($ciniki) {
         'end_col'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'End Column'),
         'end_row'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'End Row'),
         'number'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Number of labels'),
+        'test'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Test'),
+        'yoffset'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Y Offset'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;

@@ -40,7 +40,7 @@ function ciniki_herbalist_hooks_uiSettings($ciniki, $tnid, $args) {
         ) {
         $menu_item = array(
             'priority'=>6500,
-            'label'=>'Products', 
+            'label'=>'Dispensary', 
             'edit'=>array('app'=>'ciniki.herbalist.main'),
             );
         $rsp['menu_items'][] = $menu_item;
